@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Deploy this to our mvn repository -->
+<actions>
+    <action>
+        <actionName>CUSTOM-git local deploy</actionName>
+        <displayName>git local deploy</displayName>
+        <goals>
+            <goal>deploy</goal>
+        </goals>
+        <properties>
+            <altDeploymentRepository>release-repo::default::file:../../wiser-mvn-repo/releases</altDeploymentRepository>
+        </properties>
+    </action>
+    <action>
+        <actionName>Exec Ant run</actionName>
+        <goals>
+            <goal>package</goal>
+            <goal>antrun:run</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>run-on-felix</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>Exect Ant debug</actionName>
+        <goals>
+            <goal>package</goal>
+            <goal>antrun:run</goal>
+        </goals>
+        <properties>
+            <vm.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address}</vm.args>
+            <jpda.listen>true</jpda.listen>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>run-on-felix</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>Exec Ant profile</actionName>
+        <goals>
+            <goal>package</goal>
+            <goal>antrun:run</goal>
+        </goals>
+        <properties>
+            <vm.args>${profiler.args}</vm.args>
+            <!-- XXX <java jvm="${profiler.java}" ...> -->
+            <profiler.action>profile</profiler.action>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>run-on-felix</activatedProfile>
+        </activatedProfiles>
+    </action>
+</actions>
