@@ -19,20 +19,18 @@
  http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
+    <reference id="hazelcastInstance"
+               interface="com.hazelcast.core.HazelcastInstance">
+    </reference>
+    
     <bean id="example-bla" class="br.ufba.dcc.wiser.fot.balance.Example"
             init-method="bla">
             <property name="a" value="FoT Balance " />
             <property name="b" value="+ Cellar" />
+            <property name="instance" ref="hazelcastInstance" />
     </bean>
 
-    <bean id="example-bli" class="br.ufba.dcc.wiser.fot.balance.Example"
-            init-method="bli">
-    </bean>
-
-    <!--<reference-list id="nodeList"
-                interface="org.apache.karaf.cellar.hazelcast.HazelcastClusterManager"  />
-
-    <bean id="list" class="br.ufba.dcc.wiser.fot.balance.Exemplo"
+    <!-- <bean id="list" class="br.ufba.dcc.wiser.fot.balance.Exemplo"
             init-method="bli">
             <property name="nodeList" ref="nodeList" />
             <property name="" value="" />
