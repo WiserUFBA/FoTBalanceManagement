@@ -7,9 +7,11 @@ import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Example {
+
 
     private String a;
     private String b;
@@ -22,6 +24,8 @@ public class Example {
     public void setB(String b) {
         this.b = b;
     }
+    
+    
 
     public void bla() {
         System.out.println("Started Example: " + a + " " + b);
@@ -32,7 +36,8 @@ public class Example {
     }
 
     public void bli(){
-
+        ArrayList<String> info = new ArrayList<String> ();
+        
         System.out.println("Listing node(s): ");
         
         // Check if there's a instance of hazelcast
@@ -50,9 +55,13 @@ public class Example {
             if (members != null && !members.isEmpty()) {
                 for (Member member : members) {
                     HazelcastNode node = new HazelcastNode(member);
-                    
-                    System.out.println("OBJ = " + node.toString());
+                        
+                        info.add(node.getHost());
+                        System.out.println(Arrays.toString(info.toArray()));
+                        //System.out.println("OBJ = " + node.toString());
+                  
                 }
+
             }
         }
         catch(NullPointerException ex){
@@ -61,4 +70,5 @@ public class Example {
         }
     
     }
+    
 }
