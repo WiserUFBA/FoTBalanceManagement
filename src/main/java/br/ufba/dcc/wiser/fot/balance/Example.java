@@ -38,7 +38,14 @@ public class Example {
     public void bli(){
         ArrayList<String> info = new ArrayList<String> ();
         
-        System.out.println("Listing node(s): ");
+        ArrayList<String> ip = new ArrayList();
+    
+        // [ B ] usando o método add() para gravar 5 números de IP
+//        ip.add("192.168.0.1");
+//        ip.add("192.168.0.2");
+        ip.add("192.168.0.3");
+//        ip.add("192.168.0.4");
+//        ip.add("192.168.0.5");
         
         // Check if there's a instance of hazelcast
         if(instance == null){
@@ -57,10 +64,12 @@ public class Example {
                     HazelcastNode node = new HazelcastNode(member);
                         
                         info.add(node.getHost());
-                        System.out.println(Arrays.toString(info.toArray()));
+                        //System.out.println(Arrays.toString(info.toArray()));
                         //System.out.println("OBJ = " + node.toString());
                   
                 }
+                
+                System.out.println(">>>>"+ ip.equals(info));
 
             }
         }
