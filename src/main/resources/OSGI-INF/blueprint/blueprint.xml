@@ -23,11 +23,29 @@
                interface="com.hazelcast.core.HazelcastInstance">
     </reference>
     
-    <bean id="example-bla" class="br.ufba.dcc.wiser.fot.balance.Example"
-            init-method="bla">
-            <property name="a" value="FoT Balance " />
-            <property name="b" value="+ Cellar" />
+    <reference id="clusterManager"
+               interface="org.apache.karaf.cellar.core.ClusterManager">
+    </reference>
+    
+    <reference id="groupManager"
+               interface="org.apache.karaf.cellar.core.GroupManager">
+    </reference>
+    
+    <reference id="hazelcastManager"
+               class="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager">
+    </reference>
+    
+        <!-- register(ClusterManager.class, clusterManager);
+         register(new Class[]{GroupManager.class, ConfigurationListener.class},groupManager); -->
+    
+    <bean id="Example_x" class="br.ufba.dcc.wiser.fot.balance.Example"
+            init-method="menssege">
+            <property name="a" value="Getting " />
+            <property name="b" value="the balance..." />
             <property name="instance" ref="hazelcastInstance" />
+            <property name="cluster" ref="clusterManager" />
+            <property name="group" ref="groupManager" />
+            <property name="hgm" ref="hazelcastManager" />
     </bean>
 
     <!-- <bean id="list" class="br.ufba.dcc.wiser.fot.balance.Exemplo"
@@ -39,7 +57,8 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
             <from uri="timer://myTimer?period=5000" />
-            <to uri="bean:example-bla?method=bli"/>
+            <to uri="bean:Example_x?method=start_bal"/>
+
         </route>
     </camelContext>
 
