@@ -31,28 +31,20 @@
                interface="org.apache.karaf.cellar.core.GroupManager">
     </reference>
     
-    <reference id="hazelcastManager"
-               class="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager">
-    </reference>
+<!--    <reference id="hazelcastManager"
+               interface="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager">
+    </reference>-->
     
-        <!-- register(ClusterManager.class, clusterManager);
+<!--         register(ClusterManager.class, clusterManager);
          register(new Class[]{GroupManager.class, ConfigurationListener.class},groupManager); -->
     
     <bean id="Example_x" class="br.ufba.dcc.wiser.fot.balance.Example"
-            init-method="menssege">
-            <property name="a" value="Getting " />
-            <property name="b" value="the balance..." />
+            init-method="init">
             <property name="instance" ref="hazelcastInstance" />
             <property name="cluster" ref="clusterManager" />
             <property name="group" ref="groupManager" />
-            <property name="hgm" ref="hazelcastManager" />
     </bean>
 
-    <!-- <bean id="list" class="br.ufba.dcc.wiser.fot.balance.Exemplo"
-            init-method="bli">
-            <property name="nodeList" ref="nodeList" />
-            <property name="" value="" />
-    </bean> -->
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
