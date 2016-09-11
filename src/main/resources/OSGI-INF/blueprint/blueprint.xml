@@ -31,8 +31,14 @@
                interface="org.apache.karaf.cellar.core.GroupManager">
     </reference>
     
-<!--    <reference id="hazelcastManager"
-               interface="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager">
+    <reference id="bla1"
+               interface="org.apache.karaf.cellar.core.command.ExecutionContext">
+    </reference>
+   
+  
+      
+<!--    <reference id="HazelcastConfigurationManager"
+               class="org.apache.karaf.cellar.hazelcast.factory.HazelcastConfigurationManager">
     </reference>-->
     
 <!--         register(ClusterManager.class, clusterManager);
@@ -43,15 +49,18 @@
             <property name="instance" ref="hazelcastInstance" />
             <property name="cluster" ref="clusterManager" />
             <property name="group" ref="groupManager" />
+            <property name="bla" ref="bla1" />
+            <!--<property name="configuration" ref="hazelcastConfigurationManager" />-->
     </bean>
 
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
-            <from uri="timer://myTimer?period=5000" />
+            <from uri="timer://myTimer?period=30000" />
             <to uri="bean:Example_x?method=start_bal"/>
 
         </route>
     </camelContext>
 
 </blueprint>
+
