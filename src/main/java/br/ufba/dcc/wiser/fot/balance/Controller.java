@@ -1,78 +1,87 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ufba.dcc.wiser.fot.balance;
 
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Cluster;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import org.apache.karaf.cellar.hazelcast.HazelcastNode;
-import org.apache.karaf.cellar.hazelcast.factory.HazelcastConfigurationManager;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
-import org.junit.Test;
-import static junit.framework.Assert.assertFalse;
-import org.apache.felix.gogo.runtime.CommandProcessorImpl;
-import org.apache.felix.gogo.runtime.threadio.ThreadIOImpl;
-import org.apache.felix.service.command.CommandProcessor;
+import javax.sql.DataSource;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
-import org.apache.karaf.cellar.core.command.Command;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
+import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
-import org.junit.Test;
 
-public class Example {
+/**
+ *
+ * @author juran
+ */
+public class Controller {
 
     private HazelcastInstance instance = null;
     private ClusterManager cluster = null;
     private GroupManager group = null;
-    private CommandProcessor commandProcessor;
-    private ExecutionContext bla;
-//    private HazelcastConfigurationManager configuration = null;
-
-    public void setBla(ExecutionContext bla) {
-        this.bla = bla;
-    }
+    private ExecutionContext executionContext;
+    private DataSource dataSource;
+    private Connection dbConnection;
 
     public void init() throws Exception {
         System.out.println("Getting the balance...");
         createFoTgroups();
-//        String listOutput = executeCommand("features:list");
-//        commandProcessor = new CommandProcessorImpl(new ThreadIOImpl());
+        createPopulateTables();
     }
 
-    public void setInstance(HazelcastInstance instance) {
-        this.instance = instance;
+    private void createPopulateTables() {
+        try {
+            this.dbConnection = this.dataSource.getConnection();
+            Statement stmt = this.dbConnection.createStatement();
+            //stmt.execute("drop table sensors_data");
+            DatabaseMetaData dbMeta = this.dbConnection.getMetaData();
+            System.out.println("Using datasource "
+                    + dbMeta.getDatabaseProductName() + ", URL "
+                    + dbMeta.getURL());
+            stmt.execute("CREATE TABLE IF NOT EXISTS gateways(ID BIGINT AUTO_INCREMENT PRIMARY KEY, ip VARCHAR(255),"
+                    + " host VARCHAR(255), tech_comm VARCHAR(255), capacity INT, status INT)");
+            stmt.execute("CREATE TABLE IF NOT EXISTS services(ID BIGINT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),"
+                    + "tech_comm VARCHAR(255), weight INT)");
+
+            /*
+			ResultSet rs = stmt.executeQuery("select * from sensors_data");
+            ResultSetMetaData meta = rs.getMetaData();
+            while (rs.next()) {
+                writeResult(rs, meta.getColumnCount());
+            }
+            rs = stmt.executeQuery("CALL DISK_SPACE_USED('sensors_data')");
+            meta = rs.getMetaData();
+            while (rs.next()) {
+                writeResult(rs, meta.getColumnCount());
+            }*/
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
-    public void setCluster(ClusterManager cluster) {
-        this.cluster = cluster;
-    }
-
-    public void setGroup(GroupManager group) {
-        this.group = group;
-    }
-    
-
-//    public void setConfiguration(HazelcastConfigurationManager configuration){
-//        this.configuration = configuration;
-//    }
-    
     private void createFoTgroups() {
         if (!group.isLocalGroup("discovery")) {
             group.createGroup("discovery");
@@ -92,35 +101,29 @@ public class Example {
         if (!group.isLocalGroup("management")) {
             group.createGroup("management");
         }
-//        if (!group.isLocalGroup("default")) {
-//            group.createGroup("default");
-//        }
 
     }
 
-   
-//    protected String executeCommand(String command) throws Exception {
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-//        CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
-//
-//        String listOutput = executeCommand("features:list");
-//        System.out.println(listOutput);
-//        assertFalse(listOutput.isEmpty());
-//        listOutput = executeCommand("features:list -i");
-//        System.out.println(listOutput);
-//        assertFalse(listOutput.isEmpty());
+    public void verifyNodesChanges() throws Exception {
+        boolean change = true;
+        if (change) {
+            startBalance();
+        }
+    }
 
-//        This is required in order to run scripts that use those session variables. 
-//        commandSession.put("APPLICATION", System.getProperty("karaf.name", "root"));
-//        commandSession.put("USER", "karaf");
-//        commandSession.execute(command);
-//
-//        return byteArrayOutputStream.toString();
-//    }
-     
-    public void start_bal() throws Exception {
+    private void startBalance() throws Exception {
 
+        //contar demanda existente
+        // - supondo que entrou um novo gateway
+        //     - verificar se ele já faz parte da tabela de gateways
+        //             - caso SIM alterar o status e nao acrescentar nada a demanda
+        //             - caso seja um novo gateway acrescentar sua demanda prévia
+        // - supondo que saiu um gateway
+        //      - alterar  status para OFF
+        //retira de todos os grupos
+        //inicia distribuicao da demanda para todos os gateway com status ON
+        
+        
 //        System.out.println(executeCommand("gosh"));
         ArrayList<String> info = new ArrayList<String>();
 
@@ -130,7 +133,6 @@ public class Example {
 //        ArrayList<Gateway> gatewayList = new ArrayList<Gateway>();
 //        String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"}; //array para preenchimento dos serviços
 //        int[] num = {1, 3, 1, 2, 1, 3};
-
         // Get all members of the Hazelcast Cluster and display some properties
         try {
             Set<Member> members = cluster.getMembers();
@@ -143,15 +145,6 @@ public class Example {
                 group.unRegisterGroup("storage");
                 group.unRegisterGroup("localization");
                 group.unRegisterGroup("management");
-                //group.unRegisterGroup("default");
-
-//                Set<Group> groups = group.listAllGroups();
-//                Set<Node> nos = null;
-//                for (Group grupo : groups) {
-//                    nos = grupo.getNodes();
-//                    nos.removeAll(nos);
-//                    grupo.setNodes(nos);
-//                }
 
                 for (Member member : members) {
                     HazelcastNode node = new HazelcastNode(member);
@@ -212,59 +205,76 @@ public class Example {
         }
 
     }
-    
-    private void blaBli() throws Exception{
-        
+
+    private void blaBli() throws Exception {
+
         System.out.println("BBMP!");
-        Cluster cluster = instance.getCluster();
+        Cluster c = instance.getCluster();
         Set<Node> nodes = new HashSet<Node>();
-        Set<Member> members = cluster.getMembers();
+        Set<Member> members = c.getMembers();
         for (Member member : members) {
             HazelcastNode node = new HazelcastNode(member);
             nodes.add(node);
         }
-        System.out.println(nodes);
         ManageGroupCommand command = new ManageGroupCommand(this.cluster.generateId());
-                command.setDestination(nodes);
-                command.setAction(ManageGroupAction.JOIN);
-                command.setGroupName("security");
-                //command.setSourceGroup(null);
-        System.out.println(bla);
-                Map<Node, ManageGroupResult> results = bla.execute(command);
-                if (results == null || results.isEmpty()) {
-                    System.out.println("No result received within given timeout");
-                } else {
-                    ShellTable table = new ShellTable();
-                    table.column(" ");
-                    table.column("Group");
-                    table.column("Members");
-                    for (Node node : results.keySet()) {
-                        ManageGroupResult result = results.get(node);
-                        if (result != null && result.getGroups() != null) {
-                            for (Group g : result.getGroups()) {
-                                StringBuffer buffer = new StringBuffer();
-                                if (g.getNodes() != null && !g.getNodes().isEmpty()) {
-                                    String local = "";
-                                    for (Node member : g.getNodes()) {
-                                        // display only up and running nodes in the cluster
-                                        if (this.cluster.findNodeById(member.getId()) != null) {
-                                            buffer.append(member.getId());
-                                            if (member.equals(this.cluster.getNode())) {
-                                                local = "x";
-                                                buffer.append("(x)");
-                                            }
-                                            buffer.append(" ");
-                                        }
+        command.setDestination(nodes);
+        command.setAction(ManageGroupAction.JOIN);
+        command.setGroupName("security");
+        //command.setSourceGroup(null);
+        Map<Node, ManageGroupResult> results = executionContext.execute(command);
+        if (results == null || results.isEmpty()) {
+            System.out.println("No result received within given timeout");
+        } else {
+            ShellTable table = new ShellTable();
+            table.column(" ");
+            table.column("Group");
+            table.column("Members");
+            for (Node node : results.keySet()) {
+                ManageGroupResult result = results.get(node);
+                if (result != null && result.getGroups() != null) {
+                    for (Group g : result.getGroups()) {
+                        StringBuffer buffer = new StringBuffer();
+                        if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                            String local = "";
+                            for (Node member : g.getNodes()) {
+                                // display only up and running nodes in the cluster
+                                if (this.cluster.findNodeById(member.getId()) != null) {
+                                    buffer.append(member.getId());
+                                    if (member.equals(this.cluster.getNode())) {
+                                        local = "x";
+                                        buffer.append("(x)");
                                     }
-                                    table.addRow().addContent(local, g.getName(), buffer.toString());
-                                } else {
-                                    table.addRow().addContent("", g.getName(), "");
+                                    buffer.append(" ");
                                 }
                             }
+                            table.addRow().addContent(local, g.getName(), buffer.toString());
+                        } else {
+                            table.addRow().addContent("", g.getName(), "");
                         }
                     }
-                    table.print(System.out);
                 }
+            }
+            table.print(System.out);
+        }
+    }
+    public void setInstance(HazelcastInstance instance) {
+        this.instance = instance;
     }
 
+    public void setCluster(ClusterManager cluster) {
+        this.cluster = cluster;
+    }
+
+    public void setGroup(GroupManager group) {
+        this.group = group;
+    }
+    
+     public void setExecutionContext(ExecutionContext executionContext) {
+        this.executionContext = executionContext;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+     
 }
