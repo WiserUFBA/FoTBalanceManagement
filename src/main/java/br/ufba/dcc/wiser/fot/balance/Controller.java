@@ -15,8 +15,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -31,10 +33,10 @@ import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
 
-/**
- *
- * @author juran
+/*
+ * @author jurandir
  */
+
 public class Controller {
 
     private HazelcastInstance instance = null;
@@ -47,11 +49,15 @@ public class Controller {
     public void init() throws Exception {
         System.out.println("Getting the balance...");
         createFoTgroups();
-        createPopulateTables();
+        blaBli();
+        System.out.println("Todos metodos do 'init' foram executados!");
+        
+        //createPopulateTables();
+
     }
 
     private void createPopulateTables() {
-        try {
+        /* try {
             this.dbConnection = this.dataSource.getConnection();
             Statement stmt = this.dbConnection.createStatement();
             //stmt.execute("drop table sensors_data");
@@ -64,22 +70,22 @@ public class Controller {
             stmt.execute("CREATE TABLE IF NOT EXISTS services(ID BIGINT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),"
                     + "tech_comm VARCHAR(255), weight INT)");
 
-            /*
-			ResultSet rs = stmt.executeQuery("select * from sensors_data");
-            ResultSetMetaData meta = rs.getMetaData();
-            while (rs.next()) {
-                writeResult(rs, meta.getColumnCount());
-            }
-            rs = stmt.executeQuery("CALL DISK_SPACE_USED('sensors_data')");
-            meta = rs.getMetaData();
-            while (rs.next()) {
-                writeResult(rs, meta.getColumnCount());
-            }*/
+//            
+//			ResultSet rs = stmt.executeQuery("select * from sensors_data");
+//            ResultSetMetaData meta = rs.getMetaData();
+//            while (rs.next()) {
+//                writeResult(rs, meta.getColumnCount());
+//            }
+//            rs = stmt.executeQuery("CALL DISK_SPACE_USED('sensors_data')");
+//            meta = rs.getMetaData();
+//            while (rs.next()) {
+//                writeResult(rs, meta.getColumnCount());
+//            }
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void createFoTgroups() {
@@ -104,36 +110,54 @@ public class Controller {
 
     }
 
-    public void verifyNodesChanges() throws Exception {
-        boolean change = true;
-        if (change) {
+    private void verifyNodesChanges() throws Exception {
+        //boolean change = true;
+        //if (change) {
             startBalance();
-        }
+      //  }
+    }
+    
+    private Set<Node> listNode(){
+        Cluster cluster = instance.getCluster();  
+        Set<Node> listNode = new HashSet<Node>();
+        try {
+            Set<Member> members = cluster.getMembers();
+            if (members != null && !members.isEmpty()) {
+                for (Member member : members) {
+                    HazelcastNode node = new HazelcastNode(member);
+                    listNode.add(node);
+                }
+            }
+            return listNode;
+        } catch (NullPointerException ex) {
+            System.out.println("Erro 2");
+            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }                
     }
 
     private void startBalance() throws Exception {
 
-        //contar demanda existente
-        // - supondo que entrou um novo gateway
-        //     - verificar se ele já faz parte da tabela de gateways
-        //             - caso SIM alterar o status e nao acrescentar nada a demanda
-        //             - caso seja um novo gateway acrescentar sua demanda prévia
-        // - supondo que saiu um gateway
-        //      - alterar  status para OFF
-        //retira de todos os grupos
-        //inicia distribuicao da demanda para todos os gateway com status ON
-        
-        
-//        System.out.println(executeCommand("gosh"));
         ArrayList<String> info = new ArrayList<String>();
-
         // Get Cluster with the hazelcast instance
         Cluster cluster = instance.getCluster();
 
-//        ArrayList<Gateway> gatewayList = new ArrayList<Gateway>();
-//        String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"}; //array para preenchimento dos serviços
-//        int[] num = {1, 3, 1, 2, 1, 3};
+        /*//ArrayList<Gateway> gatewayList = new ArrayList<Gateway>();
+        String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"}; //array para preenchimento dos serviços
+        int[] num = {1, 3, 1, 2, 1, 3};
         // Get all members of the Hazelcast Cluster and display some properties
+        
+        Set<Services> servicesList = new HashSet<Services>();
+        for(int i = 0; i < nome.length; i++){            
+            Services s = new Services();            
+            s.setName(nome[i]);
+            s.setWeigh(num[i]);
+            System.out.println(s.getName());
+            System.out.println(s.getWeigh());
+            servicesList.add(s);              
+        }
+        */
+
         try {
             Set<Member> members = cluster.getMembers();
             if (members != null && !members.isEmpty()) {
@@ -151,53 +175,16 @@ public class Controller {
 //                    configuration.getHazelcastConfig();
                     info.add(node.getHost());
                     System.out.println(Arrays.toString(info.toArray()));
-//                  
-//                    Group x = group.findGroupByName("composition");
-//                    Collection<String> z =  Arrays.asList(node.getId());
-//                    x.setNodes(this.cluster.listNodes(z));
-//                    group.registerGroup(x);
-//                    Gateway gateway = new Gateway(); //os loads não são preenchidos nesse momento pois irão depender dos pesos de cada serviço
-//                    gateway.setNode(node.getHost());
-//                    gatewayList.add(gateway);
-//                    
-//
-//                }
-//                int i = 0; //utilizado apenas para iterar os serviços que serão preenchidos dentro de cada gateway
-//                for (Gateway g : gatewayList) {
-//                    for (int j = 0; j < 2; j++) {
-//                        Services service = new Services();
-//                        if (i >= 3) { //apenas para volta o contador de serviço
-//                            i = 0;
-//                        }
-//                        service.setName(nome[i]);
-//                        service.setWeigh(num[i]);
-//                        g.setLoad(g.getLoad() + num[i]); //preste atenção nessa linha - o valor de Load está sendo somado com o valor do peso do serviço
-//                        g.getServices().add(service);
-//                        
-//                        i++;
-//                    }
                 }
-                //info.add(node.getHost());
-                //System.out.println(Arrays.toString(info.toArray()));
-                //System.out.println("OBJ = " + node.toString());
-
-                //Gateway gateway = new Gateway(); //os loads não são preenchidos nesse momento pois irão depender dos pesos de cada serviço
-                //info.setNode("192.168.0." + i);
-                //gatewayList.add(gateway);
             }
 
-//            for (Gateway g : gatewayList) { //serve para imprimir os gateways e seus serviços
-//                System.out.println("\n>>>>>>>>>> IpGateway:" + g.getNode() + " >>> Load: " + g.getLoad());
-//                
-//                for (Services s : g.getServices()) {
-//                    
-////                    group.registerGroup(s.getName());
-//                    System.out.println(">>>>>>>>>> ServiceName:" + s.getName() + " >>> Weigh:" + s.getWeigh());
-//                }
-//                //System.out.println("#########################");
-//            }
             System.out.println("Balancing made!!!\n");
-            blaBli();
+            
+            Set<Node> nos = new HashSet<Node>();
+            for (Member member : members) {
+                HazelcastNode node = new HazelcastNode(member);
+                nos.add(node);
+            }
 
         } catch (NullPointerException ex) {
             System.out.println("erro 2");
@@ -212,16 +199,35 @@ public class Controller {
         Cluster c = instance.getCluster();
         Set<Node> nodes = new HashSet<Node>();
         Set<Member> members = c.getMembers();
+        
         for (Member member : members) {
             HazelcastNode node = new HazelcastNode(member);
             nodes.add(node);
         }
-        ManageGroupCommand command = new ManageGroupCommand(this.cluster.generateId());
-        command.setDestination(nodes);
-        command.setAction(ManageGroupAction.JOIN);
-        command.setGroupName("security");
-        //command.setSourceGroup(null);
-        Map<Node, ManageGroupResult> results = executionContext.execute(command);
+        
+        ArrayList<String> services = new ArrayList<String>();
+        //String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"};
+        services.add("discovery");
+        services.add("composition");
+        services.add("security");
+        services.add("storage");
+        services.add("localization");
+        services.add("management");
+        
+        for (int s = 0; s >= services.size(); s++){
+            int n = 0;
+            if (n <= nodes.size()){
+                ManageGroupCommand command = new ManageGroupCommand(this.cluster.generateId());
+                command.setDestination(nodes.get(n));
+                command.setAction(ManageGroupAction.JOIN);
+                command.setGroupName(services.get(s));
+                //command.setGroupName(group);
+                //command.setSourceGroup(null);
+            }else{
+                n = 0;
+
+        
+        /* Map<Node, ManageGroupResult> results = executionContext.execute(command);
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
@@ -229,6 +235,7 @@ public class Controller {
             table.column(" ");
             table.column("Group");
             table.column("Members");
+            
             for (Node node : results.keySet()) {
                 ManageGroupResult result = results.get(node);
                 if (result != null && result.getGroups() != null) {
@@ -255,8 +262,14 @@ public class Controller {
                 }
             }
             table.print(System.out);
-        }
+        }*/
+      }  
+       
     }
+    
+  }
+        
+
     public void setInstance(HazelcastInstance instance) {
         this.instance = instance;
     }
