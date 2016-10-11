@@ -42,13 +42,13 @@ language governing permissions and limitations under the License. -->
         <property name="executionContext" ref="executionContext1" />
         <!--<property name="dataSource" ref="dataBase" />-->
     </bean>
-
+<!--
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
             <from uri="timer://myTimer?period=30000" />
             <to uri="bean:controllerInstance?method=verifyNodesChanges"/>
         </route>
     </camelContext>
-
+-->
 </blueprint>
 

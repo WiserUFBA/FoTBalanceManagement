@@ -50,8 +50,7 @@ public class Controller {
     public void init() throws Exception {
         System.out.println("Getting the balance...");
         createFoTgroups();
-        startBalance();
-        blaBli();
+        verifyNodesChanges();
         }
 
     private void createFoTgroups() {
@@ -77,10 +76,11 @@ public class Controller {
     }
 
     private void verifyNodesChanges() throws Exception {
-        //boolean change = true;
-        //if (change) {
-        startBalance();
-        //  }
+        boolean change = true;
+        if (change) {
+            removeNodesGroup();
+            balance();
+        }
     }
 
     private Set<Node> listNode() {
@@ -102,7 +102,7 @@ public class Controller {
         }
     }
 
-    private void startBalance() throws Exception {
+    private void removeNodesGroup() throws Exception {
 
         ArrayList<String> info = new ArrayList<String>();
         // Get Cluster with the hazelcast instance
@@ -140,7 +140,7 @@ public class Controller {
 
     }
 
-    private void blaBli() throws Exception {
+    private void balance() throws Exception {
 
         Cluster c = instance.getCluster();
         Set<Node> nodes = new HashSet<Node>();
