@@ -40,7 +40,7 @@ language governing permissions and limitations under the License. -->
         <property name="cluster" ref="clusterManager" />
         <property name="group" ref="groupManager" />
         <property name="executionContext" ref="executionContext1" />
-        <property name="dataSource" ref="dataBase" />
+        <!--<property name="dataSource" ref="dataBase" />-->
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
