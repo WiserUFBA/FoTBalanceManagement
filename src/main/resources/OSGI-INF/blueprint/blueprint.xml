@@ -28,20 +28,29 @@ language governing permissions and limitations under the License. -->
     <reference id="groupManager"
                interface="org.apache.karaf.cellar.core.GroupManager" />
         
-    <reference id="executionContext1"
+    <reference id="executionContext"
                interface="org.apache.karaf.cellar.core.command.ExecutionContext" />
-        
-    <reference id="dataBase" interface="javax.sql.DataSource" availability="optional"
-               filter="(dataSourceName=fot-balance)" />
-   
+    
+    <reference id="configurationAdmin"
+               interface="org.osgi.service.cm.ConfigurationAdmin" />
+    
+    <reference id="eventProducer"
+               interface="org.apache.karaf.cellar.core.event.EventProducer"/>
+    
+    <reference id="featuresService"
+               interface="org.apache.karaf.features.FeaturesService"/>
+ 
     <bean id="controllerInstance" class="br.ufba.dcc.wiser.fot.balance.Controller"
           init-method="init">
         <property name="instance" ref="hazelcastInstance" />
-        <property name="cluster" ref="clusterManager" />
-        <property name="group" ref="groupManager" />
-        <property name="executionContext" ref="executionContext1" />
-        <!--<property name="dataSource" ref="dataBase" />-->
+        <property name="clusterManager" ref="clusterManager" />
+        <property name="groupManager" ref="groupManager" />
+        <property name="executionContext" ref="executionContext" />
+        <property name="eventProducer" ref="eventProducer"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+        
     </bean>
+
 <!--
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
@@ -51,4 +60,3 @@ language governing permissions and limitations under the License. -->
     </camelContext>
 -->
 </blueprint>
-

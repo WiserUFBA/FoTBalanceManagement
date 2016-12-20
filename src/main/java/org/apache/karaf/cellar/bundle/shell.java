@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufba.dcc.wiser.fot.balance;
+package org.apache.karaf.cellar.bundle;
 
 /**
  *
  * @author juran
  */
-class Example {
+public class shell {
     
 }
