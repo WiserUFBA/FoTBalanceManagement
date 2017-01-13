@@ -49,7 +49,6 @@ import org.osgi.service.cm.ConfigurationAdmin;
 /*
  * @author jurandir
  */
-
 public class Controller extends CellarCommandSupport {
 
     private HazelcastInstance instance = null;
@@ -70,6 +69,13 @@ public class Controller extends CellarCommandSupport {
     List<Long> ids = new ArrayList<Long>();
     List<String> bundles;
     List<String> groups;
+
+    ArrayList<Node> hosts = new ArrayList<Node>();
+    Map<String, Integer> nodeCapacity = new HashMap<String, Integer>();
+
+    ArrayList<String> services = new ArrayList<String>();
+    Map<String, Integer> serviceCost = new HashMap<String, Integer>();
+
     boolean start;
     private EventProducer eventProducer;
     private HashMap<String, List<String>> listHostByGroup = new HashMap<String, List<String>>();
@@ -78,29 +84,91 @@ public class Controller extends CellarCommandSupport {
 
         try {
             System.out.println("\nGetting the balance management...\n");
-            List<String> bundlesInit;    
-            String raiz = "file:///G://bundles-iot/";
-            
+            List<String> bundlesInit;
+//            String raiz = "file:///G://bundles-iot/";
+            String raiz = "url:http://";
+            String addmvn = ":8181/bundleInstall?mvn=br.ufba.dcc.wiser/";
+
+//            url.add(raiz + host() + addmvn);
             verifyNodesChanges();
             startGroupBundles();
 
-            String nameBundle="";
+            String nameBundle = "";
             System.out.println("\nDistributing bundles between groups/clusters...\n");
-            System.out.println(groups.size());
-            for (String g : groups){    
-                groupName = g;
-                System.out.println(groupName);
-                bundlesInit = this.bundleGroup.get(g);
-                 for (String b : bundlesInit ){
-                    nameBundle = b;
-                    System.out.println(nameBundle);
-                    urls.add(raiz + nameBundle);
-                    installBundles();          
-                }
-            }
-            System.out.println("\n---------------IoT balanced network---------------\n");
 
+//            String part2 = parts[1]; // port
+            if (hosts.size() <= 2) {
+                System.out.println(groups.size());
+                if (hosts.size() == 1) {
+                    for (int p = 0; p < 2; p++) {
+                        groupName = groups.get(p);
+                        System.out.println(groupName);
+                        bundlesInit = this.bundleGroup.get(groups.get(p));
+                        for (String b : bundlesInit) {
+                            System.out.println(hosts.get(0));
+                            String ip_st = hosts.get(0).toString();
+                            String[] parts = ip_st.split("=");
+                            String part1 = parts[1];
+                            String[] parts2 = part1.split(":");
+                            String part2 = parts2[0]; // ip
+                            nameBundle = b;
+                            System.out.println(nameBundle + " install in" + part2);
+//                        urls.add(raiz + nameBundle);
+                            urls.add(raiz + part2 + addmvn + nameBundle);
+                            installBundles();
+                        }
+                    }
+                } else {
+                    for (int p = 0; p < 2; p++) {
+                        groupName = groups.get(p);
+                        System.out.println(groupName);
+                        bundlesInit = this.bundleGroup.get(groups.get(p));
+                        for (String b : bundlesInit) {
+                            System.out.println(hosts.get(p));
+                            String ip_st = hosts.get(p).toString();
+                            String[] parts = ip_st.split("=");
+                            String part1 = parts[1];
+                            String[] parts2 = part1.split(":");
+                            String part2 = parts2[0]; // ip
+                            nameBundle = b;
+                            System.out.println(nameBundle + " install in" + part2);
+//                        urls.add(raiz + nameBundle);
+                            urls.add(raiz + part2 + addmvn + nameBundle);
+                            installBundles();
+
+                        }
+                    }
+                }
+
+            } else {
+                int z = 0;
+                    for (String g : groups) {
+                        groupName = g;
+                        System.out.println(groupName);
+                        bundlesInit = this.bundleGroup.get(g);
+                        
+                        
+                        for (String b : bundlesInit) {
+                            
+                            System.out.println(hosts.size());
+                            System.out.println(hosts.get(z));
+                            String ip_st = hosts.get(z).toString();
+                            String[] parts = ip_st.split("=");
+                            String part1 = parts[1];
+                            String[] parts2 = part1.split(":");
+                            String part2 = parts2[0]; // ip
+                            nameBundle = b;
+                            System.out.println(nameBundle + " install in" + part2);
+//                        urls.add(raiz + nameBundle);
+                            urls.add(raiz + part2 + addmvn + nameBundle);
+                          z++;
+                            installBundles();
+                        }
+                    }
+                }
             
+
+            System.out.println("\n------------------IoT balanced network------------------\n");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,59 +176,57 @@ public class Controller extends CellarCommandSupport {
     }
 
     public void startGroupBundles() {
-        
+
         groups = new ArrayList<String>();
-       
-        groups.add("composition");
+
         groups.add("localization");
-        groups.add("security");
         groups.add("discovery");
+        groups.add("composition");
+        groups.add("security");
 //        groups.add("storage");
 //        groups.add("management");
 
         this.bundleGroup = new HashMap<String, List<String>>();
-        
-        bundles = new ArrayList<String>();
-        bundles.add("app1_com-fatorial-1.0.jar");
-        bundles.add("app2_com-fatorial-1.0.jar");
-//        bundles.add("app3_com-fatorial-1.0.jar");
-//        bundles.add("app4_com-fatorial-1.0.jar");
-        this.bundleGroup.put("composition", bundles);
-
-           bundles = new ArrayList<String>();
-//         bundles.add("");
-//         bundleGroup.put("default", bundles);
 
         bundles = new ArrayList<String>();
-        bundles.add("app1_dis-fatorial-1.0.jar");
-        bundles.add("app2_dis-fatorial-1.0.jar");
-        bundles.add("app3_dis-fatorial-1.0.jar");
-//        bundles.add("app4_dis-fatorial-1.0.jar");
+        bundles.add("app1_dis-fatorial/1.0");
+        bundles.add("app2_dis-fatorial/1.0");
+        bundles.add("app3_dis-fatorial/1.0");
+        bundles.add("app4_dis-fatorial/1.0");
         this.bundleGroup.put("discovery", bundles);
 
         bundles = new ArrayList<String>();
-        bundles.add("app1_loc-fatorial-1.0.jar");
-        bundles.add("app2_loc-fatorial-1.0.jar");
-//        bundles.add("app3_loc-fatorial-1.0.jar");
-//        bundles.add("app4_loc-fatorial-1.0.jar");
+        bundles.add("app1_loc-fatorial/1.0");
+        bundles.add("app2_loc-fatorial/1.0");
+        bundles.add("app3_loc-fatorial/1.0");
+        bundles.add("app4_loc-fatorial/1.0");
         this.bundleGroup.put("localization", bundles);
 
         bundles = new ArrayList<String>();
-        bundles.add("app1_sec-fatorial-1.0.jar");
-        bundles.add("app2_sec-fatorial-1.0.jar");
-//        bundles.add("app3_sec-fatorial-1.0.jar");
+        bundles.add("app1_sec-fatorial/1.0");
+        bundles.add("app2_sec-fatorial/1.0");
+        bundles.add("app3_sec-fatorial/1.0");
         this.bundleGroup.put("security", bundles);
+
+        bundles = new ArrayList<String>();
+        bundles.add("app1_com-fatorial/1.0");
+        bundles.add("app2_com-fatorial/1.0");
+        bundles.add("app3_com-fatorial/1.0");
+        bundles.add("app4_com-fatorial/1.0");
+        this.bundleGroup.put("composition", bundles);
+
+        bundles = new ArrayList<String>();
+//         bundles.add("");
+//         bundleGroup.put("default", bundles);
 
 //        //Está faltando criar o bundle desse grupo management
 //        bundles = new ArrayList<String>();
 //        bundles.add("app1_man-fatorial-1.0.jar");
 //        this.bundleGroup.put("management", bundles);
-
 //        //Está faltando criar o bundle desse grupo storage
 //        bundles = new ArrayList<String>();
 //        bundles.add("app1_sto-fatorial-1.0.jar");
 //        this.bundleGroup.put("storage", bundles);
-
     }
 
     public void installBundles() throws IOException {
@@ -222,12 +288,12 @@ public class Controller extends CellarCommandSupport {
                     ids.add(state.getId());
                     state.setLocation(url);
                     if (start) {
-                        
+
                         state.setStatus(BundleEvent.LAZY_ACTIVATION);
                     } else {
                         state.setStatus(BundleEvent.INSTALLED);
                     }
-                    
+
                     System.out.println("status " + state.getStatus());
                     clusterBundles.put(symbolicName + "/" + version, state);
                 } finally {
@@ -416,31 +482,26 @@ public class Controller extends CellarCommandSupport {
         Cluster c = instance.getCluster();
         Set<Node> nodes = new HashSet<Node>();
         Set<Member> members = c.getMembers();
-        List<String> listHost;
 
         for (Member member : members) {
             HazelcastNode node = new HazelcastNode(member);
             nodes.add(node);
         }
 
-        ArrayList<String> services = new ArrayList<String>();
-        Map<String, Integer> serviceCost = new HashMap<String, Integer>();
         //String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"};
         services.add("discovery");
         serviceCost.put("discovery", 2);
+        services.add("localization");
+        serviceCost.put("localization", 3);
         services.add("composition");
         serviceCost.put("composition", 1);
         services.add("security");
         serviceCost.put("security", 3);
         services.add("storage");
         serviceCost.put("storage", 1);
-        services.add("localization");
-        serviceCost.put("localization", 3);
         services.add("management");
         serviceCost.put("management", 2);
 
-        ArrayList<Node> hosts = new ArrayList<Node>();
-        Map<String, Integer> nodeCapacity = new HashMap<String, Integer>();
         for (Member member : members) {
             HazelcastNode node = new HazelcastNode(member);
             hosts.add(node);
@@ -449,15 +510,25 @@ public class Controller extends CellarCommandSupport {
             nodeCapacity.put(node.getHost(), 6);
         }
 
+        if (hosts.size() < 2) {
+            priorityHosts();
+        } else {
+            sequenceHosts();
+        }
+    }
+
+    public void priorityHosts() throws Exception {
+        List<String> listHost;
+
         int n = 0;
-        for (int s = 0; s < services.size(); s++) { //foi removido o "<=" e substituido por "<"
+        for (int s = 0; s < 2; s++) { //foi removido o "<=" e substituido por "<"
             int NumUncapacityNodes = 0;
             if (n >= hosts.size()) {
                 n = 0;
             }
             boolean serviceAllocated = false;
             while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
-                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {                    
+                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
                     setCellarGroup(services.get(s), hosts.get(n));
                     String host = hosts.get(n).getHost();
                     if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
@@ -485,16 +556,51 @@ public class Controller extends CellarCommandSupport {
                 }
                 n++;
             }
-            n-=1;
+            n -= 1;
             if (NumUncapacityNodes >= hosts.size()) {
                 Node greaterNode = greaterCapacity(hosts, nodeCapacity);
                 setCellarGroup(services.get(s), greaterNode);
                 int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
                 //if(n < hosts.size()){
-                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
                 //}
-                
+
                 String host = hosts.get(n).getHost();
+                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                    for (String key : listHostByGroup.keySet()) {
+                        //Capturamos o valor a partir da chave
+                        if (services.get(s).equals(key)) {
+                            List<String> value = listHostByGroup.get(key);
+                            value.add(host);
+                            listHostByGroup.put(key, value);
+                        }
+                    }
+                } else {
+                    listHost = new ArrayList<String>();
+                    listHost.add(host);
+                    String g = services.get(s);
+                    System.out.println(">>>>>>>>>>>>>>>>>>Adicionando novo grupo e seu nó: " + g);
+                    listHostByGroup.put(services.get(s), listHost);
+                }
+                impress(); //impressão após cada incremento                
+            }
+        }
+    }
+
+    public void sequenceHosts() throws Exception {
+        List<String> listHost;
+
+        int n = 0;
+        for (int s = 0; s < services.size(); s++) { //foi removido o "<=" e substituido por "<"
+            int NumUncapacityNodes = 0;
+            if (n >= hosts.size()) {
+                n = 0;
+            }
+            boolean serviceAllocated = false;
+            while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
+                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
+                    setCellarGroup(services.get(s), hosts.get(n));
+                    String host = hosts.get(n).getHost();
                     if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
                         for (String key : listHostByGroup.keySet()) {
                             //Capturamos o valor a partir da chave
@@ -508,20 +614,57 @@ public class Controller extends CellarCommandSupport {
                         listHost = new ArrayList<String>();
                         listHost.add(host);
                         String g = services.get(s);
-                        System.out.println(">>>>>>>>>>>>>>>>>>Adicionando novo grupo e seu nó: " + g);
+                        System.out.println("Nome do grupo adicionado ao nó: " + g);
                         listHostByGroup.put(services.get(s), listHost);
                     }
-                    impress(); //impressão após cada incremento                
+                    
+                    impress(); //impressão após cada incremento
+                    int newCapacity = nodeCapacity.get(hosts.get(n).getHost()) - serviceCost.get(services.get(s));
+                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                    serviceAllocated = true;
+                } else {
+                    NumUncapacityNodes++;
+                }
+                n++;
             }
-            
+            n -= 1;
+            if (NumUncapacityNodes >= hosts.size()) {
+                Node greaterNode = greaterCapacity(hosts, nodeCapacity);
+                setCellarGroup(services.get(s), greaterNode);
+                int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
+                //if(n < hosts.size()){
+                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                //}
+
+                String host = hosts.get(n).getHost();
+                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                    for (String key : listHostByGroup.keySet()) {
+                        //Capturamos o valor a partir da chave
+                        if (services.get(s).equals(key)) {
+                            List<String> value = listHostByGroup.get(key);
+                            value.add(host);
+                            listHostByGroup.put(key, value);
+                        }
+                    }
+                } else {
+                    listHost = new ArrayList<String>();
+                    listHost.add(host);
+                    String g = services.get(s);
+                    System.out.println(">>>>>>>>>>>>>>>>>>Adicionando novo grupo e seu nó: " + g);
+                    listHostByGroup.put(services.get(s), listHost);
+                }
+                impress(); //impressão após cada incremento                
+            }
+
         }
+
     }
-    
-    private void impress(){ //apenas para impressão
+
+    private void impress() { //apenas para impressão
         if (listHostByGroup.isEmpty()) {
             System.out.println("\n\n>>>>>>>>>>>>>>>>>>>>>ListHostByGroup vazio.\n\n");
         } else {
-            
+
             System.out.println("Total of Groups: " + listHostByGroup.size());
             for (String key : listHostByGroup.keySet()) {
                 //Capturamos o valor a partir da chave
@@ -596,7 +739,7 @@ public class Controller extends CellarCommandSupport {
             }
             table.print(System.out);
         }
-        System.out.println("End of nodes grouping!");        
+        System.out.println("End of nodes grouping!");
     }
 
     public void setInstance(HazelcastInstance instance) {
