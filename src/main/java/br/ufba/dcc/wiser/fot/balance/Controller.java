@@ -12,6 +12,8 @@ import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,92 +83,23 @@ public class Controller extends CellarCommandSupport {
     private HashMap<String, List<String>> listHostByGroup = new HashMap<String, List<String>>();
 
     public void init() {
-
+        //Método init para começão a iniciar os parâmetros do balanceamento
+        System.out.println("\nMétodo init\n");
+        
         try {
-            System.out.println("\nGetting the balance management...\n");
-            List<String> bundlesInit;
-//            String raiz = "file:///G://bundles-iot/";
-            String raiz = "url:http://";
-            String addmvn = ":8181/bundleInstall?mvn=br.ufba.dcc.wiser/";
+            System.out.println("\nGetting the balance management. Wait...");
+            System.out.println("Analyzing nodes with Karaf Cellar... ");
 
-//            url.add(raiz + host() + addmvn);
-            verifyNodesChanges();
-            startGroupBundles();
+            //Pegando tempo inicial de execução
+            Calendar cal = Calendar.getInstance();
 
-            String nameBundle = "";
-            System.out.println("\nDistributing bundles between groups/clusters...\n");
+            createFoTgroups();
+            comparativeTable();
 
-//            String part2 = parts[1]; // port
-            if (hosts.size() <= 2) {
-                System.out.println(groups.size());
-                if (hosts.size() == 1) {
-                    for (int p = 0; p < 2; p++) {
-                        groupName = groups.get(p);
-                        System.out.println(groupName);
-                        bundlesInit = this.bundleGroup.get(groups.get(p));
-                        for (String b : bundlesInit) {
-                            System.out.println(hosts.get(0));
-                            String ip_st = hosts.get(0).toString();
-                            String[] parts = ip_st.split("=");
-                            String part1 = parts[1];
-                            String[] parts2 = part1.split(":");
-                            String part2 = parts2[0]; // ip
-                            nameBundle = b;
-                            System.out.println(nameBundle + " install in" + part2);
-//                        urls.add(raiz + nameBundle);
-                            urls.add(raiz + part2 + addmvn + nameBundle);
-                            installBundles();
-                        }
-                    }
-                } else {
-                    for (int p = 0; p < 2; p++) {
-                        groupName = groups.get(p);
-                        System.out.println(groupName);
-                        bundlesInit = this.bundleGroup.get(groups.get(p));
-                        for (String b : bundlesInit) {
-                            System.out.println(hosts.get(p));
-                            String ip_st = hosts.get(p).toString();
-                            String[] parts = ip_st.split("=");
-                            String part1 = parts[1];
-                            String[] parts2 = part1.split(":");
-                            String part2 = parts2[0]; // ip
-                            nameBundle = b;
-                            System.out.println(nameBundle + " install in" + part2);
-//                        urls.add(raiz + nameBundle);
-                            urls.add(raiz + part2 + addmvn + nameBundle);
-                            installBundles();
-
-                        }
-                    }
-                }
-
-            } else {
-                int z = 0;
-                    for (String g : groups) {
-                        groupName = g;
-                        System.out.println(groupName);
-                        bundlesInit = this.bundleGroup.get(g);
-                        
-                        
-                        for (String b : bundlesInit) {
-                            
-                            System.out.println(hosts.size());
-                            System.out.println(hosts.get(z));
-                            String ip_st = hosts.get(z).toString();
-                            String[] parts = ip_st.split("=");
-                            String part1 = parts[1];
-                            String[] parts2 = part1.split(":");
-                            String part2 = parts2[0]; // ip
-                            nameBundle = b;
-                            System.out.println(nameBundle + " install in" + part2);
-//                        urls.add(raiz + nameBundle);
-                            urls.add(raiz + part2 + addmvn + nameBundle);
-                          z++;
-                            installBundles();
-                        }
-                    }
-                }
-            
+            //Pegando tempo final de execução
+            Calendar cal2 = Calendar.getInstance();
+            Date d = cal2.getTime();
+            System.out.println("\nCycle executed in " + ((cal2.getTimeInMillis() - cal.getTimeInMillis())) + " ms");
 
             System.out.println("\n------------------IoT balanced network------------------\n");
 
@@ -175,7 +108,428 @@ public class Controller extends CellarCommandSupport {
         }
     }
 
+    private void createFoTgroups() {
+        //Método createFoTgroups verifica a existencia de cada grupo, caso não exista,
+        //o grupo faltante é criado no momento
+        System.out.println("\nMétodo createFoTgroups\n");
+        
+        if (!getGroupManager().isLocalGroup("discovery")) {
+            getGroupManager().createGroup("discovery");
+        }
+        if (!getGroupManager().isLocalGroup("composition")) {
+            getGroupManager().createGroup("composition");
+        }
+        if (!getGroupManager().isLocalGroup("security")) {
+            getGroupManager().createGroup("security");
+        }
+        if (!getGroupManager().isLocalGroup("storage")) {
+            getGroupManager().createGroup("storage");
+        }
+        if (!getGroupManager().isLocalGroup("localization")) {
+            getGroupManager().createGroup("localization");
+        }
+        if (!getGroupManager().isLocalGroup("management")) {
+            getGroupManager().createGroup("management");
+        }
+
+    }
+        
+    private void comparativeTable() throws Exception {
+        //Método comparativeTable compara uma tabela de nós (futuramente extraida de um bundle específico)
+        //com os nós existentes no momento no cluster do Karaf Cellar
+        System.out.println("\nMétodo comparativeTable\n");
+        
+        ArrayList<String> ipListCellar = new ArrayList<String>();
+        ArrayList<String> ipListTable = new ArrayList();
+        ArrayList<String> ipListTemp = new ArrayList();
+        ArrayList<String> cellarTemp = new ArrayList();
+
+        // [ B ] usando o método add() para gravar 'x' números de IP
+        ipListTable.add("192.168.0.103");
+        ipListTable.add("192.168.0.144");
+        ipListTable.add("192.168.0.148");
+        ipListTable.add("192.168.0.149");
+        System.out.println(Arrays.toString(ipListTable.toArray()));
+
+        // Check if there's a instance of hazelcast
+        if (instance == null) {
+            System.out.println("Instance null.");
+            return;
+        }
+
+        // Get Cluster with the hazelcast instance
+        Cluster cluster = instance.getCluster();
+
+        // Get all members of the Hazelcast Cluster and display some properties
+        try {
+            Set<Member> members = cluster.getMembers();
+            if (members != null && !members.isEmpty()) {
+                for (Member member : members) {
+                    HazelcastNode node = new HazelcastNode(member);
+
+                    ipListCellar.add(node.getHost());
+                    System.out.println(Arrays.toString(ipListCellar.toArray()));
+                    //System.out.println("OBJ = " + node.toString());
+
+                }
+
+//                System.out.println(">>>>"+ ipListTable.equals(ipListCellar));
+                ipListTemp.addAll(ipListTable);
+                //retorna os gateways que cairam
+                ipListTemp.removeAll(ipListCellar);
+                //retorna os gateways novos que surgiram
+                cellarTemp.removeAll(ipListTable);
+                // atualização da lista principal
+                // adiciona novos gateways
+                ipListTable.addAll(cellarTemp);
+                // retirando gateways que sairam do sistema
+
+                System.out.println("ipListTemp" + Arrays.toString(ipListTemp.toArray()));
+                System.out.println("cellarTemp" + Arrays.toString(cellarTemp.toArray()));
+                System.out.println("ipListTable" + Arrays.toString(ipListTable.toArray()));
+                System.out.println("ipListCellar" + Arrays.toString(ipListCellar.toArray()));
+
+                if ((!ipListTemp.isEmpty()) || (!cellarTemp.isEmpty())) {
+
+                    System.out.println("Divergent network. New network balancing!");
+                    this.createFoTgroups();
+                    this.verifyNodesChanges();
+                    this.startGroupBundles();
+                    this.nodeAllocation();
+                    
+                } else {
+                    System.out.println("Stable network! No balancing!");
+                }
+
+            }
+        } catch (NullPointerException ex) {
+            System.out.println("Erro NullPointerException ex in comparativeTable.");
+            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    private void verifyNodesChanges() throws Exception {
+        //Método verifyNodesChanges inicia o processo de limpeza dos nós nos grupos, monta todo o cluster
+        //para iniciar o processo de balanceamento da rede
+        System.out.println("\nMétodo verifyNodesChanges\n");
+        
+        boolean change = true;
+        if (change) {
+//            verifyNodesChanges();
+            System.out.println("\nStep 1/2 - Removing nodes from groups...\n");
+            removeNodesGroup();
+            System.out.println("\nStep 2/2 - Creating cluster and inserting nodes...\n");
+            balance();
+            System.out.println("End of the distribution of the groups in the nodes!");
+        }
+    }
+    
+    private void removeNodesGroup() throws Exception {
+        //Método removeNodesGroup exclui todos os nós de seus respectivos grupos
+        System.out.println("\nMétodo removeNodesGroup\n");
+        
+        ArrayList<String> info = new ArrayList<String>();
+        // Get Cluster with the hazelcast instance
+        Cluster cluster = instance.getCluster();
+
+        try {
+            Set<Member> members = cluster.getMembers();
+            if (members != null && !members.isEmpty()) {
+
+                //group.unRegisterGroup(groupName) - método utilizado
+                getGroupManager().unRegisterGroup("discovery");
+                getGroupManager().unRegisterGroup("composition");
+                getGroupManager().unRegisterGroup("security");
+                getGroupManager().unRegisterGroup("storage");
+                getGroupManager().unRegisterGroup("localization");
+                getGroupManager().unRegisterGroup("management");
+
+                for (Member member : members) {
+                    HazelcastNode node = new HazelcastNode(member);
+//                    configuration.getHazelcastConfig();
+                    info.add(node.getHost());
+                    System.out.println(Arrays.toString(info.toArray()));
+                }
+            }
+
+//            Set<Node> nos = new HashSet<Node>();
+//            for (Member member : members) {
+//                HazelcastNode node = new HazelcastNode(member);
+//                nos.add(node);
+//            }
+        } catch (NullPointerException ex) {
+            System.out.println("Erro NullPointerException ex in removeNodesGroup().");
+            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    private void balance() throws Exception {
+        //Método balance distribui os grupos (services) em seus respectivos nós da rede
+        System.out.println("\nMétodo balance\n");
+        
+        Cluster c = instance.getCluster();
+        Set<Node> nodes = new HashSet<Node>();
+        Set<Member> members = c.getMembers();
+
+        for (Member member : members) {
+            HazelcastNode node = new HazelcastNode(member);
+            nodes.add(node);
+        }
+        
+        //HashMap que distribui o peso (distribuição manual aleatória) existente em cada grupo
+        //String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"};
+        services.add("discovery");
+        serviceCost.put("discovery", 2);
+        services.add("localization");
+        serviceCost.put("localization", 3);
+        services.add("composition");
+        serviceCost.put("composition", 1);
+        services.add("security");
+        serviceCost.put("security", 3);
+        services.add("storage");
+        serviceCost.put("storage", 1);
+        services.add("management");
+        serviceCost.put("management", 2);
+
+//        hosts.clear();
+        
+        for (Member member : members) {
+            HazelcastNode node = new HazelcastNode(member);
+            hosts.add(node);
+            //a linha de baixo deve ser substituida pela a capacidade de cada nó
+            //gerada por Nilson
+            nodeCapacity.put(node.getHost(), 6);
+        }
+
+        if (hosts.size() < 3) {
+            priorityHosts();
+        } else {
+            sequenceHosts();
+        }
+    }
+
+    public void priorityHosts() throws Exception {
+        //Método priorityHosts executado quando o número de nós na rede for menor (igual) a 2
+        System.out.println("\nMétodo priorityHosts\n");
+        
+        List<String> listHost;
+
+        int n = 0;
+        for (int s = 0; s < 2; s++) { //foi removido o "<=" e substituido por "<"
+            int NumUncapacityNodes = 0;
+            if (n >= hosts.size()) {
+                n = 0;
+            }
+            boolean serviceAllocated = false;
+            while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
+                if (n >= hosts.size()) {
+                    n = 0;
+                }
+                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
+                    setCellarGroup(services.get(s), hosts.get(n));
+                    String host = hosts.get(n).getHost();
+                    //rotina que acrescenta um host a lista de grupo existente (s)
+                    if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                        for (String key : listHostByGroup.keySet()) {
+                            //Capturamos o valor a partir da chave
+                            if (services.get(s).equals(key)) {
+                                List<String> value = listHostByGroup.get(key);
+                                value.add(host);
+                                listHostByGroup.put(key, value);
+                            }
+                        }
+                    } else {
+                        listHost = new ArrayList<String>();
+                        listHost.add(host);
+                        String g = services.get(s);
+                        System.out.println("Group added to the node: " + g);
+                        listHostByGroup.put(services.get(s), listHost);
+                        
+                    }
+                    impress(); //impressão após cada incremento
+                    int newCapacity = nodeCapacity.get(hosts.get(n).getHost()) - serviceCost.get(services.get(s));
+                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                    serviceAllocated = true;
+                } else {
+                    NumUncapacityNodes++;
+                }
+                n++;
+            }
+            n -= 1;
+            if (NumUncapacityNodes >= hosts.size()) {
+                Node greaterNode = greaterCapacity(hosts, nodeCapacity);
+                setCellarGroup(services.get(s), greaterNode);
+                int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
+                //if(n < hosts.size()){
+                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                //}
+
+
+                String host = hosts.get(n).getHost();
+                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                    for (String key : listHostByGroup.keySet()) {
+                        //Capturamos o valor a partir da chave
+                        if (services.get(s).equals(key)) {
+                            List<String> value = listHostByGroup.get(key);
+                            value.add(host);
+                            listHostByGroup.put(key, value);
+                        }
+                    }
+                } else {
+                    listHost = new ArrayList<String>();
+                    listHost.add(host);
+                    String g = services.get(s);
+                    System.out.println("Adding a new group and its node: " + g);
+                    listHostByGroup.put(services.get(s), listHost);
+                }
+                impress(); //impressão após cada incremento                
+            }
+        }
+    }
+
+    public void sequenceHosts() throws Exception {
+        //Método sequenceHosts executado quando o número de nós na rede for maior (igual) a 3
+        System.out.println("\nMétodo sequenceHosts\n");
+        
+        List<String> listHost;
+
+        int n = 0;
+        for (int s = 0; s < services.size(); s++) { //foi removido o "<=" e substituido por "<"
+            int NumUncapacityNodes = 0;
+            if (n >= hosts.size()) {
+                n = 0;
+            }
+            boolean serviceAllocated = false;
+            while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
+                if (n >= hosts.size()) {
+                    n = 0;
+                }
+                
+                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
+                    setCellarGroup(services.get(s), hosts.get(n));
+                    String host = hosts.get(n).getHost();
+                    //rotina que acrescenta um host a lista de grupo existente (s)
+                    if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                        for (String key : listHostByGroup.keySet()) {
+                            //Capturamos o valor a partir da chave
+                            if (services.get(s).equals(key)) {
+                                List<String> value = listHostByGroup.get(key);
+                                value.add(host);
+                                listHostByGroup.put(key, value);
+                            }
+                        }
+                    } else {
+                        listHost = new ArrayList<String>();
+                        listHost.add(host);
+                        String g = services.get(s);
+                        System.out.println("Group added to the node: " + g);
+                        listHostByGroup.put(services.get(s), listHost);
+                    }
+
+                    impress(); //impressão após cada incremento
+                    int newCapacity = nodeCapacity.get(hosts.get(n).getHost()) - serviceCost.get(services.get(s));
+                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                    serviceAllocated = true;
+                } else {
+                    NumUncapacityNodes++;
+                }
+                n++;
+            }
+            n -= 1;
+            if (NumUncapacityNodes >= hosts.size()) {
+                Node greaterNode = greaterCapacity(hosts, nodeCapacity);
+                setCellarGroup(services.get(s), greaterNode);
+                int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
+                //if(n < hosts.size()){
+                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
+                //}
+
+                String host = hosts.get(n).getHost();
+                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
+                    for (String key : listHostByGroup.keySet()) {
+                        //Capturamos o valor a partir da chave
+                        if (services.get(s).equals(key)) {
+                            List<String> value = listHostByGroup.get(key);
+                            value.add(host);
+                            listHostByGroup.put(key, value);
+                        }
+                    }
+                } else {
+                    listHost = new ArrayList<String>();
+                    listHost.add(host);
+                    String g = services.get(s);
+                    System.out.println("Adding a new group and its node: " + g);
+                    listHostByGroup.put(services.get(s), listHost);
+                }
+                impress(); //impressão após cada incremento  
+                
+            }
+        }
+//        if(hosts.size() > 2){
+//            List<String> bundlesInit;
+//            String raiz = "url:http://";
+//            String addmvn = ":8181/bundleInstall?mvn=br.ufba.dcc.wiser/";
+//            String nameBundle = "";
+//            System.out.println("\nDistributing bundles between groups/clusters...\n");
+//
+//            for (String g : listHostByGroup.keySet()) {
+//                groupName = g;
+//                System.out.println(groupName);
+//                bundlesInit = this.bundleGroup.get(g);
+//
+//                List<String> nos_grupo = listHostByGroup.get(g);
+//
+//                for(int z = 0; z < hosts.size() ; z++){
+//                    if(nos_grupo.contains(hosts.get(z).getHost())){
+//                        for (String b : bundlesInit) {
+//                            System.out.println(hosts.size());
+//                            System.out.println(hosts.get(z));
+//                            String ip_st = hosts.get(z).toString();
+//                            String[] parts = ip_st.split("=");
+//                            String part1 = parts[1];
+//                            String[] parts2 = part1.split(":");
+//                            String part2 = parts2[0]; // ip
+//                            nameBundle = b;
+//                            System.out.println(nameBundle + " install in" + part2);
+//                            urls.add(raiz + part2 + addmvn + nameBundle);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            installBundles();
+//            urls.clear();
+//        }
+    }
+    
+    private void impress() {
+        //Método impress usado apenas para impressão em tela da distribuição executada
+        System.out.println("\nMétodo impress\n");
+        
+        if (listHostByGroup.isEmpty()) {
+            System.out.println("\n\n>>>>>>>>>>>>>>> ListHostByGroup vazio <<<<<<<<<<<<<<\n\n");
+        } else {
+
+            System.out.println("Total of Groups: " + listHostByGroup.size());
+            for (String key : listHostByGroup.keySet()) {
+                //Capturamos o valor a partir da chave
+                List<String> value = listHostByGroup.get(key);
+                System.out.println("Total of Nodes: " + value.size());
+                System.out.println("Group Name = " + key);
+                for (String h : value) {
+                    System.out.println("Node/Host: " + h);
+                }
+            }
+            System.out.println("\n\n");
+            
+        }
+    }
+    
     public void startGroupBundles() {
+        //Método starGroupBundles cria o HashMap da relação entre os grupos e seus respectivos bundles
+        System.out.println("\nMétodo startGroupBundles\n");
 
         groups = new ArrayList<String>();
 
@@ -228,10 +582,86 @@ public class Controller extends CellarCommandSupport {
 //        bundles.add("app1_sto-fatorial-1.0.jar");
 //        this.bundleGroup.put("storage", bundles);
     }
+    
+    public void nodeAllocation() throws IOException {
+        //Método nodeAllocation aloca os nó com suas respectivas prioridades
+        //menor igual a dois nós ou maior que dois nós
+        System.out.println("\nMétodo nodeAllocation\n");
+
+//            String raiz = "file:///G://bundles-iot/";
+        List<String> bundlesInit;
+        String raiz = "url:http://";
+        String addmvn = ":8181/bundleInstall?mvn=br.ufba.dcc.wiser/";
+        String nameBundle = "";
+        System.out.println("\nDistributing bundles between groups/clusters...\n");
+
+        if (hosts.size() <= 2) {
+            System.out.println(groups.size());
+            if (hosts.size() == 1) {
+                for (int p = 0; p < 2; p++) {
+                    groupName = groups.get(p);
+                    System.out.println(groupName);
+                    bundlesInit = this.bundleGroup.get(groups.get(p));
+                    for (String b : bundlesInit) {
+                        System.out.println(hosts.get(0));
+                        String ip_st = hosts.get(0).toString();
+                        String[] parts = ip_st.split("=");
+                        String part1 = parts[1];
+                        String[] parts2 = part1.split(":");
+                        String part2 = parts2[0]; // ip
+                        nameBundle = b;
+                        System.out.println(nameBundle + " install in " + part2);
+                        urls.add(raiz + part2 + addmvn + nameBundle);
+                        this.installBundles();
+                    }
+                }
+            } else {
+                for (int p = 0; p < 2; p++) {
+                    groupName = groups.get(p);
+                    System.out.println(groupName);
+                    bundlesInit = this.bundleGroup.get(groups.get(p));
+                    for (String b : bundlesInit) {
+                        System.out.println(hosts.get(p));
+                        String ip_st = hosts.get(p).toString();
+                        String[] parts = ip_st.split("=");
+                        String part1 = parts[1];
+                        String[] parts2 = part1.split(":");
+                        String part2 = parts2[0]; // ip
+                        nameBundle = b;
+                        System.out.println(nameBundle + " install in " + part2);
+                        urls.add(raiz + part2 + addmvn + nameBundle);
+                        this.installBundles();
+                    }
+                }
+            }
+        } else {
+            int z = 0;
+            for (String g : groups) {
+                groupName = g;
+                System.out.println(groupName);
+                bundlesInit = this.bundleGroup.get(g);
+                for (String b : bundlesInit) {
+                    System.out.println(hosts.size());
+                    System.out.println(hosts.get(z));
+                    String ip_st = hosts.get(z).toString();
+                    String[] parts = ip_st.split("=");
+                    String part1 = parts[1];
+                    String[] parts2 = part1.split(":");
+                    String part2 = parts2[0]; // ip
+                    nameBundle = b;
+                    System.out.println(nameBundle + " install in " + part2);
+                    urls.add(raiz + part2 + addmvn + nameBundle);
+                    z++;
+                    installBundles();
+                }
+            }
+        }
+    }
 
     public void installBundles() throws IOException {
-
-        System.out.println("doExecute()");
+        //Método installBundles extraido do código fonte do Karaf Cellar para instalação de bundles
+        System.out.println("\nMétodo installBundles\n");
+        
         start = true;
 
         // check if the group exists
@@ -322,363 +752,6 @@ public class Controller extends CellarCommandSupport {
 
     }
 
-    private void comparativeTable() throws Exception {
-        ArrayList<String> ipListCellar = new ArrayList<String>();
-        ArrayList<String> ipListTable = new ArrayList();
-        ArrayList<String> ipListTemp = new ArrayList();
-        ArrayList<String> cellarTemp = new ArrayList();
-
-        // [ B ] usando o método add() para gravar 5 números de IP
-        ipListTable.add("192.168.177.1");
-        //ipListTable.add("192.168.177.2");
-        System.out.println(Arrays.toString(ipListTable.toArray()));
-
-        // Check if there's a instance of hazelcast
-        if (instance == null) {
-            System.out.println("Instance null.");
-            return;
-        }
-
-        // Get Cluster with the hazelcast instance
-        Cluster cluster = instance.getCluster();
-
-        // Get all members of the Hazelcast Cluster and display some properties
-        try {
-            Set<Member> members = cluster.getMembers();
-            if (members != null && !members.isEmpty()) {
-                for (Member member : members) {
-                    HazelcastNode node = new HazelcastNode(member);
-
-                    ipListCellar.add(node.getHost());
-                    System.out.println(Arrays.toString(ipListCellar.toArray()));
-                    //System.out.println("OBJ = " + node.toString());
-
-                }
-
-//                System.out.println(">>>>"+ ipListTable.equals(ipListCellar));
-                ipListTemp.addAll(ipListTable);
-                //retorna os gateways que cairam
-                ipListTemp.removeAll(ipListCellar);
-                //retorna os gateways novos que surgiram
-                cellarTemp.removeAll(ipListTable);
-                // atualização da lista principal
-                // adiciona novos gateways
-                ipListTable.addAll(cellarTemp);
-                // retirando gateways que sairam do sistema
-
-                System.out.println("ipListTemp" + Arrays.toString(ipListTemp.toArray()));
-                System.out.println("cellarTemp" + Arrays.toString(cellarTemp.toArray()));
-                System.out.println("ipListTable" + Arrays.toString(ipListTable.toArray()));
-                System.out.println("ipListCellar" + Arrays.toString(ipListCellar.toArray()));
-
-                if ((!ipListTemp.isEmpty()) || (!cellarTemp.isEmpty())) {
-
-                    this.createFoTgroups();
-                    this.verifyNodesChanges();
-
-                }
-
-            }
-        } catch (NullPointerException ex) {
-            System.out.println("erro 2");
-            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    private void createFoTgroups() {
-        if (!getGroupManager().isLocalGroup("discovery")) {
-            getGroupManager().createGroup("discovery");
-        }
-        if (!getGroupManager().isLocalGroup("composition")) {
-            getGroupManager().createGroup("composition");
-        }
-        if (!getGroupManager().isLocalGroup("security")) {
-            getGroupManager().createGroup("security");
-        }
-        if (!getGroupManager().isLocalGroup("storage")) {
-            getGroupManager().createGroup("storage");
-        }
-        if (!getGroupManager().isLocalGroup("localization")) {
-            getGroupManager().createGroup("localization");
-        }
-        if (!getGroupManager().isLocalGroup("management")) {
-            getGroupManager().createGroup("management");
-        }
-
-    }
-
-    private void verifyNodesChanges() throws Exception {
-        boolean change = true;
-        if (change) {
-//            verifyNodesChanges();
-            System.out.println("\nRemoving nodes from groups...\n");
-            removeNodesGroup();
-            System.out.println("\nCreating cluster and inserting nodes...\n");
-            balance();
-            System.out.println("End of balancing!!!");
-        }
-    }
-
-    private Set<Node> listNode() {
-        Cluster cluster = instance.getCluster();
-        Set<Node> listNode = new HashSet<Node>();
-        try {
-            Set<Member> members = cluster.getMembers();
-            if (members != null && !members.isEmpty()) {
-                for (Member member : members) {
-                    HazelcastNode node = new HazelcastNode(member);
-                    listNode.add(node);
-                }
-            }
-            return listNode;
-        } catch (NullPointerException ex) {
-            System.out.println("Erro 2");
-            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    private void removeNodesGroup() throws Exception {
-
-        ArrayList<String> info = new ArrayList<String>();
-        // Get Cluster with the hazelcast instance
-        Cluster cluster = instance.getCluster();
-
-        try {
-            Set<Member> members = cluster.getMembers();
-            if (members != null && !members.isEmpty()) {
-
-                //group.unRegisterGroup(groupName) - método utilizado
-                getGroupManager().unRegisterGroup("discovery");
-                getGroupManager().unRegisterGroup("composition");
-                getGroupManager().unRegisterGroup("security");
-                getGroupManager().unRegisterGroup("storage");
-                getGroupManager().unRegisterGroup("localization");
-                getGroupManager().unRegisterGroup("management");
-
-                for (Member member : members) {
-                    HazelcastNode node = new HazelcastNode(member);
-//                    configuration.getHazelcastConfig();
-                    info.add(node.getHost());
-                    System.out.println(Arrays.toString(info.toArray()));
-                }
-            }
-
-//            Set<Node> nos = new HashSet<Node>();
-//            for (Member member : members) {
-//                HazelcastNode node = new HazelcastNode(member);
-//                nos.add(node);
-//            }
-        } catch (NullPointerException ex) {
-            System.out.println("erro 2");
-            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    private void balance() throws Exception {
-
-        Cluster c = instance.getCluster();
-        Set<Node> nodes = new HashSet<Node>();
-        Set<Member> members = c.getMembers();
-
-        for (Member member : members) {
-            HazelcastNode node = new HazelcastNode(member);
-            nodes.add(node);
-        }
-
-        //String[] nome = {"discovery", "composition", "security", "storage", "localization", "management"};
-        services.add("discovery");
-        serviceCost.put("discovery", 2);
-        services.add("localization");
-        serviceCost.put("localization", 3);
-        services.add("composition");
-        serviceCost.put("composition", 1);
-        services.add("security");
-        serviceCost.put("security", 3);
-        services.add("storage");
-        serviceCost.put("storage", 1);
-        services.add("management");
-        serviceCost.put("management", 2);
-
-        for (Member member : members) {
-            HazelcastNode node = new HazelcastNode(member);
-            hosts.add(node);
-            //a linha de baixo deve ser substituida pela a capacidade de cada nó
-            //gerada por Nilson
-            nodeCapacity.put(node.getHost(), 6);
-        }
-
-        if (hosts.size() < 2) {
-            priorityHosts();
-        } else {
-            sequenceHosts();
-        }
-    }
-
-    public void priorityHosts() throws Exception {
-        List<String> listHost;
-
-        int n = 0;
-        for (int s = 0; s < 2; s++) { //foi removido o "<=" e substituido por "<"
-            int NumUncapacityNodes = 0;
-            if (n >= hosts.size()) {
-                n = 0;
-            }
-            boolean serviceAllocated = false;
-            while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
-                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
-                    setCellarGroup(services.get(s), hosts.get(n));
-                    String host = hosts.get(n).getHost();
-                    if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
-                        for (String key : listHostByGroup.keySet()) {
-                            //Capturamos o valor a partir da chave
-                            if (services.get(s).equals(key)) {
-                                List<String> value = listHostByGroup.get(key);
-                                value.add(host);
-                                listHostByGroup.put(key, value);
-                            }
-                        }
-                    } else {
-                        listHost = new ArrayList<String>();
-                        listHost.add(host);
-                        String g = services.get(s);
-                        System.out.println("Nome do grupo adicionado ao nó: " + g);
-                        listHostByGroup.put(services.get(s), listHost);
-                    }
-                    impress(); //impressão após cada incremento
-                    int newCapacity = nodeCapacity.get(hosts.get(n).getHost()) - serviceCost.get(services.get(s));
-                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
-                    serviceAllocated = true;
-                } else {
-                    NumUncapacityNodes++;
-                }
-                n++;
-            }
-            n -= 1;
-            if (NumUncapacityNodes >= hosts.size()) {
-                Node greaterNode = greaterCapacity(hosts, nodeCapacity);
-                setCellarGroup(services.get(s), greaterNode);
-                int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
-                //if(n < hosts.size()){
-                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
-                //}
-
-                String host = hosts.get(n).getHost();
-                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
-                    for (String key : listHostByGroup.keySet()) {
-                        //Capturamos o valor a partir da chave
-                        if (services.get(s).equals(key)) {
-                            List<String> value = listHostByGroup.get(key);
-                            value.add(host);
-                            listHostByGroup.put(key, value);
-                        }
-                    }
-                } else {
-                    listHost = new ArrayList<String>();
-                    listHost.add(host);
-                    String g = services.get(s);
-                    System.out.println(">>>>>>>>>>>>>>>>>>Adicionando novo grupo e seu nó: " + g);
-                    listHostByGroup.put(services.get(s), listHost);
-                }
-                impress(); //impressão após cada incremento                
-            }
-        }
-    }
-
-    public void sequenceHosts() throws Exception {
-        List<String> listHost;
-
-        int n = 0;
-        for (int s = 0; s < services.size(); s++) { //foi removido o "<=" e substituido por "<"
-            int NumUncapacityNodes = 0;
-            if (n >= hosts.size()) {
-                n = 0;
-            }
-            boolean serviceAllocated = false;
-            while (NumUncapacityNodes < hosts.size() && !serviceAllocated) {
-                if (nodeCapacity.get(hosts.get(n).getHost()) >= serviceCost.get(services.get(s))) {
-                    setCellarGroup(services.get(s), hosts.get(n));
-                    String host = hosts.get(n).getHost();
-                    if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
-                        for (String key : listHostByGroup.keySet()) {
-                            //Capturamos o valor a partir da chave
-                            if (services.get(s).equals(key)) {
-                                List<String> value = listHostByGroup.get(key);
-                                value.add(host);
-                                listHostByGroup.put(key, value);
-                            }
-                        }
-                    } else {
-                        listHost = new ArrayList<String>();
-                        listHost.add(host);
-                        String g = services.get(s);
-                        System.out.println("Nome do grupo adicionado ao nó: " + g);
-                        listHostByGroup.put(services.get(s), listHost);
-                    }
-                    
-                    impress(); //impressão após cada incremento
-                    int newCapacity = nodeCapacity.get(hosts.get(n).getHost()) - serviceCost.get(services.get(s));
-                    nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
-                    serviceAllocated = true;
-                } else {
-                    NumUncapacityNodes++;
-                }
-                n++;
-            }
-            n -= 1;
-            if (NumUncapacityNodes >= hosts.size()) {
-                Node greaterNode = greaterCapacity(hosts, nodeCapacity);
-                setCellarGroup(services.get(s), greaterNode);
-                int newCapacity = nodeCapacity.get(greaterNode.getHost()) - serviceCost.get(services.get(s));
-                //if(n < hosts.size()){
-                nodeCapacity.put(hosts.get(n).getHost(), newCapacity);
-                //}
-
-                String host = hosts.get(n).getHost();
-                if ((!listHostByGroup.isEmpty()) && listHostByGroup.containsKey(services.get(s))) {
-                    for (String key : listHostByGroup.keySet()) {
-                        //Capturamos o valor a partir da chave
-                        if (services.get(s).equals(key)) {
-                            List<String> value = listHostByGroup.get(key);
-                            value.add(host);
-                            listHostByGroup.put(key, value);
-                        }
-                    }
-                } else {
-                    listHost = new ArrayList<String>();
-                    listHost.add(host);
-                    String g = services.get(s);
-                    System.out.println(">>>>>>>>>>>>>>>>>>Adicionando novo grupo e seu nó: " + g);
-                    listHostByGroup.put(services.get(s), listHost);
-                }
-                impress(); //impressão após cada incremento                
-            }
-
-        }
-
-    }
-
-    private void impress() { //apenas para impressão
-        if (listHostByGroup.isEmpty()) {
-            System.out.println("\n\n>>>>>>>>>>>>>>>>>>>>>ListHostByGroup vazio.\n\n");
-        } else {
-
-            System.out.println("Total of Groups: " + listHostByGroup.size());
-            for (String key : listHostByGroup.keySet()) {
-                //Capturamos o valor a partir da chave
-                List<String> value = listHostByGroup.get(key);
-                System.out.println("Total of Nodes: " + value.size());
-                System.out.println("Group Name = " + key);
-                for (String h : value) {
-                    System.out.println("Node/Host: " + h);
-                }
-            }
-            System.out.println("\n\n");
-        }
-    }
-
     private Node greaterCapacity(ArrayList<Node> nodes, Map<String, Integer> nodeCapacity) {
         Node node = nodes.get(0);
         for (int i = 0; i < nodes.size(); i++) { //foi removido o "<=" e substituido por "<"
@@ -753,6 +826,25 @@ public class Controller extends CellarCommandSupport {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+//    private Set<Node> listNode() {
+//        Cluster cluster = instance.getCluster();
+//        Set<Node> listNode = new HashSet<Node>();
+//        try {
+//            Set<Member> members = cluster.getMembers();
+//            if (members != null && !members.isEmpty()) {
+//                for (Member member : members) {
+//                    HazelcastNode node = new HazelcastNode(member);
+//                    listNode.add(node);
+//                }
+//            }
+//            return listNode;
+//        } catch (NullPointerException ex) {
+//            System.out.println("Erro 2");
+//            Logger.getLogger(Example.class.getName()).log(Level.SEVERE, null, ex);
+//            return null;
+//        }
+//    }
 
     @Override
     protected Object doExecute() throws Exception {

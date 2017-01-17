@@ -51,12 +51,12 @@ language governing permissions and limitations under the License. -->
         
     </bean>
 
-<!--
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
-            <from uri="timer://myTimer?period=30000" />
-            <to uri="bean:controllerInstance?method=verifyNodesChanges"/>
+            <from uri="timer://myTimer?period=60000" />
+            <to uri="bean:controllerInstance?method=init"/>
         </route>
     </camelContext>
--->
+
 </blueprint>
