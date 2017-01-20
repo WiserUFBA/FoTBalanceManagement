@@ -36,6 +36,8 @@ public class Bundles {
     private String bundle_mvn_version;
     /* Bundle Group */
     private Group bundle_group;
+    /* Bundle cost */
+    private int bundle_cost;
     
     /* Maven Format */
     public static String MVN_URL_FORMAT = "mvn=%s/%s/%s";
@@ -51,13 +53,16 @@ public class Bundles {
      * @param mvn_group Maven groupId.
      * @param mvn_version Maven version.
      * @param bundle_group Maven group object.
+     * @param bundle_cost Cost of the given bundle.
      */
-    public Bundles(String mvn_artifact, String mvn_group, String mvn_version, Group bundle_group){
+    public Bundles( String mvn_artifact, String mvn_group, String mvn_version, 
+                    Group bundle_group, int bundle_cost){
         /* Set object properties */
         this.bundle_mvn_artifact = mvn_artifact;
         this.bundle_mvn_group = mvn_group;
         this.bundle_mvn_version = mvn_version;
         this.bundle_group = bundle_group;
+        this.bundle_cost = bundle_cost;
     }
         
     /**
@@ -160,6 +165,26 @@ public class Bundles {
      */
     public void setBundleGroup(Group bundle_group) {
         this.bundle_group = bundle_group;
+    }
+    
+    /**
+     * 
+     * Return the bundle cost.
+     * 
+     * @return Bundle cost.
+     */
+    public int getBundleCost() {
+        return bundle_cost;
+    }
+
+    /**
+     * 
+     * Set bundle cost.
+     * 
+     * @param bundle_cost New bundle cost.
+     */
+    public void setBundleGroup(int bundle_cost) {
+        this.bundle_cost = bundle_cost;
     }
     
     // </editor-fold>

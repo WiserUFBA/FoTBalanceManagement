@@ -153,6 +153,23 @@ public class Group {
         }
     }
     
-    
+    /**
+     * 
+     * Return cost of the group.
+     * 
+     * @return cost of the group.
+     */
+    public int getGroupCost(){
+        /* Group cost */
+        int total_group_cost = 0;
+        
+        /* Recurse from list of bundles */
+        for(Bundles bundles : bundles_list){
+            total_group_cost += bundles.getBundleCost();
+        }
+        
+        /* Return cost of the given group */
+        return total_group_cost;
+    }
     
 }

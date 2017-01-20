@@ -126,6 +126,15 @@ public class Controller {
     
     /**
      * 
+     * Initialize application and execute routines
+     * 
+     */
+    public void init(){
+        
+    }
+    
+    /**
+     * 
      * Register a new group.
      * 
      * @param group_name The name of the group to be registered.
@@ -158,8 +167,8 @@ public class Controller {
         removeCellarGroup(group_name);
     }
 
-    /* Update the list of hosts based on given */
-    public void updateHosts(){
+    /* Update the list of hosts based on cluster members */
+    private void updateHosts(){
         /* Get cluster instance */
         Cluster cluster = hazelcast_instance.getCluster();
         
@@ -242,22 +251,48 @@ public class Controller {
      * 
      * Add a host to a given group.
      * 
-     * @param host
-     * @param group 
+     * @param host Host to add.
+     * @param group Given group.
      */
     public void addHostToGroup(Host host, Group group){
+        /* Add reference of the host to group */
+        group.addHost(host);
         
+        /* Get group name */
+        String group_name = group.getGroupName();
+        
+        /* Get host node */
+        Node node = host.getHostInstance();
+        
+        /* Add reference of group to host */
+        host.addGroup(group_name);
+        
+        /* Add host to cellar group */
+        addHostCellarGroup(node, group_name);
     }
     
     /**
      * 
      * Remove a host from a given group.
      * 
-     * @param host
-     * @param group 
+     * @param host Host to remove.
+     * @param group Given group.
      */
     public void removeHostFromGroup(Host host, Group group){
+        /* Add reference of the host to group */
+        group.removeHost(host);
         
+        /* Get group name */
+        String group_name = group.getGroupName();
+        
+        /* Get host node */
+        Node node = host.getHostInstance();
+        
+        /* Add reference of group to host */
+        host.removeGroup(group_name);
+        
+        /* Add host to cellar group */
+        removeHostCellarGroup(node, group_name);
     }
     
     /**
