@@ -1,4 +1,4 @@
-package br.ufba.dcc.wiser.fot.balance;
+package br.ufba.dcc.wiser.fot.balanceold;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

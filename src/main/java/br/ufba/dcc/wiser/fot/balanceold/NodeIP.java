@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufba.dcc.wiser.fot.balance;
+package br.ufba.dcc.wiser.fot.balanceold;
 
 import java.util.ArrayList;
 
