@@ -23,22 +23,40 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.Member;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import org.apache.karaf.cellar.bundle.BundleState;
+import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
+import org.apache.karaf.cellar.bundle.Constants;
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
+import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
+
 
 /**
  *
@@ -67,6 +85,9 @@ public class Controller {
     /* Array of Groups */
     private final Map<String, Group> group_list;
     
+    /* Default Node Capacity */
+    public static int NODE_CAPACITY = 6;    
+    
     /**
      * 
      * Create a new Controller instance.
@@ -82,10 +103,10 @@ public class Controller {
         configuration_admin = null;
         
         /* Create the list of hosts */
-        host_list = new HashSet<Host>();
+        host_list = new HashSet<>();
         
         /* Create the list of groups */
-        group_list = new HashMap<String, Group>();
+        group_list = new HashMap<>();
     }
     
     /**
@@ -137,6 +158,86 @@ public class Controller {
         removeCellarGroup(group_name);
     }
 
+    /* Update the list of hosts based on given */
+    public void updateHosts(){
+        /* Get cluster instance */
+        Cluster cluster = hazelcast_instance.getCluster();
+        
+        /* Temporary list of hosts */
+        Set<Host> temp_host_list = new HashSet<>();
+        
+        try{
+            /* Get members from cluster */
+            Set<Member> members = cluster.getMembers();
+            
+            /* If members is null, somethin went wrong */
+            if(members == null){
+                System.err.println("Something went wrong...");
+                return;
+            }
+            
+            /* For each member who belong to members list */
+            for (Member member : members) {
+                /* Create a new host based on cluster member */
+                Host host = new Host(new HazelcastNode(member), NODE_CAPACITY);
+                
+                /* Store the temp host */
+                temp_host_list.add(host);
+            }
+            
+            /* Remove all elements of the actual list from the temp list */
+            Set<Host> new_hosts = new HashSet<>();
+            Set<Host> past_hosts = new HashSet<>();
+            
+            /* Put all elements in temp list host to discover who notes */
+            new_hosts.addAll(temp_host_list);
+            new_hosts.removeAll(host_list);
+            
+            /* Put all elements from old host list, to discover which host had disappear */
+            past_hosts.addAll(host_list);
+            past_hosts.removeAll(temp_host_list);
+            
+            /* Check if there are network modifications */
+            if(!new_hosts.isEmpty() || !past_hosts.isEmpty()){
+                /* Check if there are new hosts on network */
+                if(!new_hosts.isEmpty()){
+                    /* Add new hosts to host_list */
+                    for(Host host : new_hosts){
+                        host_list.add(host);
+                    }
+                }
+                
+                /* Check if there are some hosts out network */
+                if(!past_hosts.isEmpty()){
+                    /* Remove those entries from host list */
+                    for(Host host : past_hosts){
+                        /* Unsubscribe all groups */
+                        host.removeAllGroups();
+                        
+                        /* Remove host from group list */
+                        host_list.remove(host);
+                    }
+                }
+                
+                /* If there are new nodes or some nodes has exit do balance */
+                balanceNetwork();
+            }
+        }
+        catch(Exception e){
+            System.err.println("Something went wrong...");
+            e.printStackTrace(new PrintStream(System.err));
+        }
+    }
+    
+    /**
+     * 
+     * Balance loading in network.
+     * 
+     */
+    public void balanceNetwork(){
+        
+    }
+    
     /**
      * 
      * Add a host to a given group.
@@ -196,7 +297,7 @@ public class Controller {
     /* Execute a given manage group command */
     private void executeManageGroupCommand(Node node, String group_name, ManageGroupAction manage_action){
         /* Create the destination set */
-        Set<Node> destination = new HashSet<Node>();
+        Set<Node> destination = new HashSet<>();
         destination.add(node);
         
         /* Create and adjust the command to add the host to the given group */
@@ -270,7 +371,7 @@ public class Controller {
      * @param node Node to be added.
      * @param group_name Group that will store the node.
      */
-    public void addHostsCellarGroup(Node node, String group_name){        
+    public void addHostCellarGroup(Node node, String group_name){        
         executeManageGroupCommand(node, group_name, ManageGroupAction.JOIN);
     }
 
@@ -284,6 +385,147 @@ public class Controller {
     public void removeHostCellarGroup(Node node, String group_name){
         executeManageGroupCommand(node, group_name, ManageGroupAction.QUIT);
     } 
+    
+    /**
+     * 
+     * Install bundle in a given host.
+     * 
+     * @param node Given node to install.
+     * @param install_urls List of install urls.
+     * @param group_name Group name.
+     */
+    public void hostInstallBundle(Node node, ArrayList<String> install_urls, String group_name){
+        /* Get the group based on group name */
+        org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
+        
+        /* If the group is null show error and stop execution */
+        if(group == null){
+            System.err.println("Cluster group " + group_name + " doesn't exist");
+            return;
+        }
+        
+        /* Initialize bundle after install */
+        boolean start = true;
+
+        /* Check if the producer is ON, if it's not stop execution */
+        if (event_producer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF");
+            return;
+        }
+        
+        /* Create a Cellar Support */
+        CellarSupport cellar_support = new CellarSupport();
+        cellar_support.setClusterManager(cluster_manager);
+        cellar_support.setGroupManager(group_manager);
+        cellar_support.setConfigurationAdmin(configuration_admin);      
+        
+        /* Install a block of maven install urls */
+        for (String install_url : install_urls) {
+            
+            /* Check if the bundle is allowed to install */
+            if (cellar_support.isAllowed(group, Constants.CATEGORY, install_url, EventType.OUTBOUND)) {
+                /* Jar Input Stream  */
+                JarInputStream jar_input_stream;
+                
+                /* Try retrieve Jar and get manifest */
+                try{
+                    jar_input_stream = new JarInputStream(new URL(install_url).openStream());
+                }
+                /* Catch errors of malformed URL exception */
+                catch(MalformedURLException e){
+                    System.err.println("Something went wrong... Malformed URL!");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                }
+                /* Catch IO Exception */
+                catch(IOException e){
+                    System.err.println("Something went wrong... IO Exception!");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                }
+                
+                /* Get the manifest of the jar input stream */
+                Manifest manifest = jar_input_stream.getManifest();
+                
+                /* If the manifest is invalid, skip this bundle */
+                if (manifest == null) {
+                    System.err.println("Bundle location " + install_url + " doesn't seem correct!");
+                    continue;
+                }
+                
+                /* Get Bundle Name */
+                String name = manifest.getMainAttributes().getValue("Bundle-Name");
+                /* Get Symbolic Name */
+                String symbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+                
+                /* Since name cannot be null, we check if name is valid */
+                if (name == null) {
+                    name = symbolicName;
+                }
+                
+                /* If it's not valid now use install_url as name */
+                if (name == null) {
+                    name = install_url;
+                }
+               
+                /* Try to get Bundle Version */
+                String version;
+                
+                try{
+                    version = manifest.getMainAttributes().getValue("Bundle-Version");
+                    jar_input_stream.close();
+                }
+                catch(IOException e){
+                    System.err.println("IO Exception wrong...");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                }
+                
+                /* Get Classloader */
+                ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+                /* Now update the cluster group */
+                try {
+                    Map<String, BundleState> clusterBundles = cluster_manager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group_name);
+                    BundleState state = new BundleState();
+                    state.setName(name);
+                    state.setSymbolicName(symbolicName);
+                    state.setVersion(version);
+                    state.setId(clusterBundles.size());
+                    state.setLocation(install_url);
+                    
+                    /* Start bundle if it's specified */
+                    if (start) {
+                        state.setStatus(BundleEvent.STARTED);
+                    } else {
+                        state.setStatus(BundleEvent.INSTALLED);
+                    }
+
+                    System.out.println("status " + state.getStatus());
+                    clusterBundles.put(symbolicName + "/" + version, state);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(originalClassLoader);
+                }
+
+                /* Now broadcast  */
+                ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, install_url, BundleEvent.INSTALLED);
+                event.setSourceGroup(group);
+                
+                /* Start bundle if it's specified */
+                if (start) {
+                    event = new ClusterBundleEvent(symbolicName, version, install_url, BundleEvent.STARTED);
+                    event.setSourceGroup(group);
+                }
+                
+                System.out.println("event: " + event);
+                event_producer.produce(event);
+
+            } else {
+                System.err.println("Bundle location " + install_url + " is blocked outbound for cluster group " + group_name);
+            }
+        }
+    }    
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
 

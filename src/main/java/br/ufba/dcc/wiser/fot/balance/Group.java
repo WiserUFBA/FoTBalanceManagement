@@ -25,6 +25,7 @@ package br.ufba.dcc.wiser.fot.balance;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.karaf.cellar.core.Node;
 
 /**
  *
@@ -51,10 +52,10 @@ public class Group {
         this.group_name = group_name;
         
         /* Create the host list */
-        host_list = new HashSet<Host>();
+        host_list = new HashSet<>();
         
         /* Create the bundle list */
-        bundles_list = new HashSet<Bundles>();
+        bundles_list = new HashSet<>();
     }
     
     /**
@@ -74,12 +75,39 @@ public class Group {
      * @param group_name The new group name.
      */
     public void setGroupName(String group_name){
+        /* If the groupName is equal actual name, nothing change */
+        if(this.group_name.equals(group_name)){
+            System.err.println("Group already exists!");
+            return;
+        }
+        
+        /* Store the old group name */
+        String old_group_name = this.group_name;
+        
         /* Set the new group name */
         this.group_name = group_name;
         
-        /*  */
+        /* Get Controller Instance */
+        Controller controller = Controller.getInstance();
+        
+        /* Register the new group */
+        controller.addGroup(group_name);
+        
+        /* Remove from old group and put it on the newer */
+        for(Host host : host_list){
+            /* Get node from host */
+            Node node = host.getHostInstance();
+
+            /* Remove from old group name */
+            controller.removeHostCellarGroup(node, old_group_name);
+            
+            /* Add to the newer group */
+            controller.addHostCellarGroup(node, group_name);
+        }
+        
+        /* Remove group */
+        controller.removeCellarGroup(old_group_name);
     }
-    
     
     /**
      * 
@@ -99,10 +127,32 @@ public class Group {
      * @param host Host that will be removed.
      */
     public void removeHost(Host host){
-        
+        /* Remove the host from the host list */
+        host_list.remove(host);
     }
     
+    /**
+     * 
+     * Remove and unregister all hosts from this group.
+     * 
+     */
     public void removeAllHosts(){
+        /* Get the instance of the controller */
+        Controller controller = Controller.getInstance();
+        
+        /* For each host on host list */
+        for(Host host : host_list){
+            /* Get the node object from host instance */
+            Node node = host.getHostInstance();
+            
+            /* Remove the host */
+            removeHost(host);
+            
+            /* Remove the node from the cellar group name */
+            controller.removeHostCellarGroup(node, group_name);
+        }
     }
+    
+    
     
 }

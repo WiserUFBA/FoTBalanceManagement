@@ -28,5 +28,140 @@ package br.ufba.dcc.wiser.fot.balance;
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class Bundles {
+    /* Maven GroupID */
+    private String bundle_mvn_group;
+    /* Maven ArtifactID */
+    private String bundle_mvn_artifact;
+    /* Maven Bundle Version */
+    private String bundle_mvn_version;
+    /* Bundle Group */
+    private Group bundle_group;
+    
+    /* Maven Format */
+    public static String MVN_URL_FORMAT = "mvn=%s/%s/%s";
+    
+    /* Karaf Install URL */
+    public static String KARAF_URL_FORMAT = "url:http://%s:%s/bundleInstall?%s";
+    
+    /**
+     * 
+     * Construct a bundle object reference.
+     * 
+     * @param mvn_artifact Maven artifactId.
+     * @param mvn_group Maven groupId.
+     * @param mvn_version Maven version.
+     * @param bundle_group Maven group object.
+     */
+    public Bundles(String mvn_artifact, String mvn_group, String mvn_version, Group bundle_group){
+        /* Set object properties */
+        this.bundle_mvn_artifact = mvn_artifact;
+        this.bundle_mvn_group = mvn_group;
+        this.bundle_mvn_version = mvn_version;
+        this.bundle_group = bundle_group;
+    }
+        
+    /**
+     * 
+     * Return maven installation URL.
+     * 
+     * @return Maven string installation url.
+     */
+    public String getMavenURL(){
+        return String.format(MVN_URL_FORMAT, bundle_mvn_group, bundle_mvn_artifact, bundle_mvn_version);
+    }
+    
+    /**
+     * 
+     * Get Karaf installation URL.
+     * 
+     * @return Karaf string installation url.
+     */
+    public String getKarafInstallURL(){
+        return String.format(KARAF_URL_FORMAT, "%s", 8181, getMavenURL());
+    }
+    
+    // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
+    
+    /**
+     * 
+     * Get Bundle Maven ArtifactID.
+     * 
+     * @return Bundle Maven ArtifactID.
+     */
+    public String getBundleMvnArtifact() {
+        return bundle_mvn_artifact;
+    }
+
+    /**
+     * 
+     * Set Bundle Maven ArtifactID.
+     * 
+     * @param bundle_mvn_artifact Bundle maven artifact.
+     */
+    public void setBundleMvnArtifact(String bundle_mvn_artifact) {
+        this.bundle_mvn_artifact = bundle_mvn_artifact;
+    }
+
+    /**
+     * 
+     * Get Bundle Maven GroupID.
+     * 
+     * @return Bundle maven GroupID.
+     */
+    public String getBundleMvnGroup() {
+        return bundle_mvn_group;
+    }
+
+    /**
+     * 
+     * Set Bundle maven GroupID.
+     * 
+     * @param bundle_mvn_group Bundle maven group.
+     */
+    public void setBundleMvnGroup(String bundle_mvn_group) {
+        this.bundle_mvn_group = bundle_mvn_group;
+    }
+
+    /**
+     * 
+     * Get bundle maven version.
+     * 
+     * @return Bundle version.
+     */
+    public String getBundleMvnVersion() {
+        return bundle_mvn_version;
+    }
+
+    /**
+     * 
+     * Set bundle maven version.
+     * 
+     * @param bundle_mvn_version Version string.
+     */
+    public void setBundleMvnVersion(String bundle_mvn_version) {
+        this.bundle_mvn_version = bundle_mvn_version;
+    }
+
+    /**
+     * 
+     * Return the bundle group.
+     * 
+     * @return Bundle group.
+     */
+    public Group getBundleGroup() {
+        return bundle_group;
+    }
+
+    /**
+     * 
+     * Set bundle group.
+     * 
+     * @param bundle_group New bundle group.
+     */
+    public void setBundleGroup(Group bundle_group) {
+        this.bundle_group = bundle_group;
+    }
+    
+    // </editor-fold>
     
 }

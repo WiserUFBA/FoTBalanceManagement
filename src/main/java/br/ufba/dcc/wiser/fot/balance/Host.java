@@ -38,19 +38,25 @@ public class Host {
     private final Node host_hazelcast_instance;
     /* List of subscription groups */
     private final Set<Group> group_list;
+    /* Capacity of this host */
+    private int host_capacity;
     
     /**
      * 
      * Instantiate a FoT Balance Host.
      * 
      * @param host_hazelcast_instance Reference of hazelcast host.
+     * @param host_capacity Capacity of this node.
      */
-    public Host(Node host_hazelcast_instance){
+    public Host(Node host_hazelcast_instance, int host_capacity){
         /* Store hazelcast host instance */
         this.host_hazelcast_instance = host_hazelcast_instance;
         
+        /* Set the host capacity */
+        this.host_capacity = host_capacity;
+        
         /* Create a list of group */
-        group_list = new HashSet<Group>();
+        group_list = new HashSet<>();
     }
     
     /**
@@ -90,7 +96,7 @@ public class Host {
     
     /**
      * 
-     * Add a group to the given host.
+     * Remove a group from a given host.
      * 
      * @param group_name Name of the group that will be added.
      */
@@ -115,12 +121,44 @@ public class Host {
     
     /**
      * 
+     * Remove All groups from the given host.
+     * 
+     */
+    public void removeAllGroups(){
+        /* Remove this host from all groups subscribed */
+        for(Group group : group_list){
+            group.removeHost(this);
+        }
+    }
+    
+    /**
+     * 
      * Get the list of groups subscribed.
      * 
      * @return A list of groups subscribed.
      */
     public Set<Group> getGroupList(){
         return group_list;
+    }
+    
+    /**
+     * 
+     * Get the host capacity.
+     * 
+     * @return The host capacity
+     */
+    public int getHostCapacity(){
+        return host_capacity;
+    }
+    
+    /**
+     * 
+     * Set the capacity of the new host.
+     * 
+     * @param new_capacity New capacity.
+     */
+    public void setHostCapacity(int new_capacity){
+        this.host_capacity = new_capacity;
     }
     
 }

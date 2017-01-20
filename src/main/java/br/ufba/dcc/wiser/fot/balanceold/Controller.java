@@ -55,7 +55,7 @@ public class Controller extends CellarCommandSupport {
 
     private HazelcastInstance instance = null;
     private ExecutionContext executionContext;
-    private NodeVector bundleGroup;
+    private int bundleGroup;
     private DataSource dataSource;
     private Connection dbConnection;
 
@@ -108,6 +108,9 @@ public class Controller extends CellarCommandSupport {
         }
     }
 
+    /**
+     * @deprecated 
+     */
     private void createFoTgroups() {
         //Método createFoTgroups verifica a existencia de cada grupo, caso não exista,
         //o grupo faltante é criado no momento
@@ -134,6 +137,10 @@ public class Controller extends CellarCommandSupport {
 
     }
         
+    /**
+     * @deprecated 
+     * @throws Exception 
+     */
     private void comparativeTable() throws Exception {
         //Método comparativeTable compara uma tabela de nós (futuramente extraida de um bundle específico)
         //com os nós existentes no momento no cluster do Karaf Cellar
@@ -166,11 +173,9 @@ public class Controller extends CellarCommandSupport {
             if (members != null && !members.isEmpty()) {
                 for (Member member : members) {
                     HazelcastNode node = new HazelcastNode(member);
-
                     ipListCellar.add(node.getHost());
                     System.out.println(Arrays.toString(ipListCellar.toArray()));
                     //System.out.println("OBJ = " + node.toString());
-
                 }
 
 //                System.out.println(">>>>"+ ipListTable.equals(ipListCellar));
@@ -209,6 +214,10 @@ public class Controller extends CellarCommandSupport {
 
     }
     
+    /**
+     * @deprecated 
+     * @throws Exception 
+     */
     private void verifyNodesChanges() throws Exception {
         //Método verifyNodesChanges inicia o processo de limpeza dos nós nos grupos, monta todo o cluster
         //para iniciar o processo de balanceamento da rede
@@ -225,6 +234,10 @@ public class Controller extends CellarCommandSupport {
         }
     }
     
+    /**
+     * @deprecated 
+     * @throws Exception 
+     */
     private void removeNodesGroup() throws Exception {
         //Método removeNodesGroup exclui todos os nós de seus respectivos grupos
         System.out.println("\nMétodo removeNodesGroup\n");
@@ -504,6 +517,9 @@ public class Controller extends CellarCommandSupport {
 //        }
     }
     
+    /**
+     * @deprecated 
+     */
     private void impress() {
         //Método impress usado apenas para impressão em tela da distribuição executada
         System.out.println("\nMétodo impress\n");
@@ -527,6 +543,9 @@ public class Controller extends CellarCommandSupport {
         }
     }
     
+    /**
+     * @deprecated 
+     */
     public void startGroupBundles() {
         //Método starGroupBundles cria o HashMap da relação entre os grupos e seus respectivos bundles
         System.out.println("\nMétodo startGroupBundles\n");
@@ -658,6 +677,10 @@ public class Controller extends CellarCommandSupport {
         }
     }
 
+    /**
+     * @deprecated 
+     * @throws IOException 
+     */
     public void installBundles() throws IOException {
         //Método installBundles extraido do código fonte do Karaf Cellar para instalação de bundles
         System.out.println("\nMétodo installBundles\n");
@@ -747,11 +770,12 @@ public class Controller extends CellarCommandSupport {
 
     }
 
-    private void nodesServices() {
-        NodeService nodeService = new NodeService();
-
-    }
-
+    /**
+     * @deprecated 
+     * @param nodes
+     * @param nodeCapacity
+     * @return 
+     */
     private Node greaterCapacity(ArrayList<Node> nodes, Map<String, Integer> nodeCapacity) {
         Node node = nodes.get(0);
         for (int i = 0; i < nodes.size(); i++) { //foi removido o "<=" e substituido por "<"
@@ -762,6 +786,12 @@ public class Controller extends CellarCommandSupport {
         return node;
     }
 
+    /**
+     * @deprecated 
+     * @param group
+     * @param node
+     * @throws Exception 
+     */
     private void setCellarGroup(String group, Node node) throws Exception {
         Set<Node> ip = new HashSet<Node>();
         ip.add(node);
@@ -846,6 +876,9 @@ public class Controller extends CellarCommandSupport {
 //        }
 //    }
 
+     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
+
+    
     @Override
     protected Object doExecute() throws Exception {
         //To change body of generated methods, choose Tools | Templates.
@@ -860,28 +893,36 @@ public class Controller extends CellarCommandSupport {
         this.eventProducer = eventProducer;
     }
 
+    @Override
     public ClusterManager getClusterManager() {
         return clusterManager;
     }
 
+    @Override
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
     }
 
+    @Override
     public GroupManager getGroupManager() {
         return groupManager;
     }
 
+    @Override
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
 
+    @Override
     public ConfigurationAdmin getConfigurationAdmin() {
         return configurationAdmin;
     }
 
+    @Override
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
 
+     // </editor-fold>
+    
 }
