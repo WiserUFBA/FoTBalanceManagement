@@ -38,6 +38,8 @@ public class Bundles {
     private Group bundle_group;
     /* Bundle cost */
     private int bundle_cost;
+    /* Bundle Host Associated */
+    private Host host_associated;
     
     /* Maven Format */
     public static String MVN_URL_FORMAT = "mvn=%s/%s/%s";
@@ -63,6 +65,7 @@ public class Bundles {
         this.bundle_mvn_version = mvn_version;
         this.bundle_group = bundle_group;
         this.bundle_cost = bundle_cost;
+        this.host_associated = null;
     }
         
     /**
@@ -185,6 +188,26 @@ public class Bundles {
      */
     public void setBundleGroup(int bundle_cost) {
         this.bundle_cost = bundle_cost;
+    }
+    
+    /**
+     * 
+     * Return host associated with this bundle.
+     * 
+     * @return Host associated with this bundle.
+     */
+    public Host getComputerAssociated() {
+        return host_associated;
+    }
+
+    /**
+     * 
+     * Set host associated with this bundle.
+     * 
+     * @param host_associated New host associated with this bundle.
+     */
+    public void setComputerAssociated(Host host_associated) {
+        this.host_associated = host_associated;
     }
     
     // </editor-fold>
