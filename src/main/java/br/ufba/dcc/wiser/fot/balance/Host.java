@@ -71,6 +71,16 @@ public class Host {
     
     /**
      * 
+     * Get Host Address.
+     * 
+     * @return Get hostname or IP if host doesn't have a FQDN.
+     */
+    public String getHostAddress(){
+        return host_hazelcast_instance.getHost();
+    }
+    
+    /**
+     * 
      * Add a group to the given host.
      * 
      * @param group_name Name of the group that will be added.
