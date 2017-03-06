@@ -85,7 +85,7 @@ public class Bundles {
      * @return Karaf string installation url.
      */
     public String getKarafInstallURL(){
-        return String.format(KARAF_URL_FORMAT, "%s", 8181, getMavenURL());
+        return String.format(KARAF_URL_FORMAT, host_associated.getHostAddress(), 8181, getMavenURL());
     }
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
