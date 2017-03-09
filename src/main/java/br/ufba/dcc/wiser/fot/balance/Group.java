@@ -172,4 +172,24 @@ public class Group {
         return total_group_cost;
     }
     
+    /**
+     * 
+     * Add a new bundle to a given group
+     * 
+     * @param bundle new bundle.
+     */
+    public void addBundle(Bundles bundle){
+        bundles_list.add(bundle);
+    }
+    
+    /**
+     * 
+     * Get Bundle List.
+     * 
+     * @return Bundle list of this group.
+     */
+    public Set<Bundles> getBundleList(){
+        return bundles_list;
+    }
+    
 }

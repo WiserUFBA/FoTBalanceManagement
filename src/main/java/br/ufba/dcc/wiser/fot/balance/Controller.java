@@ -26,13 +26,17 @@ package br.ufba.dcc.wiser.fot.balance;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarInputStream;
@@ -56,7 +60,14 @@ import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
-
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.api.domain.solution.PlanningSolution;
+import org.optaplanner.core.api.domain.solution.Solution;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.impl.score.buildin.hardsoft.HardSoftScoreDefinition;
+import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
 
 /**
  *
@@ -64,7 +75,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class Controller {
+@PlanningSolution
+@XStreamAlias("Controller")
+public class Controller implements Solution<HardSoftScore> {
     
     /* Controller Instance */
     private static Controller instance = null;
@@ -80,13 +93,25 @@ public class Controller {
     protected GroupManager group_manager;
     /* Configuration Admin Instance */
     protected ConfigurationAdmin configuration_admin;
-    /* List of Host */
+    /* Set of Host */
     private final Set<Host> host_list;
+        /* Set of bundles */
+    private final Set<Bundles> bundle_list;
     /* Array of Groups */
     private final Map<String, Group> group_list;
     
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;    
+    
+    /* Solver configuration file */
+    public static final String SOLVER_CONFIGURATION = "br/ufba/dcc/wiser/fot/balance/solver/fotBalanceSolverConfig.xml";
+    
+    /* Config file */
+    public static final String CONFIG_CLASSPATH_URL = "br/ufba/dcc/wiser/fot/balance/config/balance_config.cfg";
+    
+    /* Balance Score */
+    @XStreamConverter(value = XStreamScoreConverter.class, types = {HardSoftScoreDefinition.class})
+    private HardSoftScore balance_score;
     
     /**
      * 
@@ -107,6 +132,13 @@ public class Controller {
         
         /* Create the list of groups */
         group_list = new HashMap<>();
+        
+        /* Create a set of bundles */
+        bundle_list = new HashSet<>();
+        
+        /* Instantiate a solver for balancing */
+        SolverFactory<Controller> solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
+        Solver<Controller> solver = solverFactory.buildSolver();        
     }
     
     /**
@@ -126,11 +158,11 @@ public class Controller {
     
     /**
      * 
-     * Initialize application and execute routines
+     * Initialize application and execute some routines
      * 
      */
     public void init(){
-        // TODO
+        //JSON config_file = new JSON(CONFIG_CLASSPATH_URL);
     }
     
     /**
@@ -223,7 +255,7 @@ public class Controller {
                         /* Unsubscribe all groups */
                         host.removeAllGroups();
                         
-                        /* Remove host from group list */
+                        /* Remove host from host list */
                         host_list.remove(host);
                     }
                 }
@@ -561,6 +593,45 @@ public class Controller {
             }
         }
     }    
+   
+    /**
+     * 
+     * Get actual balance score.
+     * 
+     * @return Actual balance score.
+     */
+    @Override
+    public HardSoftScore getScore() {
+        return balance_score;
+    }
+
+    /**
+     * Set a new balance score.
+     * 
+     * @param score New balance score.
+     */
+    @Override
+    public void setScore(HardSoftScore score) {
+        this.balance_score = score;
+    }
+    
+    /**
+     * 
+     * This is needed by solver.
+     * 
+     * @return Collection of facts to be used in solver
+     */
+    @Override
+    public Collection<? extends Object> getProblemFacts() {
+        List<Object> facts = new ArrayList<>();
+        facts.addAll(host_list);
+        
+        // Do not add the planning entity's (processList) because that will be done automatically
+        return facts;
+    }
+    
+    
+    @ValueRangeProvider(id = "hostRange")
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
 
