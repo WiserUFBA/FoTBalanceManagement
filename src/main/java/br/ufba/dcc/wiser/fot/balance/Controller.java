@@ -107,7 +107,10 @@ public class Controller implements Solution<HardSoftScore> {
     public static final String SOLVER_CONFIGURATION = "br/ufba/dcc/wiser/fot/balance/solver/fotBalanceSolverConfig.xml";
     
     /* Config file */
-    public static final String CONFIG_CLASSPATH_URL = "br/ufba/dcc/wiser/fot/balance/config/balance_config.cfg";
+    public static final String CONFIG_CLASSPATH_URL = "br/ufba/dcc/wiser/fot/balance/config/balance_config.json";
+    
+    /* Karaf Install Port, used by bundles */
+    public static final int KARAF_INSTALL_PORT = 8181;
     
     /* Balance Score */
     @XStreamConverter(value = XStreamScoreConverter.class, types = {HardSoftScoreDefinition.class})

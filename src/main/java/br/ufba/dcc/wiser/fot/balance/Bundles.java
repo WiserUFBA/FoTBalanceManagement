@@ -23,20 +23,27 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class Bundles {
     /* Maven GroupID */
+    @SerializedName("groupId")
     private String bundle_mvn_group;
     /* Maven ArtifactID */
+    @SerializedName("artifactId")
     private String bundle_mvn_artifact;
     /* Maven Bundle Version */
+    @SerializedName("artifactVersion")
     private String bundle_mvn_version;
     /* Bundle Group */
+    @SerializedName("bundleGroup")
     private Group bundle_group;
     /* Bundle cost */
+    @SerializedName("bundleCost")
     private int bundle_cost;
     /* Bundle Host Associated */
     private Host host_associated;
@@ -85,7 +92,7 @@ public class Bundles {
      * @return Karaf string installation url.
      */
     public String getKarafInstallURL(){
-        return String.format(KARAF_URL_FORMAT, host_associated.getHostAddress(), 8181, getMavenURL());
+        return String.format(KARAF_URL_FORMAT, host_associated.getHostAddress(), Controller.KARAF_INSTALL_PORT, getMavenURL());
     }
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">

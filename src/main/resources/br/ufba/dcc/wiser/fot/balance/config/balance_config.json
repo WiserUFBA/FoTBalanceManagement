@@ -1,73 +1,111 @@
 {
-    "FotBundleGroups" : [
+    "FotBalanceGroups" : [
         {
-            "group": "composition",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0",
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "composition",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
         },
         {
-            "group": "storage",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0",
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "storage",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                },
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
         },
         {
-            "group": "basic",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0",
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "basic",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                },
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
         },
         {
-            "group": "discovery",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0", 
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "discovery",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                },
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
         },
         {
-            "group": "localization",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0",
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "localization",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                },
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
         },
         {   
-            "group": "security",
-            "bundles": [
-                "mvn:groupId:artifactId/1.0",
-                "mvn:groupId2:artifactId2/1.0"
+            "group_name": "security",
+            "bundles_list": [
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                },
+                {
+                    "groupId" : "groupId",
+                    "artifactId" : "artifactId",
+                    "artifactVersion" : "1.0.0",
+                    "bundleGroup" : "composition"
+                    "bundleCost" : 1
+                }
             ]
-        }
-    ],
-    "FotBundleClients" : [
-        {
-            "client-id": "1",
-            "client-ip": "192.168.0.1",
-            "groups": ["composition"]
-        },
-        {
-            "client-id": "2",
-            "client-ip": "192.168.0.2",
-            "groups": ["storage", "basic"]
-        },
-        {
-            "client-id": "3",
-            "client-ip": "192.168.0.3",
-            "groups": ["security", "discovery"]
-        },
-        {
-            "client-id": "4",
-            "client-ip": "192.168.0.4",
-            "groups": ["storage", "basic"]
-        },
-        {
-            "client-id": "5",
-            "client-ip": "192.168.0.5",
-            "groups": ["basic", "discovery", "localization"]
         }
     ]
 }
