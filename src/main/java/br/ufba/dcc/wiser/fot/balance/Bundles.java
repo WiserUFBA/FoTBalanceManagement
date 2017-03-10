@@ -40,7 +40,6 @@ public class Bundles {
     @SerializedName("artifactVersion")
     private String bundle_mvn_version;
     /* Bundle Group */
-    @SerializedName("bundleGroup")
     private Group bundle_group;
     /* Bundle cost */
     @SerializedName("bundleCost")

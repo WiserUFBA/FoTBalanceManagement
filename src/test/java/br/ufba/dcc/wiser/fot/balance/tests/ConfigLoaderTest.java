@@ -21,12 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.ufba.dcc.wiser.fot.balance.config;
+package br.ufba.dcc.wiser.fot.balance.tests;
+
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigGroup {
+public class ConfigLoaderTest {
+    
+    /* Basic JSON string for test purpose */
+    public static final String DEFAULT_CONFIG_TEST = 
+        "{\n" +
+        "    \"FotBalanceGroups\" : [\n" +
+        "        {\n" +
+        "            \"group_name\": \"test\",\n" +
+        "            \"bundles_list\": [\n" +
+        "                {\n" +
+        "                    \"groupId\" : \"test\",\n" +
+        "                    \"artifactId\" : \"test\",\n" +
+        "                    \"artifactVersion\" : \"1.0.0.TEST\",\n" +
+        "                    \"bundleCost\" : 1\n" +
+        "                }\n" +
+        "            ]\n" +
+        "        }\n" +
+        "    ]\n" +
+        "}";
+    
+    @Test
+    public void testConfigFile(){
+        
+        assertEquals("[Testing] Checking if ", 0, null);
+    }
     
 }

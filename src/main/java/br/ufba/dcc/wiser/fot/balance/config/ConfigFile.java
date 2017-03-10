@@ -23,21 +23,45 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
+import br.ufba.dcc.wiser.fot.balance.Group;
+import com.google.gson.annotations.SerializedName;
+import java.util.Set;
+
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class ConfigFile {
     
+    /* List of groups */
+    @SerializedName("FotBalanceGroups")
+    private Set<Group> list_groups;
+    
     /**
      * 
      * Instantiate a new Configuration File.
      * 
      */
-    public ConfigFile(){
-        
-       
-        
+    public ConfigFile(){}
+
+    /**
+     * 
+     * Get list of groups
+     * 
+     * @return a set of groups.
+     */
+    public Set<Group> getListGroups() {
+        return list_groups;
+    }
+
+    /**
+     * 
+     * Set a list of groups in this object.
+     * 
+     * @param list_groups New list of groups.
+     */
+    public void setListGroups(Set<Group> list_groups) {
+        this.list_groups = list_groups;
     }
     
 }

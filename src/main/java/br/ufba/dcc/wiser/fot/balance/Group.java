@@ -23,7 +23,6 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.karaf.cellar.core.Node;

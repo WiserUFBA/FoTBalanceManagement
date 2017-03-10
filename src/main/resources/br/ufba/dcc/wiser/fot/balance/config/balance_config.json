@@ -7,7 +7,6 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
@@ -19,14 +18,12 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 },
                 {
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
@@ -38,14 +35,12 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 },
                 {
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
@@ -57,14 +52,12 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 },
                 {
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
@@ -76,14 +69,12 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 },
                 {
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
@@ -95,14 +86,13 @@
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
+
                     "bundleCost" : 1
                 },
                 {
                     "groupId" : "groupId",
                     "artifactId" : "artifactId",
                     "artifactVersion" : "1.0.0",
-                    "bundleGroup" : "composition"
                     "bundleCost" : 1
                 }
             ]
