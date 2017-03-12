@@ -23,30 +23,10 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
-import br.ufba.dcc.wiser.fot.balance.Bundles;
-import br.ufba.dcc.wiser.fot.balance.Host;
-import org.apache.karaf.cellar.itests;
-
 /**
  *
- * Test support of balance application.
- * 
- * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
+ * @author jeferson
  */
-public abstract class TestSupport extends CellarTestSupport{
-    
-    /* Test Maven URL return */
-    public static final String GET_MAVEN_URL_TEST_RESULT = "mvn=testGroup/testArtifact/1.0.0.TEST";
-    
-    /* Test Karaf URL return */
-    public static final String GET_KARAF_URL_TEST_RESULT = "url:http://localhost:8181/bundleInstall?" + GET_MAVEN_URL_TEST_RESULT;
-    
-    /* Return a test bundle object */
-    public static Bundles initBundleObject(){
-        Bundles test_bundle = new Bundles("testArtifact", "testGroup", "1.0.0.TEST", 1);        
-        Host test_Host = new Host(1);
-        test_bundle.setHostAssociated(test_Host);
-        return test_bundle;
-    }
+public class GroupTest {
     
 }

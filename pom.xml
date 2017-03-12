@@ -158,6 +158,12 @@
             <version>4.0.1</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.itests</artifactId>
+            <version>4.0.1</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Hazelcast -->
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -189,6 +195,13 @@
             <artifactId>optaplanner-persistence-xstream</artifactId>
             <version>6.5.0.Final</version>
             <type>jar</type>
+        </dependency>
+        <!-- Junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -256,6 +269,18 @@
                                             tofile="${project.build.directory}/felix.jar" />
                                     </target>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.servicemix.tooling</groupId>
+                        <artifactId>depends-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-depends-file</id>
+                                <goals>
+                                    <goal>generate-depends-file</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>

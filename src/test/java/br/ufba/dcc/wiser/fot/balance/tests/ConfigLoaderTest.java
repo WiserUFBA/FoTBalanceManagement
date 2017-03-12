@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigLoaderTest {
+public class ConfigLoaderTest extends TestSupport{
     
     /* Basic JSON string for test purpose */
     public static final String DEFAULT_CONFIG_TEST = 
