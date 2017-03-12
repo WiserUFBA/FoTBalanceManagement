@@ -35,7 +35,7 @@ public class ConfigFile {
     
     /* List of groups */
     @SerializedName("FotBalanceGroups")
-    private Set<Group> list_groups;
+    private Set<Group> groups_list;
     
     /**
      * 
@@ -50,18 +50,18 @@ public class ConfigFile {
      * 
      * @return a set of groups.
      */
-    public Set<Group> getListGroups() {
-        return list_groups;
+    public Set<Group> getGroupsList() {
+        return groups_list;
     }
 
     /**
      * 
      * Set a list of groups in this object.
      * 
-     * @param list_groups New list of groups.
+     * @param groups_list New list of groups.
      */
-    public void setListGroups(Set<Group> list_groups) {
-        this.list_groups = list_groups;
+    public void setGroupsList(Set<Group> groups_list) {
+        this.groups_list = groups_list;
     }
     
 }
