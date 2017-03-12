@@ -138,31 +138,38 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
+            <version>4.3.1</version>
             <type>jar</type>
         </dependency>
         <!--Cellar -->
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.bundle</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.3</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.itests</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>apache-karaf-cellar</artifactId>
+            <version>4.0.3</version>
+            <classifier>features</classifier>
+            <type>xml</type>
         </dependency>
         <!-- Hazelcast -->
         <dependency>
@@ -171,17 +178,49 @@
             <version>3.6.4</version>
             <type>jar</type>
         </dependency>
+        <!-- OP4SJ -->
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-junit4</artifactId>
+            <version>4.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-karaf</artifactId>
+            <version>4.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Geronimo -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Karaf -->
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>apache-karaf</artifactId>
+            <version>4.0.6</version>
+            <type>tar.gz</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
-            <version>4.0.5</version>
+            <version>4.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.features</artifactId>
             <version>4.0.1</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <!-- OptaPlanner -->
         <dependency>

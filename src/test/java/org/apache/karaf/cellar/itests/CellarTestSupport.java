@@ -69,7 +69,6 @@ public class CellarTestSupport {
     @Inject
     protected SessionFactory sessionFactory;
 
-
     /**
      * @param probe
      * @return
@@ -81,8 +80,9 @@ public class CellarTestSupport {
     }
 
     /**
-     * This method configures Hazelcast TcpIp discovery for a given number of members.
-     * This configuration is required, when working with karaf instances.
+     * This method configures Hazelcast TcpIp discovery for a given number of
+     * members. This configuration is required, when working with karaf
+     * instances.
      *
      * @param members
      */
@@ -119,6 +119,8 @@ public class CellarTestSupport {
 
     /**
      * Creates a child instance that runs cellar.
+     *
+     * @param name
      */
     protected void createCellarChild(String name) {
         createCellarChild(name, false, 0);
@@ -156,6 +158,8 @@ public class CellarTestSupport {
 
     /**
      * Destroys the child node.
+     *
+     * @param name
      */
     protected void destroyCellarChild(String name) {
         System.err.println(executeCommand("instance:connect " + name + " feature:uninstall cellar"));
@@ -164,6 +168,9 @@ public class CellarTestSupport {
 
     /**
      * Returns the node id of a specific child instance.
+     *
+     * @param name
+     * @return
      */
     protected String getNodeIdOfChild(String name) {
         String node;
@@ -185,9 +192,9 @@ public class CellarTestSupport {
     @Configuration
     public Option[] config() {
         Option[] options = new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.INFO),
-                editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL()),
-                editConfigurationFileExtend("etc/config.properties", "org.apache.aries.blueprint.synchronous", "true")
+            cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.INFO),
+            editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL()),
+            editConfigurationFileExtend("etc/config.properties", "org.apache.aries.blueprint.synchronous", "true")
         };
         String debug = System.getProperty("debugMain");
         if (debug != null) {
@@ -198,10 +205,9 @@ public class CellarTestSupport {
         return options;
     }
 
-    protected String executeCommand(final String command, Principal ... principals) {
+    protected String executeCommand(final String command, Principal... principals) {
         return executeCommand(command, COMMAND_TIMEOUT, false, principals);
     }
-
 
     protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal... principals) {
         waitForCommandService(command);
@@ -212,39 +218,29 @@ public class CellarTestSupport {
         final SessionFactory sessionFactory = getOsgiService(SessionFactory.class);
         final Session session = sessionFactory.create(System.in, printStream, System.err);
 
-        final Callable<String> commandCallable = new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                try {
-                    if (!silent) {
-                        System.err.println(command);
-                    }
-                    session.execute(command);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage(), e);
+        final Callable<String> commandCallable;
+        commandCallable = () -> {
+            try {
+                if (!silent) {
+                    System.err.println(command);
                 }
-                printStream.flush();
-                return byteArrayOutputStream.toString();
+                session.execute(command);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
+            printStream.flush();
+            return byteArrayOutputStream.toString();
         };
 
         FutureTask<String> commandFuture;
         if (principals.length == 0) {
-            commandFuture = new FutureTask<String>(commandCallable);
+            commandFuture = new FutureTask<>(commandCallable);
         } else {
             // If principals are defined, run the command callable via Subject.doAs()
-            commandFuture = new FutureTask<String>(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    Subject subject = new Subject();
-                    subject.getPrincipals().addAll(Arrays.asList(principals));
-                    return Subject.doAs(subject, new PrivilegedExceptionAction<String>() {
-                        @Override
-                        public String run() throws Exception {
-                            return commandCallable.call();
-                        }
-                    });
-                }
+            commandFuture = new FutureTask<>(() -> {
+                Subject subject = new Subject();
+                subject.getPrincipals().addAll(Arrays.asList(principals));
+                return Subject.doAs(subject, (PrivilegedExceptionAction<String>) commandCallable::call);
             });
         }
 
@@ -278,10 +274,10 @@ public class CellarTestSupport {
         }
         int colonIndx = command.indexOf(':');
         String scope = (colonIndx > 0) ? command.substring(0, colonIndx) : "*";
-        String name  = (colonIndx > 0) ? command.substring(colonIndx + 1) : command;
+        String name = (colonIndx > 0) ? command.substring(colonIndx + 1) : command;
         try {
             long start = System.currentTimeMillis();
-            long cur   = start;
+            long cur = start;
             while (cur - start < SERVICE_TIMEOUT) {
                 if (sessionFactory.getRegistry().getCommand(scope, name) != null) {
                     return;
@@ -289,11 +285,10 @@ public class CellarTestSupport {
                 Thread.sleep(100);
                 cur = System.currentTimeMillis();
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     protected Bundle getInstalledBundle(String symbolicName) {
         for (Bundle b : bundleContext.getBundles()) {
@@ -312,7 +307,7 @@ public class CellarTestSupport {
      */
     private static String explode(Dictionary dictionary) {
         Enumeration keys = dictionary.keys();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             result.append(String.format("%s=%s", key, dictionary.get(key)));
@@ -332,7 +327,7 @@ public class CellarTestSupport {
     }
 
     protected <T> T getOsgiService(Class<T> type, String filter, long timeout) {
-        ServiceTracker tracker = null;
+        ServiceTracker tracker;
         try {
             String flt;
             if (filter != null) {
@@ -375,6 +370,7 @@ public class CellarTestSupport {
     /**
      * Finds a free port starting from the give port numner.
      *
+     * @param port
      * @return
      */
     protected int getFreePort(int port) {

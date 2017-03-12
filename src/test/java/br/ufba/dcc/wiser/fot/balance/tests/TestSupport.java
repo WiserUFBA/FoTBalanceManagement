@@ -25,7 +25,7 @@ package br.ufba.dcc.wiser.fot.balance.tests;
 
 import br.ufba.dcc.wiser.fot.balance.Bundles;
 import br.ufba.dcc.wiser.fot.balance.Host;
-import org.apache.karaf.cellar.itests;
+
 
 /**
  *
@@ -33,7 +33,7 @@ import org.apache.karaf.cellar.itests;
  * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public abstract class TestSupport extends CellarTestSupport{
+public abstract class TestSupport {
     
     /* Test Maven URL return */
     public static final String GET_MAVEN_URL_TEST_RESULT = "mvn=testGroup/testArtifact/1.0.0.TEST";
