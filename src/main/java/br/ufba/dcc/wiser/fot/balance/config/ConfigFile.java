@@ -25,6 +25,7 @@ package br.ufba.dcc.wiser.fot.balance.config;
 
 import br.ufba.dcc.wiser.fot.balance.Group;
 import com.google.gson.annotations.SerializedName;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -42,7 +43,9 @@ public class ConfigFile {
      * Instantiate a new Configuration File.
      * 
      */
-    public ConfigFile(){}
+    public ConfigFile(){
+        groups_list = new HashSet();
+    }
 
     /**
      * 

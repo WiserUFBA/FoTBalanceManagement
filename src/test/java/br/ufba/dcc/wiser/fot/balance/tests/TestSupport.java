@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>.
+ * Copyright 2017 jeferson.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,37 +23,29 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import br.ufba.dcc.wiser.fot.balance.Bundles;
+import br.ufba.dcc.wiser.fot.balance.Host;
 
 /**
  *
+ * Test support of balance application.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigLoaderTest {
+public abstract class TestSupport {
     
-    /* Basic JSON string for test purpose */
-    public static final String DEFAULT_CONFIG_TEST = 
-        "{\n" +
-        "    \"FotBalanceGroups\" : [\n" +
-        "        {\n" +
-        "            \"group_name\": \"test\",\n" +
-        "            \"bundles_list\": [\n" +
-        "                {\n" +
-        "                    \"groupId\" : \"test\",\n" +
-        "                    \"artifactId\" : \"test\",\n" +
-        "                    \"artifactVersion\" : \"1.0.0.TEST\",\n" +
-        "                    \"bundleCost\" : 1\n" +
-        "                }\n" +
-        "            ]\n" +
-        "        }\n" +
-        "    ]\n" +
-        "}";
+    /* Test Maven URL return */
+    public static final String GET_MAVEN_URL_TEST_RESULT = "mvn=testGroup/testArtifact/1.0.0.TEST";
     
-    @Test
-    public void testConfigFile(){
-        // TODO
-        assertEquals("[Testing] Checking if ", 0, 0);
+    /* Test Karaf URL return */
+    public static final String GET_KARAF_URL_TEST_RESULT = "url:http://localhost:8181/bundleInstall?" + GET_MAVEN_URL_TEST_RESULT;
+    
+    /* Return a test bundle object */
+    public static Bundles initBundleObject(){
+        Bundles test_bundle = new Bundles("testArtifact", "testGroup", "1.0.0.TEST", 0);        
+        Host test_Host = new Host(1);
+        test_bundle.setHostAssociated(test_Host);
+        return test_bundle;
     }
     
 }

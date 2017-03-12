@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>.
+ * Copyright 2017 jeferson.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,39 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.ufba.dcc.wiser.fot.balance.tests;
-
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+package br.ufba.dcc.wiser.fot.balance.exceptions;
 
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigLoaderTest {
+public class UnassociatedHostException extends Exception{
     
-    /* Basic JSON string for test purpose */
-    public static final String DEFAULT_CONFIG_TEST = 
-        "{\n" +
-        "    \"FotBalanceGroups\" : [\n" +
-        "        {\n" +
-        "            \"group_name\": \"test\",\n" +
-        "            \"bundles_list\": [\n" +
-        "                {\n" +
-        "                    \"groupId\" : \"test\",\n" +
-        "                    \"artifactId\" : \"test\",\n" +
-        "                    \"artifactVersion\" : \"1.0.0.TEST\",\n" +
-        "                    \"bundleCost\" : 1\n" +
-        "                }\n" +
-        "            ]\n" +
-        "        }\n" +
-        "    ]\n" +
-        "}";
-    
-    @Test
-    public void testConfigFile(){
-        // TODO
-        assertEquals("[Testing] Checking if ", 0, 0);
+    public UnassociatedHostException() {
+        super("There's no host associated with this service!");
+    }
+
+    public UnassociatedHostException(String message) {
+        super(message);
+    }
+
+    public UnassociatedHostException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnassociatedHostException(String message, Throwable cause) {
+        super(message, cause);
     }
     
 }

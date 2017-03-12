@@ -61,6 +61,16 @@ public class Host {
     
     /**
      * 
+     * Instantiate a host without a hazelcast_install reference.
+     * 
+     * @param host_capacity Capacity of this host.
+     */
+    public Host(int host_capacity){
+        this(null, host_capacity);
+    }
+    
+    /**
+     * 
      * Get the host instance.
      * 
      * @return Hazelcast Host instance.
@@ -76,6 +86,10 @@ public class Host {
      * @return Get hostname or IP if host doesn't have a FQDN.
      */
     public String getHostAddress(){
+        if(host_hazelcast_instance == null){
+            /* If there are no hazelcast instance return localhost */
+            return "localhost";
+        }
         return host_hazelcast_instance.getHost();
     }
     
