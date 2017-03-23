@@ -33,7 +33,7 @@ public class CellarConfigurationTest extends CellarTestSupport {
     private static final String TESTPID = "org.apache.karaf.cellar.tst";
 
     @Test
-    @Ignore
+    //@Ignore
     public void testCellarFeaturesModule() throws InterruptedException {
         installCellar();
         createCellarChild("child1");

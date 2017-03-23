@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class CellarInstallationTest extends CellarTestSupport {
 
     @Test
-    @Ignore
+    //@Ignore
     public void testInstallation() throws InterruptedException {
         installCellar();
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);

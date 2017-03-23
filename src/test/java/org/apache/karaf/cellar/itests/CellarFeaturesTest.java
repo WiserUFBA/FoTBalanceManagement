@@ -36,7 +36,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
     private static final String INSTALLED = "[installed  ]";
 
     @Test
-    @Ignore
+    //@Ignore
     public void testCellarFeaturesModule() throws InterruptedException {
         installCellar();
         createCellarChild("child1");

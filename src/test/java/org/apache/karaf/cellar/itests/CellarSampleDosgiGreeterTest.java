@@ -34,7 +34,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
 
     @Test
-    @Ignore
+    //@Ignore
     public void testDosgiGreeter() throws InterruptedException {
         installCellar();
         createCellarChild("child1");

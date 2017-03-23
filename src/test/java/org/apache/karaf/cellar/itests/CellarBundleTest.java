@@ -30,7 +30,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class CellarBundleTest extends CellarTestSupport {
 
     @Test
-    @Ignore
+    //@Ignore
     public void testCellarBundleModule() throws Exception {
     	FeaturesService featuresService = getOsgiService(FeaturesService.class);
     	assertNotNull(featuresService);

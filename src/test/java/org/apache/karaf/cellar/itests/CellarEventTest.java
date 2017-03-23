@@ -29,7 +29,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class CellarEventTest extends CellarTestSupport {
 
     @Test
-    @Ignore
+    //@Ignore
     public void testCellarEventFeatureInstall() throws Exception {
         installCellar();
         Thread.sleep(DEFAULT_TIMEOUT);
