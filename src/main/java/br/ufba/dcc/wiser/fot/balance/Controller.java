@@ -642,6 +642,17 @@ public class Controller implements Solution<HardSoftScore> {
     }
 
     /**
+     * 
+     * Check if there are a group with the specified name.
+     * 
+     * @param group_name Group name which will be tested
+     * @return True if this group is already registered and false otherwise.
+     */
+    boolean groupExists(String group_name) {
+        return group_list.containsKey(group_name);
+    }
+    
+    /**
      *
      * Set a new Hazelcast Instance.
      *

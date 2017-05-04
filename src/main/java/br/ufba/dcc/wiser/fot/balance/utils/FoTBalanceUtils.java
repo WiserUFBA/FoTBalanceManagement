@@ -21,37 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.ufba.dcc.wiser.fot.balance.tests;
-
-import br.ufba.dcc.wiser.fot.balance.Bundles;
-import br.ufba.dcc.wiser.fot.balance.Group;
-import br.ufba.dcc.wiser.fot.balance.Host;
+package br.ufba.dcc.wiser.fot.balance.utils;
 
 /**
  *
- * Test support of balance application.
- * 
- * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
+ * @author jeferson
  */
-public abstract class TestSupport {
+public class FoTBalanceUtils {
     
-    /* Test Maven URL return */
-    public static final String GET_MAVEN_URL_TEST_RESULT = "mvn=testGroup/testArtifact/1.0.0.TEST";
+    public final static String WARNING_MSG_START = "[WARNING]";
+    public final static String ERROR_MSG_START = "[ERROR] ";
+    public final static String INFO_MSG_START = "[INFO] ";
     
-    /* Test Karaf URL return */
-    public static final String GET_KARAF_URL_TEST_RESULT = "url:http://localhost:8181/bundleInstall?" + GET_MAVEN_URL_TEST_RESULT;
-    
-    /* Return a test bundle object */
-    public static Bundles initBundleObject(){
-        Bundles test_bundle = new Bundles("testArtifact", "testGroup", "1.0.0.TEST", 1);        
-        Host test_Host = new Host(1);
-        test_bundle.setHostAssociated(test_Host);
-        return test_bundle;
+    /**
+     * 
+     * Print a warning message formatted with warning style.
+     * 
+     * @param warning_msg Message to be printed.
+     */
+    public static void warningMsg(String warning_msg){
+        // TODO Store this in a log file too
+        System.err.println(WARNING_MSG_START + warning_msg);
     }
     
-    /* Return a test group object */
-    public static Group initGroupObject(){
-        Group test_group = new Group("testGroup");
-        return test_group;
+    /**
+     * 
+     * Print a error message formatted with error style.
+     * 
+     * @param error_msg Message to be printed.
+     */
+    public static void errorMsg(String error_msg){
+        // TODO Store this in a log file too
+        System.err.println(ERROR_MSG_START + error_msg);
+    }
+    
+    /**
+     * 
+     * Print a info message formatted with info style.
+     * 
+     * @param info_msg Message to be printed.
+     */
+    public static void infoMsg(String info_msg){
+        // TODO Store this in a log file too
+        System.err.println(INFO_MSG_START + info_msg);
     }
 }

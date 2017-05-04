@@ -23,10 +23,20 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
 /**
  *
- * @author jeferson
+ * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class GroupTest {
+public class GroupTest extends TestSupport {
+    
+    @Test
+    public void testGroupAddHost(){
+                
+        
+        assertEquals("[Testing] Checking Karaf install url", null, null);
+    }
     
 }

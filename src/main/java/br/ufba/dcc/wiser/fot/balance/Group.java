@@ -26,6 +26,7 @@ package br.ufba.dcc.wiser.fot.balance;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.karaf.cellar.core.Node;
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 
 /**
  *
@@ -57,17 +58,7 @@ public class Group {
         /* Create the bundle list */
         bundles_list = new HashSet<>();
     }
-    
-    /**
-     * 
-     * Return the name of the group.
-     * 
-     * @return Group name.
-     */
-    public String getGroupName(){
-        return group_name;
-    }
-    
+        
     /**
      * 
      * Set the group name.
@@ -77,8 +68,16 @@ public class Group {
     public void setGroupName(String group_name){
         /* If the groupName is equal actual name, nothing change */
         if(this.group_name.equals(group_name)){
-            System.err.println("Group already exists!");
+            FoTBalanceUtils.errorMsg("This group already have this name!");
             return;
+        }
+        
+        /* Get Controller Instance */
+        Controller controller = Controller.getInstance();
+        
+        /* Check if new group name hasn't been registered yet on controller */
+        if(controller.groupExists(group_name)){
+            FoTBalanceUtils.errorMsg("Group already exists, choose another name!s");
         }
         
         /* Store the old group name */
@@ -86,9 +85,6 @@ public class Group {
         
         /* Set the new group name */
         this.group_name = group_name;
-        
-        /* Get Controller Instance */
-        Controller controller = Controller.getInstance();
         
         /* Register the new group */
         controller.addGroup(group_name);
@@ -184,12 +180,32 @@ public class Group {
     
     /**
      * 
+     * Return the name of the group.
+     * 
+     * @return Group name.
+     */
+    public String getGroupName(){
+        return group_name;
+    }
+    
+    /**
+     * 
      * Get Bundle List.
      * 
      * @return Bundle list of this group.
      */
     public Set<Bundles> getBundleList(){
         return bundles_list;
+    }
+    
+    /**
+     * 
+     * Get Host List.
+     * 
+     * @return Bundle list of this group.
+     */
+    public Set<Host> getHostList(){
+        return host_list;
     }
     
 }
