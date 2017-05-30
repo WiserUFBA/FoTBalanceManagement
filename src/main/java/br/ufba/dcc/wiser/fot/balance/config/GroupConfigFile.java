@@ -30,41 +30,14 @@ import java.util.Set;
 
 /**
  *
+ * Load of the group configuration file.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class BundleConfigFile {
+public class GroupConfigFile {
     
-    /* List of groups */
-    @SerializedName("FotBalanceGroups")
-    private Set<Group> groups_list;
+    /* URL to this configuration file */
+    private static final String GROUP_CONFIGURATION_FILE_URL = "br/ufba/dcc/wiser/fot/balance/config/group_config.json";
     
-    /**
-     * 
-     * Instantiate a new Configuration File.
-     * 
-     */
-    public BundleConfigFile(){
-        groups_list = new HashSet();
-    }
-
-    /**
-     * 
-     * Get list of groups
-     * 
-     * @return a set of groups.
-     */
-    public Set<Group> getGroupsList() {
-        return groups_list;
-    }
-
-    /**
-     * 
-     * Set a list of groups in this object.
-     * 
-     * @param groups_list New list of groups.
-     */
-    public void setGroupsList(Set<Group> groups_list) {
-        this.groups_list = groups_list;
-    }
     
 }

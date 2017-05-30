@@ -23,11 +23,16 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -35,9 +40,22 @@ import java.io.PrintStream;
  */
 public class ConfigLoader {
     
+    /* Private static gson loader object */
+    private static final Gson GSON_OBJ = new Gson();
+    
+    /* This class shouldn't be instatiated */
     private ConfigLoader(){}
     
-    public static BundleConfigFile configLoader(String config_file_url){
+    /**
+     * 
+     * Load a list of configurations from a configuration file with an specified type.
+     * 
+     * @param <T> Type of return of this file.
+     * @param config_file_url URL to this file in disk.
+     * @param config_file_type Type of data for GSON.
+     * @return A list of configurations
+     */
+    public static <T> List<T> configLoader(String config_file_url){
         
         /* Configuration File */
         FileReader config_file_reader;
@@ -47,6 +65,7 @@ public class ConfigLoader {
             config_file_reader = new FileReader(config_file_url);
         } catch(FileNotFoundException e){
             System.err.println("br.ufba.dcc.wiser.fot.balance.config.ConfigFile.<init>()");
+            FoTBalanceUtils.errorMsg("Canno't load configuration file = " + config_file_url);
             e.printStackTrace(new PrintStream(System.err));
             return null;
         }
@@ -54,11 +73,13 @@ public class ConfigLoader {
         /* Get a buffered reader */
         BufferedReader config_file_buffer = new BufferedReader(config_file_reader);
         
-        /* Get GSON object and convert config file to an object and after that return the config file */
-        Gson gson = new Gson();
-        BundleConfigFile config_file = gson.fromJson(config_file_buffer, BundleConfigFile.class);
+        FoTBalanceUtils.infoMsg("Loaded Configuration file - " + config_file_url);
         
-        return config_file;
+        /* Get GSON object and convert this file to a list of T object and after that return the config file */
+        Type config_file_type = new TypeToken<ArrayList<T>>(){}.getType();
+        List<T> configurations_file = GSON_OBJ.fromJson(config_file_buffer, config_file_type);
+        
+        return configurations_file;
     }
     
 }

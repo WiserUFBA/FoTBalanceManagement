@@ -23,92 +23,43 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.google.gson.Gson;
 import java.util.List;
 
 /**
  *
+ * Load of the Host Configuration file.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class HostConfigFile {
     
-    /* Id of this host */
-    private String hostId;
+    /* URL to this configuration file */
+    private static final String HOST_CONFIGURATION_FILE_URL = "br/ufba/dcc/wiser/fot/balance/config/host_config.json";
     
-    /* List of groups */
-    private List<String> groupsList;
+    /* Configurations list */
+    private final List<HostConfigFileObject> configurations;
     
-    /**
-     * 
-     * Instantiate a new Configuration File.
-     * 
-     * @param hostId Id of this host.
-     * @param groupsList Array of groups which is associated with this host.
-     */
-    public HostConfigFile(String hostId, String[] groupsList){
-        this.hostId = hostId;
-        this.groupsList = new ArrayList<>(Arrays.asList(groupsList));
+    /* Instance of this object */
+    private static HostConfigFile instance = null;
+    
+    /* Private constructor for singlenton operations */
+    private HostConfigFile(){
+        configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL);
+        Gson gson = new Gson();
+        System.out.println("HAHA" + gson.toJson(configurations));
     }
     
     /**
+     * Get Configurations from host configuration file instance 
      * 
-     * Instantiate a new configuration file without groups.
-     * 
-     * @param hostId Id of this host.
+     * @return An instance of Host Configuration file properties.
      */
-    public HostConfigFile(String hostId){
-        this(hostId, new String[]{});
+    public static HostConfigFile getInstance(){
+        if(instance == null){
+            instance = new HostConfigFile();
+        }
+        
+        return instance;
     }
-    
-    /**
-     * 
-     * No argument constructor for clone operations.
-     * 
-     * @param hostId Id of this host.
-     */
-    public HostConfigFile(){
-        this("");
-    }
-
-    /**
-     * 
-     * Get list of groups
-     * 
-     * @return a set of groups.
-     */
-    public List<String> getGroupsList() {
-        return groupsList;
-    }
-
-    /**
-     * 
-     * Set a list of groups in this object.
-     * 
-     * @param groupsList New list of groups.
-     */
-    public void setGroupsList(List<String> groupsList) {
-        this.groupsList = groupsList;
-    }    
-    
-    /**
-     * 
-     * Get id of this host.
-     * 
-     * @return a set of groups.
-     */
-    public String getHostId() {
-        return hostId;
-    }
-
-    /**
-     * 
-     * Set id of this host.
-     * 
-     * @param groupsList New list of groups.
-     */
-    public void setHostId(String hostId) {
-        this.hostId = hostId;
-    }
-    
 }

@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
+import br.ufba.dcc.wiser.fot.balance.config.HostConfigFile;
 import br.ufba.dcc.wiser.fot.balance.config.HostConfigFileObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -59,6 +60,7 @@ public class ConfigLoaderTest extends TestSupport{
         "[\n" +
         "    {\n" +
         "        \"hostId\": \"test_host\",\n" +
+        "        \"hostIP\": \"127.0.0.1\",\n" +
         "        \"groupsList\": [\n" +
         "            \"security\",\n" +
         "            \"basic\"\n" +
@@ -76,6 +78,8 @@ public class ConfigLoaderTest extends TestSupport{
         List<HostConfigFileObject> hostsConfiguration = gson.fromJson(DEFAULT_HOST_CONFIG_TEST, listOfHostsConfigFileObjectType);
         
         System.out.println("FINAL OBJECT => " + gson.toJson(hostsConfiguration));
+        
+        HostConfigFile.getInstance();
         
         assertEquals("[Testing] Checking if ", 0, 0);
     }

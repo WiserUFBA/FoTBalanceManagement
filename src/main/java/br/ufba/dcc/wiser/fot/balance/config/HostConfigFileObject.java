@@ -36,6 +36,9 @@ public class HostConfigFileObject {
     /* Id of this host */
     private String hostId;
     
+    /* IP of this host */
+    private String hostIP;
+    
     /* List of groups */
     private List<String> groupsList;
     
@@ -44,10 +47,12 @@ public class HostConfigFileObject {
      * Instantiate a new Configuration File.
      * 
      * @param hostId Id of this host.
+     * @param hostIP IP of this host.
      * @param groupsList Array of groups which is associated with this host.
      */
-    public HostConfigFileObject(String hostId, String[] groupsList){
+    public HostConfigFileObject(String hostId, String hostIP, String[] groupsList){
         this.hostId = hostId;
+        this.hostIP = hostIP;
         this.groupsList = new ArrayList<>(Arrays.asList(groupsList));
     }
     
@@ -56,9 +61,20 @@ public class HostConfigFileObject {
      * Instantiate a new configuration file without groups.
      * 
      * @param hostId Id of this host.
+     * @param hostIP IP of this host.
+     */
+    public HostConfigFileObject(String hostId, String hostIP){
+        this(hostId, hostIP, new String[0]);
+    }
+    
+    /**
+     * 
+     * Instantiate a new configuration file without groups and IP.
+     * 
+     * @param hostId Id of this host.
      */
     public HostConfigFileObject(String hostId){
-        this(hostId, new String[]{});
+        this(hostId, "");
     }
     
     /**
@@ -75,7 +91,7 @@ public class HostConfigFileObject {
      * 
      * Get list of groups
      * 
-     * @return a set of groups.
+     * @return a list of groups id.
      */
     public List<String> getGroupsList() {
         return groupsList;
@@ -85,7 +101,7 @@ public class HostConfigFileObject {
      * 
      * Set a list of groups in this object.
      * 
-     * @param groupsList New list of groups.
+     * @param groupsList New list of groups id.
      */
     public void setGroupsList(List<String> groupsList) {
         this.groupsList = groupsList;
@@ -95,7 +111,7 @@ public class HostConfigFileObject {
      * 
      * Get id of this host.
      * 
-     * @return a set of groups.
+     * @return Id of this host.
      */
     public String getHostId() {
         return hostId;
@@ -105,10 +121,29 @@ public class HostConfigFileObject {
      * 
      * Set id of this host.
      * 
-     * @param groupsList New list of groups.
+     * @param hostId New host id.
      */
     public void setHostId(String hostId) {
         this.hostId = hostId;
     }
     
+    /**
+     * 
+     * Get IP of this host.
+     * 
+     * @return IP of this host.
+     */
+    public String getHostIp() {
+        return hostIP;
+    }
+
+    /**
+     * 
+     * Set id of this host.
+     * 
+     * @param hostIP New IP of this host.
+     */
+    public void setHostIP(String hostIP) {
+        this.hostIP = hostIP;
+    }
 }

@@ -1,0 +1,99 @@
+[
+    {
+        "groupName": "composition",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+    {
+        "groupName": "storage",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+    {
+        "groupName": "basic",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+    {
+        "groupName": "discovery",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+    {
+        "groupName": "localization",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+    {   
+        "groupName": "security",
+        "bundlesList": [
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
+                "artifactVersion" : "1.0.0",
+                "bundleCost" : 1
+            }
+        ]
+    }
+]
