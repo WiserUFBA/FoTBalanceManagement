@@ -58,6 +58,15 @@ public class Group {
         /* Create the bundle list */
         bundles_list = new HashSet<>();
     }
+    
+    /**
+     * 
+     * Create a FoT Balance group for clone.
+     * 
+     */
+    public Group(){
+        this("");
+    }
         
     /**
      * 

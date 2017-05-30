@@ -60,10 +60,9 @@ public class BundleTest extends TestSupport {
         Bundles test_bundle = TestSupport.initBundleObject();
         test_bundle.disassociateHost();
         
-        boolean test_result;
+        boolean test_result = false;
         try{
             test_bundle.getKarafInstallURL();
-            test_result = false;
         } catch(UnassociatedHostException e){
             test_result = true;
         }

@@ -37,7 +37,7 @@ public class ConfigLoader {
     
     private ConfigLoader(){}
     
-    public static ConfigFile ConfigLoader(String config_file_url){
+    public static ConfigFile configLoader(String config_file_url){
         
         /* Configuration File */
         FileReader config_file_reader;

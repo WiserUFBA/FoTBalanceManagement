@@ -34,9 +34,7 @@ public class GroupTest extends TestSupport {
     
     @Test
     public void testGroupAddHost(){
-                
-        
-        assertEquals("[Testing] Checking Karaf install url", null, null);
+        //assertEquals("[Testing] Checking Karaf install url", null, null);
     }
     
 }

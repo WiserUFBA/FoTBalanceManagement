@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
+import com.google.gson.Gson;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -53,6 +54,10 @@ public class ConfigLoaderTest extends TestSupport{
     @Test
     public void testConfigFile(){
         // TODO
+        Gson gson = new Gson();
+        
+        
+        
         assertEquals("[Testing] Checking if ", 0, 0);
     }
     

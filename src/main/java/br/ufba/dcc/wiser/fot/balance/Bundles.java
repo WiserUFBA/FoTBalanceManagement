@@ -91,6 +91,15 @@ public class Bundles {
     }
 
     /**
+     * 
+     * Blank constructor for clone operations
+     * 
+     */
+    public Bundles(){
+        this("","","", 0);
+    }
+    
+    /**
      *
      * Return maven installation URL.
      *

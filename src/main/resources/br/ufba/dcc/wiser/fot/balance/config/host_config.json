@@ -1,0 +1,22 @@
+[
+    {
+        "host_id": "Host 1",
+        "groups_list": [
+            "security",
+            "basic"
+        ]
+    },
+    {
+        "host_id": "Host 2",
+        "groups_list": [
+            "localization",
+            "basic"
+        ]
+    },
+    {
+        "host_id": "Host 3",
+        "groups_list": [
+            "discovery"
+        ]
+    }
+]
