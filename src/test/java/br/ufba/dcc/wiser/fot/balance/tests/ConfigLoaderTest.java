@@ -23,8 +23,13 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
+import br.ufba.dcc.wiser.fot.balance.config.HostConfigFileObject;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import static org.junit.Assert.assertEquals;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 
 /**
@@ -33,30 +38,44 @@ import org.junit.Test;
  */
 public class ConfigLoaderTest extends TestSupport{
     
-    /* Basic JSON string for test purpose */
-    public static final String DEFAULT_CONFIG_TEST = 
-        "{\n" +
-        "    \"FotBalanceGroups\" : [\n" +
-        "        {\n" +
-        "            \"group_name\": \"test\",\n" +
-        "            \"bundles_list\": [\n" +
-        "                {\n" +
-        "                    \"groupId\" : \"test\",\n" +
-        "                    \"artifactId\" : \"test\",\n" +
-        "                    \"artifactVersion\" : \"1.0.0.TEST\",\n" +
-        "                    \"bundleCost\" : 1\n" +
-        "                }\n" +
-        "            ]\n" +
-        "        }\n" +
-        "    ]\n" +
-        "}";
+    /* Basic JSON string for bundle test purpose */
+    public static final String DEFAULT_BUNDLE_CONFIG_TEST = 
+        "[\n" +
+        "    {\n" +
+        "        \"group_name\": \"test_group\",\n" +
+        "        \"bundles_list\": [\n" +
+        "            {\n" +
+        "                \"groupId\" : \"groupId\",\n" +
+        "                \"artifactId\" : \"artifactId\",\n" +
+        "                \"artifactVersion\" : \"1.0.0\",\n" +
+        "                \"bundleCost\" : 1\n" +
+        "            }\n" +
+        "        ]\n" +
+        "    }\n" +
+        "]";
+    
+    /* Basic JSON string for host test purpose */
+    public static final String DEFAULT_HOST_CONFIG_TEST = 
+        "[\n" +
+        "    {\n" +
+        "        \"hostId\": \"test_host\",\n" +
+        "        \"groupsList\": [\n" +
+        "            \"security\",\n" +
+        "            \"basic\"\n" +
+        "        ]\n" +
+        "    }\n" +
+        "]";
     
     @Test
     public void testConfigFile(){
         // TODO
         Gson gson = new Gson();
         
+        Type listOfHostsConfigFileObjectType = new TypeToken<ArrayList<HostConfigFileObject>>(){}.getType();
         
+        List<HostConfigFileObject> hostsConfiguration = gson.fromJson(DEFAULT_HOST_CONFIG_TEST, listOfHostsConfigFileObjectType);
+        
+        System.out.println("FINAL OBJECT => " + gson.toJson(hostsConfiguration));
         
         assertEquals("[Testing] Checking if ", 0, 0);
     }

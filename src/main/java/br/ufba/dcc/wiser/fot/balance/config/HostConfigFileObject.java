@@ -23,28 +23,52 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
-import br.ufba.dcc.wiser.fot.balance.Group;
-import com.google.gson.annotations.SerializedName;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigFile {
+public class HostConfigFileObject {
+    
+    /* Id of this host */
+    private String hostId;
     
     /* List of groups */
-    @SerializedName("FotBalanceGroups")
-    private Set<Group> groups_list;
+    private List<String> groupsList;
     
     /**
      * 
      * Instantiate a new Configuration File.
      * 
+     * @param hostId Id of this host.
+     * @param groupsList Array of groups which is associated with this host.
      */
-    public ConfigFile(){
-        groups_list = new HashSet();
+    public HostConfigFileObject(String hostId, String[] groupsList){
+        this.hostId = hostId;
+        this.groupsList = new ArrayList<>(Arrays.asList(groupsList));
+    }
+    
+    /**
+     * 
+     * Instantiate a new configuration file without groups.
+     * 
+     * @param hostId Id of this host.
+     */
+    public HostConfigFileObject(String hostId){
+        this(hostId, new String[]{});
+    }
+    
+    /**
+     * 
+     * No argument constructor for clone operations.
+     * 
+     * @param hostId Id of this host.
+     */
+    public HostConfigFileObject(){
+        this("");
     }
 
     /**
@@ -53,18 +77,38 @@ public class ConfigFile {
      * 
      * @return a set of groups.
      */
-    public Set<Group> getGroupsList() {
-        return groups_list;
+    public List<String> getGroupsList() {
+        return groupsList;
     }
 
     /**
      * 
      * Set a list of groups in this object.
      * 
-     * @param groups_list New list of groups.
+     * @param groupsList New list of groups.
      */
-    public void setGroupsList(Set<Group> groups_list) {
-        this.groups_list = groups_list;
+    public void setGroupsList(List<String> groupsList) {
+        this.groupsList = groupsList;
+    }    
+    
+    /**
+     * 
+     * Get id of this host.
+     * 
+     * @return a set of groups.
+     */
+    public String getHostId() {
+        return hostId;
+    }
+
+    /**
+     * 
+     * Set id of this host.
+     * 
+     * @param groupsList New list of groups.
+     */
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
     }
     
 }

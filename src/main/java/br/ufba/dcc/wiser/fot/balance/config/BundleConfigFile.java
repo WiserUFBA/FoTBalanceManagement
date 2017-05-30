@@ -23,42 +23,48 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
-import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.PrintStream;
+import br.ufba.dcc.wiser.fot.balance.Group;
+import com.google.gson.annotations.SerializedName;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class ConfigLoader {
+public class BundleConfigFile {
     
-    private ConfigLoader(){}
+    /* List of groups */
+    @SerializedName("FotBalanceGroups")
+    private Set<Group> groups_list;
     
-    public static BundleConfigFile configLoader(String config_file_url){
-        
-        /* Configuration File */
-        FileReader config_file_reader;
-        
-        try{
-            /* Get the configuration file */
-            config_file_reader = new FileReader(config_file_url);
-        } catch(FileNotFoundException e){
-            System.err.println("br.ufba.dcc.wiser.fot.balance.config.ConfigFile.<init>()");
-            e.printStackTrace(new PrintStream(System.err));
-            return null;
-        }
-        
-        /* Get a buffered reader */
-        BufferedReader config_file_buffer = new BufferedReader(config_file_reader);
-        
-        /* Get GSON object and convert config file to an object and after that return the config file */
-        Gson gson = new Gson();
-        BundleConfigFile config_file = gson.fromJson(config_file_buffer, BundleConfigFile.class);
-        
-        return config_file;
+    /**
+     * 
+     * Instantiate a new Configuration File.
+     * 
+     */
+    public BundleConfigFile(){
+        groups_list = new HashSet();
+    }
+
+    /**
+     * 
+     * Get list of groups
+     * 
+     * @return a set of groups.
+     */
+    public Set<Group> getGroupsList() {
+        return groups_list;
+    }
+
+    /**
+     * 
+     * Set a list of groups in this object.
+     * 
+     * @param groups_list New list of groups.
+     */
+    public void setGroupsList(Set<Group> groups_list) {
+        this.groups_list = groups_list;
     }
     
 }

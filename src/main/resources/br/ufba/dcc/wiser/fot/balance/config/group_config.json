@@ -1,7 +1,7 @@
 [
     {
-        "group_name": "composition",
-        "bundles_list": [
+        "groupName": "composition",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
@@ -11,8 +11,8 @@
         ]
     },
     {
-        "group_name": "storage",
-        "bundles_list": [
+        "groupName": "storage",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
@@ -28,8 +28,8 @@
         ]
     },
     {
-        "group_name": "basic",
-        "bundles_list": [
+        "groupName": "basic",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
@@ -45,8 +45,8 @@
         ]
     },
     {
-        "group_name": "discovery",
-        "bundles_list": [
+        "groupName": "discovery",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
@@ -62,8 +62,8 @@
         ]
     },
     {
-        "group_name": "localization",
-        "bundles_list": [
+        "groupName": "localization",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
@@ -79,8 +79,8 @@
         ]
     },
     {   
-        "group_name": "security",
-        "bundles_list": [
+        "groupName": "security",
+        "bundlesList": [
             {
                 "groupId" : "groupId",
                 "artifactId" : "artifactId",
