@@ -29,9 +29,9 @@ package br.ufba.dcc.wiser.fot.balance.utils;
  */
 public class FoTBalanceUtils {
     
-    public final static String WARNING_MSG_START = "[WARNING]";
-    public final static String ERROR_MSG_START = "[ERROR] ";
-    public final static String INFO_MSG_START = "[INFO] ";
+    public static final String WARNING_MSG_START = "[WARNING] ";
+    public static final String ERROR_MSG_START = "[ERROR] ";
+    public static final String INFO_MSG_START = "[INFO] ";
     
     /**
      * 

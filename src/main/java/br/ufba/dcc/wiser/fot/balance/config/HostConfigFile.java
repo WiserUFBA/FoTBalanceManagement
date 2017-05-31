@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.Gson;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class HostConfigFile {
     private HostConfigFile(){
         configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL);
         Gson gson = new Gson();
-        System.out.println("HAHA" + gson.toJson(configurations));
+        FoTBalanceUtils.infoMsg("Configuration file loaded!");
+        FoTBalanceUtils.infoMsg("Content: " + gson.toJson(configurations));
     }
     
     /**
