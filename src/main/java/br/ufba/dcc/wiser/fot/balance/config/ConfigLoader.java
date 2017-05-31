@@ -28,7 +28,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -58,20 +59,19 @@ public class ConfigLoader {
     public static <T> List<T> configLoader(String config_file_url){
         
         /* Configuration File */
-        FileReader config_file_reader;
+        InputStream input_stream_reader;
         
-        try{
-            /* Get the configuration file */
-            config_file_reader = new FileReader(config_file_url);
-        } catch(FileNotFoundException e){
-            System.err.println("br.ufba.dcc.wiser.fot.balance.config.ConfigFile.<init>()");
+        /* Get the configuration file */
+        input_stream_reader = ConfigLoader.class.getResourceAsStream(config_file_url);
+        
+        /* Check if this file is correct */
+        if(input_stream_reader == null){
             FoTBalanceUtils.errorMsg("Canno't load configuration file = " + config_file_url);
-            e.printStackTrace(new PrintStream(System.err));
             return null;
         }
         
         /* Get a buffered reader */
-        BufferedReader config_file_buffer = new BufferedReader(config_file_reader);
+        BufferedReader config_file_buffer = new BufferedReader(new InputStreamReader(input_stream_reader));
         
         FoTBalanceUtils.infoMsg("Loaded Configuration file - " + config_file_url);
         

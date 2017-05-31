@@ -35,7 +35,7 @@ import java.util.List;
 public class HostConfigFile {
     
     /* URL to this configuration file */
-    private static final String HOST_CONFIGURATION_FILE_URL = "br/ufba/dcc/wiser/fot/balance/config/host_config.json";
+    private static final String HOST_CONFIGURATION_FILE_URL = "/br/ufba/dcc/wiser/fot/balance/config/host_config.json";
     
     /* Configurations list */
     private final List<HostConfigFileObject> configurations;
@@ -62,4 +62,25 @@ public class HostConfigFile {
         
         return instance;
     }
+    
+    /**
+     * 
+     * Return a list of configuration objects.
+     * 
+     * @return A list of configurations object.
+     */
+    public List<HostConfigFileObject> getConfigurations(){
+        return configurations;
+    }
+    
+    /**
+     * 
+     * Return configurations list from configuration instance.
+     * 
+     * @return A list of configuration objects.
+     */
+    public static List<HostConfigFileObject> getConfigurationsFromInstance(){
+        return instance.getConfigurations();
+    }
+    
 }
