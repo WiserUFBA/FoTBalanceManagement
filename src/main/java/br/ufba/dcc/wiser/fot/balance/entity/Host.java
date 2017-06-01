@@ -41,6 +41,8 @@ public class Host {
     private final Set<Group> group_list;
     /* Capacity of this host */
     private int host_capacity;
+    /* ID of This host */
+    private String host_id;
     
     /**
      * 
@@ -49,7 +51,10 @@ public class Host {
      * @param host_hazelcast_instance Reference of hazelcast host.
      * @param host_capacity Capacity of this node.
      */
-    public Host(Node host_hazelcast_instance, int host_capacity){
+    public Host(Node host_hazelcast_instance, String host_id, int host_capacity){
+        /* Store id name of this host */
+        this.host_id = host_id;
+        
         /* Store hazelcast host instance */
         this.host_hazelcast_instance = host_hazelcast_instance;
         
@@ -64,10 +69,20 @@ public class Host {
      * 
      * Instantiate a host without a hazelcast_install reference.
      * 
+     * @param host_id Id of this host.
      * @param host_capacity Capacity of this host.
      */
-    public Host(int host_capacity){
-        this(null, host_capacity);
+    public Host(String host_id, int host_capacity){
+        this(null, host_id, host_capacity);
+    }
+    
+    /**
+     * 
+     * No argument constructor for clone operations.
+     * 
+     */
+    public Host(){
+        this("", 0);
     }
     
     /**
@@ -164,6 +179,26 @@ public class Host {
      */
     public Set<Group> getGroupList(){
         return group_list;
+    }
+    
+    /**
+     * 
+     * Get id of the actual host.
+     * 
+     * @return Id of this host.
+     */
+    public String getHostID() {
+        return host_id;
+    }
+
+    /**
+     * 
+     * Set id of this host
+     * 
+     * @param host_id New Id of this host.
+     */
+    public void setHostID(String host_id) {
+        this.host_id = host_id;
     }
     
     /**

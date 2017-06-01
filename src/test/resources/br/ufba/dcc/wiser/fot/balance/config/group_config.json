@@ -1,98 +1,29 @@
 [
     {
-        "groupName": "composition",
+        "groupName": "test1",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "GID1",
+                "artifactId" : "AID1",
+                "artifactVersion" : "1.TEST.1",
                 "bundleCost" : 1
             }
         ]
     },
     {
-        "groupName": "storage",
+        "groupName": "test2",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
+                "groupId" : "GID2",
+                "artifactId" : "AID2",
+                "artifactVersion" : "1.TEST.2",
+                "bundleCost" : 2
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            }
-        ]
-    },
-    {
-        "groupName": "basic",
-        "bundlesList": [
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            },
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            }
-        ]
-    },
-    {
-        "groupName": "discovery",
-        "bundlesList": [
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            },
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            }
-        ]
-    },
-    {
-        "groupName": "localization",
-        "bundlesList": [
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            },
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
-            }
-        ]
-    },
-    {   
-        "groupName": "security",
-        "bundlesList": [
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-
-                "bundleCost" : 1
-            },
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
-                "bundleCost" : 1
+                "groupId" : "GID3",
+                "artifactId" : "AID3",
+                "artifactVersion" : "1.TEST.3",
+                "bundleCost" : 3
             }
         ]
     }

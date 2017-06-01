@@ -3,23 +3,14 @@
         "hostId": "Host 1",
         "hostIP": "192.168.0.1",
         "groupsList": [
-            "security",
-            "basic"
+            "test1"
         ]
     },
     {
         "hostId": "Host 2",
         "hostIP": "192.168.0.2",
         "groupsList": [
-            "localization",
-            "basic"
-        ]
-    },
-    {
-        "hostId": "Host 3",
-        "hostIP": "192.168.0.3",
-        "groupsList": [
-            "discovery"
+            "test2"
         ]
     }
 ]

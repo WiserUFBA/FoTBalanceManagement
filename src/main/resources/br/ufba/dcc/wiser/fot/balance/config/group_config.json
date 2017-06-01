@@ -3,8 +3,8 @@
         "groupName": "composition",
         "bundlesList": [
             {
-                "groupId" : "groupIdComposition1",
-                "artifactId" : "artifactIdComposition1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.1",
                 "bundleCost" : 1
             }
@@ -14,14 +14,14 @@
         "groupName": "storage",
         "bundlesList": [
             {
-                "groupId" : "groupIdStorage1",
-                "artifactId" : "artifactIdStorage1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.2",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupIdStorage2",
-                "artifactId" : "artifactId-storage2",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.3",
                 "bundleCost" : 1
             }
@@ -31,14 +31,14 @@
         "groupName": "basic",
         "bundlesList": [
             {
-                "groupId" : "groupIdBasic1",
-                "artifactId" : "artifactIdBasic1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.4",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupIdBasic2",
-                "artifactId" : "artifactIdBasic2",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.5",
                 "bundleCost" : 1
             }
@@ -48,14 +48,14 @@
         "groupName": "discovery",
         "bundlesList": [
             {
-                "groupId" : "groupIdDiscovery1",
-                "artifactId" : "artifactIdDiscovery1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.6",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupIdDiscovery2",
-                "artifactId" : "artifactIdDiscovery2",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.7",
                 "bundleCost" : 1
             }
@@ -65,14 +65,14 @@
         "groupName": "localization",
         "bundlesList": [
             {
-                "groupId" : "groupIdLocalization1",
-                "artifactId" : "artifactIdLocalization1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.8",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupIdLocalization2",
-                "artifactId" : "artifactIdLocalization2",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.9",
                 "bundleCost" : 1
             }
@@ -82,15 +82,15 @@
         "groupName": "security",
         "bundlesList": [
             {
-                "groupId" : "groupIdSecurity1",
-                "artifactId" : "artifactIdSecurity1",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.10",
 
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupIdSecurity2",
-                "artifactId" : "artifactIdSecurity2",
+                "groupId" : "groupId",
+                "artifactId" : "artifactId",
                 "artifactVersion" : "1.0.11",
                 "bundleCost" : 1
             }

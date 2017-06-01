@@ -29,6 +29,14 @@ import java.util.Set;
 import org.apache.karaf.cellar.core.Node;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
+import org.optaplanner.core.api.domain.solution.PlanningSolution;
+import org.optaplanner.core.api.domain.solution.Solution;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
 /**
  *
@@ -36,16 +44,20 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class Group {
+@PlanningSolution()
+public class Group implements Solution<HardSoftScore>{
     /* Name of the group */
     @SerializedName("groupName")
     private String group_name;
     /* List of hosts */
-    private final Set<Host> host_list;
+    private Set<Host> host_list;
     /* List of Bundles */
     @SerializedName("bundlesList")
-    private final Set<Bundles> bundles_list;
+    private Set<Bundles> bundles_list;
 
+    /* Score for OptaPlanner operations */
+    private HardSoftScore score;
+    
     /**
      * 
      * Create a FoT Balance Group.
@@ -207,8 +219,13 @@ public class Group {
      * 
      * @return Bundle list of this group.
      */
+    @PlanningEntityCollectionProperty
     public Set<Bundles> getBundleList(){
         return bundles_list;
+    }
+    
+    public void setBundleList(Set<Bundles> bundles_list) {
+        this.bundles_list = bundles_list;
     }
     
     /**
@@ -217,8 +234,54 @@ public class Group {
      * 
      * @return Bundle list of this group.
      */
+    @ValueRangeProvider(id = "hostRange")
     public Set<Host> getHostList(){
         return host_list;
+    }
+    
+    /**
+     * 
+     * Set Host List.
+     * 
+     * @param host_list 
+     */
+    public void setHostList(Set<Host> host_list) {
+        this.host_list = host_list;
+    }
+   
+    /**
+     * 
+     * HardSoft Score OptaPlanner method for retrieve score.
+     * 
+     * @return Actual score of this operation
+     */
+    @Override
+    public HardSoftScore getScore() {
+        return score;
+    }
+
+    /**
+     * 
+     * Change score of this Group.
+     * 
+     * @param score 
+     */
+    @Override
+    public void setScore(HardSoftScore score) {
+        this.score = score;
+    }
+    
+    /**
+     * 
+     * Get list of host that is being organized.
+     * 
+     * @return List of facts (Hosts of this group)
+     */
+    @Override
+    public Collection<? extends Object> getProblemFacts() {
+        List<Object> facts = new ArrayList<>();
+        facts.addAll(host_list);
+        return facts;
     }
     
 }

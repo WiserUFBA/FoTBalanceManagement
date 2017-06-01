@@ -29,17 +29,13 @@ import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarInputStream;
@@ -63,14 +59,6 @@ import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.core.api.domain.solution.PlanningSolution;
-import org.optaplanner.core.api.domain.solution.Solution;
-import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.impl.score.buildin.hardsoft.HardSoftScoreDefinition;
-import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
 
 /**
  *
@@ -78,9 +66,7 @@ import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-@PlanningSolution
-@XStreamAlias("Controller")
-public class Controller implements Solution<HardSoftScore> {
+public class Controller {
 
     /* Controller Instance */
     private static Controller instance = null;
@@ -115,10 +101,6 @@ public class Controller implements Solution<HardSoftScore> {
     /* Karaf Install Port, used by bundles */
     public static final int KARAF_INSTALL_PORT = 8181;
 
-    /* Balance Score */
-    @XStreamConverter(value = XStreamScoreConverter.class, types = {HardSoftScoreDefinition.class})
-    private HardSoftScore balance_score;
-
     /**
      *
      * Create a new Controller instance.
@@ -141,10 +123,6 @@ public class Controller implements Solution<HardSoftScore> {
 
         /* Create a set of bundles */
         bundle_list = new HashSet<>();
-
-        /* Instantiate a solver for balancing */
-        SolverFactory<Controller> solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
-        Solver<Controller> solver = solverFactory.buildSolver();
     }
 
     /**
@@ -226,7 +204,7 @@ public class Controller implements Solution<HardSoftScore> {
             /* For each member who belong to members list */
             for (Member member : members) {
                 /* Create a new host based on cluster member */
-                Host host = new Host(new HazelcastNode(member), NODE_CAPACITY);
+                Host host = new Host(new HazelcastNode(member), member.getUuid(), NODE_CAPACITY);
 
                 /* Store the temp host */
                 temp_host_list.add(host);
@@ -594,44 +572,6 @@ public class Controller implements Solution<HardSoftScore> {
             }
         }
     }
-
-    /**
-     *
-     * Get actual balance score.
-     *
-     * @return Actual balance score.
-     */
-    @Override
-    public HardSoftScore getScore() {
-        return balance_score;
-    }
-
-    /**
-     * Set a new balance score.
-     *
-     * @param score New balance score.
-     */
-    @Override
-    public void setScore(HardSoftScore score) {
-        this.balance_score = score;
-    }
-
-    /**
-     *
-     * This is needed by solver.
-     *
-     * @return Collection of facts to be used in solver
-     */
-    @Override
-    public Collection<? extends Object> getProblemFacts() {
-        List<Object> facts = new ArrayList<>();
-        facts.addAll(host_list);
-
-        // Do not add the planning entity's (processList) because that will be done automatically
-        return facts;
-    }
-
-    @ValueRangeProvider(id = "hostRange")
 
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**

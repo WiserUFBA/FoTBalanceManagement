@@ -29,6 +29,10 @@ package br.ufba.dcc.wiser.fot.balance.utils;
  */
 public class FoTBalanceUtils {
     
+    /* Counter for balance operations check */
+    public static int BALANCE_COUNTER = 0;
+    
+    /* System Messages line begin */
     public static final String WARNING_MSG_START = "[WARNING] ";
     public static final String ERROR_MSG_START = "[ERROR] ";
     public static final String INFO_MSG_START = "[INFO] ";
