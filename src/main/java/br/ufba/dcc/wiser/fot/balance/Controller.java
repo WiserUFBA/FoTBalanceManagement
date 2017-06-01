@@ -572,7 +572,18 @@ public class Controller {
             }
         }
     }
-
+    
+    /**
+     *
+     * Uninstall bundle in a given host.
+     *
+     * @param node Given node to uninstall bundles.
+     * @param install_urls List of uninstall urls.
+     * @param group_name Group name.
+     */
+    public void hostUnninstalBundle(Node node, ArrayList<String> install_urls, String group_name);
+    // TODO!
+    
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**
      *
