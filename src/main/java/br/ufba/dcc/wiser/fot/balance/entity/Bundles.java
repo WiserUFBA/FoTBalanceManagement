@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.ufba.dcc.wiser.fot.balance;
+package br.ufba.dcc.wiser.fot.balance.entity;
 
+import br.ufba.dcc.wiser.fot.balance.Controller;
 import br.ufba.dcc.wiser.fot.balance.exceptions.UnassociatedHostException;
 import com.google.gson.annotations.SerializedName;
 

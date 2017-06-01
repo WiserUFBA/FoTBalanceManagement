@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
+import br.ufba.dcc.wiser.fot.balance.config.GroupConfigFile;
 import br.ufba.dcc.wiser.fot.balance.config.HostConfigFile;
 import br.ufba.dcc.wiser.fot.balance.config.HostConfigFileObject;
 import com.google.gson.Gson;
@@ -80,6 +81,7 @@ public class ConfigLoaderTest extends TestSupport{
         System.out.println("FINAL OBJECT => " + gson.toJson(hostsConfiguration));
         
         HostConfigFile.getInstance();
+        GroupConfigFile.getInstance();
         
         assertEquals("[Testing] Checking if ", 0, 0);
     }

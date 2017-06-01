@@ -23,6 +23,9 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import br.ufba.dcc.wiser.fot.balance.entity.Host;
+import br.ufba.dcc.wiser.fot.balance.entity.Group;
+import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
@@ -648,7 +651,7 @@ public class Controller implements Solution<HardSoftScore> {
      * @param group_name Group name which will be tested
      * @return True if this group is already registered and false otherwise.
      */
-    boolean groupExists(String group_name) {
+    public boolean groupExists(String group_name) {
         return group_list.containsKey(group_name);
     }
     

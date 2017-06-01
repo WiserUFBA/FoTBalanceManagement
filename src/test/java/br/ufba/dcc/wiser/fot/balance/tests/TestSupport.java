@@ -23,9 +23,9 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
-import br.ufba.dcc.wiser.fot.balance.Bundles;
-import br.ufba.dcc.wiser.fot.balance.Group;
-import br.ufba.dcc.wiser.fot.balance.Host;
+import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
+import br.ufba.dcc.wiser.fot.balance.entity.Group;
+import br.ufba.dcc.wiser.fot.balance.entity.Host;
 
 /**
  *

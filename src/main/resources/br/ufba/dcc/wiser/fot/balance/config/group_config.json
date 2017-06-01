@@ -3,9 +3,9 @@
         "groupName": "composition",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdComposition1",
+                "artifactId" : "artifactIdComposition1",
+                "artifactVersion" : "1.0.1",
                 "bundleCost" : 1
             }
         ]
@@ -14,15 +14,15 @@
         "groupName": "storage",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdStorage1",
+                "artifactId" : "artifactIdStorage1",
+                "artifactVersion" : "1.0.2",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdStorage2",
+                "artifactId" : "artifactId-storage2",
+                "artifactVersion" : "1.0.3",
                 "bundleCost" : 1
             }
         ]
@@ -31,15 +31,15 @@
         "groupName": "basic",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdBasic1",
+                "artifactId" : "artifactIdBasic1",
+                "artifactVersion" : "1.0.4",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdBasic2",
+                "artifactId" : "artifactIdBasic2",
+                "artifactVersion" : "1.0.5",
                 "bundleCost" : 1
             }
         ]
@@ -48,15 +48,15 @@
         "groupName": "discovery",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdDiscovery1",
+                "artifactId" : "artifactIdDiscovery1",
+                "artifactVersion" : "1.0.6",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdDiscovery2",
+                "artifactId" : "artifactIdDiscovery2",
+                "artifactVersion" : "1.0.7",
                 "bundleCost" : 1
             }
         ]
@@ -65,15 +65,15 @@
         "groupName": "localization",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdLocalization1",
+                "artifactId" : "artifactIdLocalization1",
+                "artifactVersion" : "1.0.8",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdLocalization2",
+                "artifactId" : "artifactIdLocalization2",
+                "artifactVersion" : "1.0.9",
                 "bundleCost" : 1
             }
         ]
@@ -82,16 +82,16 @@
         "groupName": "security",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdSecurity1",
+                "artifactId" : "artifactIdSecurity1",
+                "artifactVersion" : "1.0.10",
 
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.0",
+                "groupId" : "groupIdSecurity2",
+                "artifactId" : "artifactIdSecurity2",
+                "artifactVersion" : "1.0.11",
                 "bundleCost" : 1
             }
         ]

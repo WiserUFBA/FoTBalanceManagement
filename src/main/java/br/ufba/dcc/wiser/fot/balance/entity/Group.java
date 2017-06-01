@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.ufba.dcc.wiser.fot.balance;
+package br.ufba.dcc.wiser.fot.balance.entity;
 
+import br.ufba.dcc.wiser.fot.balance.Controller;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.karaf.cellar.core.Node;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
+import com.google.gson.annotations.SerializedName;
 
 /**
  *
@@ -36,10 +38,12 @@ import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
  */
 public class Group {
     /* Name of the group */
+    @SerializedName("groupName")
     private String group_name;
     /* List of hosts */
     private final Set<Host> host_list;
     /* List of Bundles */
+    @SerializedName("bundlesList")
     private final Set<Bundles> bundles_list;
 
     /**

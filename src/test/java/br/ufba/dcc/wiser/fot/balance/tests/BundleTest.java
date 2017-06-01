@@ -23,7 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance.tests;
 
-import br.ufba.dcc.wiser.fot.balance.Bundles;
+import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.exceptions.UnassociatedHostException;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;

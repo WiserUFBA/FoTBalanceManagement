@@ -23,10 +23,11 @@
  */
 package br.ufba.dcc.wiser.fot.balance.config;
 
-import br.ufba.dcc.wiser.fot.balance.Group;
-import com.google.gson.annotations.SerializedName;
-import java.util.HashSet;
-import java.util.Set;
+import br.ufba.dcc.wiser.fot.balance.entity.Group;
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
+import com.google.gson.Gson;
+import java.util.List;
+
 
 /**
  *
@@ -37,7 +38,53 @@ import java.util.Set;
 public class GroupConfigFile {
     
     /* URL to this configuration file */
-    private static final String GROUP_CONFIGURATION_FILE_URL = "br/ufba/dcc/wiser/fot/balance/config/group_config.json";
+    private static final String GROUP_CONFIGURATION_FILE_URL = "/br/ufba/dcc/wiser/fot/balance/config/group_config.json";
     
+    /* Configurations list */
+    private final List<Group> configurations;
+    
+    /* Instance of this object */
+    private static GroupConfigFile instance = null;
+    
+    /* Private constructor for singlenton operations */
+    private GroupConfigFile(){
+        configurations = ConfigLoader.configLoader(GROUP_CONFIGURATION_FILE_URL);
+        Gson gson = new Gson();
+        FoTBalanceUtils.infoMsg("Configuration file loaded!");
+        FoTBalanceUtils.infoMsg("Content: " + gson.toJson(configurations));
+    }
+    
+    /**
+     * Get Configurations from host configuration file instance 
+     * 
+     * @return An instance of Host Configuration file properties.
+     */
+    public static GroupConfigFile getInstance(){
+        if(instance == null){
+            instance = new GroupConfigFile();
+        }
+        
+        return instance;
+    }
+    
+    /**
+     * 
+     * Return a list of configuration objects.
+     * 
+     * @return A list of configurations object.
+     */
+    public List<Group> getConfigurations(){
+        return configurations;
+    }
+    
+    /**
+     * 
+     * Return configurations list from configuration instance.
+     * 
+     * @return A list of configuration objects.
+     */
+    public static List<Group> getConfigurationsFromInstance(){
+        return instance.getConfigurations();
+    }
     
 }
