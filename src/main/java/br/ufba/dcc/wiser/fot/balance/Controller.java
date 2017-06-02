@@ -57,6 +57,8 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.api.solver.SolverFactory;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -89,14 +91,17 @@ public class Controller {
     /* List of offline hosts, hosts which will loose bundles after caming online */
     private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
     
+    /* Factory of Group Solver */
+    private final SolverFactory<Group> solver_factory;
+    
+    /* Group Solver Class */
+    private final Solver<Group> solver;
+    
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;
 
     /* Solver configuration file */
     public static final String SOLVER_CONFIGURATION = "br/ufba/dcc/wiser/fot/balance/solver/fotBalanceSolverConfig.xml";
-
-    /* Config file */
-    public static final String CONFIG_CLASSPATH_URL = "br/ufba/dcc/wiser/fot/balance/config/balance_config.json";
 
     /* Karaf Install Port, used by bundles */
     public static final int KARAF_INSTALL_PORT = 8181;
@@ -123,6 +128,11 @@ public class Controller {
         
         /* Create the list of offline hosts, which will loose the bundles installed by this controller */
         offline_hosts_to_remove_bundles = new HashMap<>();
+        
+        /* OptaPlanner Solver Factory */
+        solver_factory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
+        /* OptaPlanner Solver */
+        solver = solver_factory.buildSolver();
     }
 
     /**
@@ -146,7 +156,7 @@ public class Controller {
      *
      */
     public void init() {
-        
+        // TODO, THIS SHOULD MOUNT ALL SYSTEM
     }
 
     /**
@@ -270,7 +280,15 @@ public class Controller {
      *
      */
     public void balanceNetwork() {
-        // TODO
+        
+        /* For each Group solve the class, compare results and do the network changes */
+        for(String group_name : group_list.keySet()){
+            Group solved_group = solver.solve(group_list.get(group_name));
+            
+            // TODO: DO THE CHANGES ON NETWORK
+        }
+        
+        // THAT's ALL :)
     }
 
     /**
