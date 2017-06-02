@@ -229,12 +229,6 @@
             <version>6.5.0.Final</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.optaplanner</groupId>
-            <artifactId>optaplanner-persistence-xstream</artifactId>
-            <version>6.5.0.Final</version>
-            <type>jar</type>
-        </dependency>
         <!-- Junit -->
         <dependency>
             <groupId>junit</groupId>
