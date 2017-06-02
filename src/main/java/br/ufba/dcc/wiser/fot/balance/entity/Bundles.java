@@ -172,6 +172,16 @@ public class Bundles {
         return host_associated;
     }
     
+    /**
+     *
+     * Set host associated with this bundle.
+     *
+     * @param host_associated New host associated with this bundle.
+     */
+    public void setHostAssociated(Host host_associated) {
+        this.host_associated = host_associated;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**
      *
@@ -271,16 +281,6 @@ public class Bundles {
      */
     public void setBundleGroup(int bundle_cost) {
         this.bundle_cost = bundle_cost;
-    }
-
-    /**
-     *
-     * Set host associated with this bundle.
-     *
-     * @param host_associated New host associated with this bundle.
-     */
-    public void setHostAssociated(Host host_associated) {
-        this.host_associated = host_associated;
     }
 
     // </editor-fold>

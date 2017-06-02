@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
 import com.hazelcast.core.Cluster;
@@ -85,7 +86,9 @@ public class Controller {
     private final Set<Host> host_list;
     /* Array of Groups */
     private final Map<String, Group> group_list;
-
+    /* List of offline hosts, hosts which will loose bundles after caming online */
+    private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
+    
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;
 
@@ -117,6 +120,9 @@ public class Controller {
 
         /* Create the list of groups */
         group_list = new HashMap<>();
+        
+        /* Create the list of offline hosts, which will loose the bundles installed by this controller */
+        offline_hosts_to_remove_bundles = new HashMap<>();
     }
 
     /**
@@ -175,6 +181,17 @@ public class Controller {
 
         /* Unregister this group from cellar */
         removeCellarGroup(group_name);
+    }
+    
+    /**
+     * 
+     * Register offline host.
+     * 
+     * @param host Offline host.
+     * @param bundles A set of bundles to remove when the host returns.
+     */
+    public void registerOfflineHostBundles(Host host, Set<Bundles> bundles){
+        offline_hosts_to_remove_bundles.put(host, bundles);
     }
 
     /* Update the list of hosts based on cluster members */

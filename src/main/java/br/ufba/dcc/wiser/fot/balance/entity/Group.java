@@ -23,20 +23,22 @@
  */
 package br.ufba.dcc.wiser.fot.balance.entity;
 
-import br.ufba.dcc.wiser.fot.balance.Controller;
-import java.util.HashSet;
 import java.util.Set;
-import org.apache.karaf.cellar.core.Node;
-import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
-import com.google.gson.annotations.SerializedName;
+import java.util.Map;
+import java.util.List;
+import java.util.HashSet;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
-import org.optaplanner.core.api.domain.solution.PlanningSolution;
+import org.apache.karaf.cellar.core.Node;
 import org.optaplanner.core.api.domain.solution.Solution;
+import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
+import br.ufba.dcc.wiser.fot.balance.Controller;
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
+import com.google.gson.annotations.SerializedName;
 
 /**
  *
@@ -54,7 +56,9 @@ public class Group implements Solution<HardSoftScore>{
     /* List of Bundles */
     @SerializedName("bundlesList")
     private Set<Bundles> bundles_list;
-
+    /* Map of Host Bundle association */
+    private final Map<Host, Set<Bundles>> host_bundle_associations;
+    
     /* Score for OptaPlanner operations */
     private HardSoftScore score;
     
@@ -73,6 +77,9 @@ public class Group implements Solution<HardSoftScore>{
         
         /* Create the bundle list */
         bundles_list = new HashSet<>();
+        
+        /* Create the map of bundle associations */
+        host_bundle_associations = new HashMap<>();
     }
     
     /**
@@ -139,6 +146,9 @@ public class Group implements Solution<HardSoftScore>{
     public void addHost(Host host){
         /* Add the host to the host list */
         host_list.add(host);
+        
+        /* Add a reference of this host to the map of bundles */
+        host_bundle_associations.put(host, new HashSet<>());
     }
     
     /**
@@ -150,6 +160,17 @@ public class Group implements Solution<HardSoftScore>{
     public void removeHost(Host host){
         /* Remove the host from the host list */
         host_list.remove(host);
+        
+        /* Pick the list of bundles associated with this host and put it on List of bundles to remove */
+        Set<Bundles> old_bundles_associated = host_bundle_associations.get(host);
+        host_bundle_associations.remove(host);
+        Controller controller = Controller.getInstance();
+        controller.registerOfflineHostBundles(host, old_bundles_associated);
+        
+        /* Remove references of this host on each bundle */
+        for(Bundles bundle : old_bundles_associated){
+            bundle.disassociateHost();
+        }
     }
     
     /**
@@ -212,6 +233,33 @@ public class Group implements Solution<HardSoftScore>{
     public String getGroupName(){
         return group_name;
     }
+    
+    /**
+     * 
+     * Check if the map of associations between bundles and host are updated,
+     * this method should be called always after the balance
+     * 
+     */
+    public void checkMapAssociations(){
+        
+        /* Clean old associations to avoid conflicts */
+        for(Host host : host_list){
+            host_bundle_associations.get(host).clear();
+        }
+        
+        /* For each bundle check if the host associated with it isn't null and put in the map */
+        for(Bundles bundle : bundles_list){
+            
+            /* Get host associated with the following bundle */
+            Host host_associated = bundle.getHostAssociated();
+            
+            /* If this bundle has a host instance put in the map */       
+            if(host_associated != null){
+                host_bundle_associations.get(host_associated).add(bundle);
+            }
+        }
+    }
+    
     
     /**
      * 
