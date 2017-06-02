@@ -575,14 +575,129 @@ public class Controller {
     
     /**
      *
-     * Uninstall bundle in a given host.
+     * Uninstall a list of bundle in a given host.
      *
      * @param node Given node to uninstall bundles.
-     * @param install_urls List of uninstall urls.
+     * @param uninstall_urls List of uninstall urls.
      * @param group_name Group name.
      */
-    public void hostUnninstalBundle(Node node, ArrayList<String> install_urls, String group_name);
-    // TODO!
+    public void hostUnninstalBundle(Node node, ArrayList<String> uninstall_urls, String group_name){
+        /* Get the group based on group name */
+        org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
+
+        /* If the group is null show error and stop execution */
+        if (group == null) {
+            System.err.println("Cluster group " + group_name + " doesn't exist");
+            return;
+        }
+
+        /* Check if the producer is ON, if it's not stop execution */
+        if (event_producer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF");
+            return;
+        }
+
+        /* Create a Cellar Support */
+        CellarSupport cellar_support = new CellarSupport();
+        cellar_support.setClusterManager(cluster_manager);
+        cellar_support.setGroupManager(group_manager);
+        cellar_support.setConfigurationAdmin(configuration_admin);
+
+        /* Uninstall a block of maven install urls */
+        for (String uninstall_url : uninstall_urls) {
+
+            /* Check if the bundle is allowed to uninstall */
+            if (cellar_support.isAllowed(group, Constants.CATEGORY, uninstall_url, EventType.OUTBOUND)) {
+                /* Jar Input Stream  */
+                JarInputStream jar_input_stream;
+
+                /* Try retrieve Jar and get manifest */
+                try {
+                    jar_input_stream = new JarInputStream(new URL(uninstall_url).openStream());
+                } /* Catch errors of malformed URL exception */ catch (MalformedURLException e) {
+                    System.err.println("Something went wrong... Malformed URL!");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                } /* Catch IO Exception */ catch (IOException e) {
+                    System.err.println("Something went wrong... IO Exception!");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                }
+
+                /* Get the manifest of the jar input stream */
+                Manifest manifest = jar_input_stream.getManifest();
+
+                /* If the manifest is invalid, skip this bundle */
+                if (manifest == null) {
+                    System.err.println("Bundle location " + uninstall_url + " doesn't seem correct!");
+                    continue;
+                }
+
+                /* Get Bundle Name */
+                String name = manifest.getMainAttributes().getValue("Bundle-Name");
+                /* Get Symbolic Name */
+                String symbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+
+                /* Since name cannot be null, we check if name is valid */
+                if (name == null) {
+                    name = symbolicName;
+                }
+
+                /* If it's not valid now use install_url as name */
+                if (name == null) {
+                    name = uninstall_url;
+                }
+
+                /* Try to get Bundle Version */
+                String version;
+
+                try {
+                    version = manifest.getMainAttributes().getValue("Bundle-Version");
+                    jar_input_stream.close();
+                } catch (IOException e) {
+                    System.err.println("IO Exception wrong...");
+                    e.printStackTrace(new PrintStream(System.err));
+                    continue;
+                }
+
+                /* Get Classloader */
+                ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+                /* Now update the cluster group */
+                try {
+                    Map<String, BundleState> clusterBundles = cluster_manager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group_name);
+                    BundleState state = new BundleState();
+                    state.setName(name);
+                    state.setSymbolicName(symbolicName);
+                    state.setVersion(version);
+                    state.setId(clusterBundles.size());
+                    state.setLocation(uninstall_url);
+
+                    /* Set this bundle as uninstalled */
+                    state.setStatus(BundleEvent.UNINSTALLED);
+
+                    System.out.println("status " + state.getStatus());
+                    clusterBundles.put(symbolicName + "/" + version, state);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(originalClassLoader);
+                }
+
+                /* Event of bundles of cluster */
+                ClusterBundleEvent event;
+
+                /* Set the bundle as uninstalled */
+                event = new ClusterBundleEvent(symbolicName, version, uninstall_url, BundleEvent.UNINSTALLED);
+                event.setSourceGroup(group);
+                System.out.println("event: " + event);
+                event_producer.produce(event);
+
+            } else {
+                System.err.println("Bundle location " + uninstall_url
+                        + " is blocked outbound for cluster group " + group_name);
+            }
+        }
+    }
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**

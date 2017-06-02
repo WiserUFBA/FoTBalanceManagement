@@ -44,7 +44,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
  * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-@PlanningSolution()
+@PlanningSolution
 public class Group implements Solution<HardSoftScore>{
     /* Name of the group */
     @SerializedName("groupName")
@@ -283,5 +283,28 @@ public class Group implements Solution<HardSoftScore>{
         facts.addAll(host_list);
         return facts;
     }
+    
+    /**
+     * 
+     * Display association of the bundles of this group with hosts associated with this group.
+     * 
+     */
+    void displayAssociations() {
+        for(Host host : host_list){
+            FoTBalanceUtils.infoMsg("Associated Bundles => " + host.getHostID());
+            for(Bundles bundle : bundles_list){
+                if(bundle.getHostAssociated() != null && bundle.getHostAssociated().equals(host)){
+                    FoTBalanceUtils.infoMsg("\t" + bundle.getBundleMvnArtifact());
+                }
+            }
+        }
+        FoTBalanceUtils.infoMsg("Unassociated Bundles:");
+        for(Bundles bundle : bundles_list){
+            if(bundle.getHostAssociated() == null){
+                FoTBalanceUtils.infoMsg("\t" + bundle.getBundleMvnArtifact());
+            }
+        }
+    }
+    
     
 }

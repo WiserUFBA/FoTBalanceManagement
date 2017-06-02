@@ -24,14 +24,18 @@
 package br.ufba.dcc.wiser.fot.balance.entity;
 
 import br.ufba.dcc.wiser.fot.balance.Controller;
-import br.ufba.dcc.wiser.fot.balance.Controller;
 import br.ufba.dcc.wiser.fot.balance.exceptions.UnassociatedHostException;
+import br.ufba.dcc.wiser.fot.balance.solver.BundleDifficultyComparator;
+import br.ufba.dcc.wiser.fot.balance.solver.HostStrengthComparator;
 import com.google.gson.annotations.SerializedName;
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 /**
  *
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
+@PlanningEntity(difficultyComparatorClass = BundleDifficultyComparator.class)
 public class Bundles {
 
     /* Maven GroupID */
@@ -55,8 +59,11 @@ public class Bundles {
     public static String MVN_URL_FORMAT = "mvn=%s/%s/%s";
 
     /* Karaf Install URL */
-    public static String KARAF_URL_FORMAT = "url:http://%s:%s/bundleInstall?%s";
+    public static String KARAF_INSTALL_URL_FORMAT = "url:http://%s:%s/bundleInstall?%s";
 
+    /* Karaf Uninstall URL */
+    public static String KARAF_UNINSTALL_URL_FORMAT = "url:http://%s:%s/bundleUninstall?%s";
+    
     /**
      *
      * Construct a bundle object reference.
@@ -124,10 +131,26 @@ public class Bundles {
         if (host_associated == null) {
             throw new UnassociatedHostException();
         }
-        return String.format(KARAF_URL_FORMAT, host_associated.getHostAddress(), 
+        return String.format(KARAF_INSTALL_URL_FORMAT, host_associated.getHostAddress(), 
                             Controller.KARAF_INSTALL_PORT, getMavenURL());
     }
 
+    /**
+     *
+     * Get Karaf installation URL.
+     *
+     * @return Karaf string installation url.
+     * @throws UnassociatedHostException Throw exception if there's no host
+     * associated with this bundle.
+     */
+    public String getKarafUninstallURL() throws UnassociatedHostException {
+        if (host_associated == null) {
+            throw new UnassociatedHostException();
+        }
+        return String.format(KARAF_UNINSTALL_URL_FORMAT, host_associated.getHostAddress(), 
+                            Controller.KARAF_INSTALL_PORT, getMavenURL());
+    }
+    
     /**
      *
      * Disassociate host from this bundle.
@@ -137,6 +160,18 @@ public class Bundles {
         host_associated = null;
     }
 
+    /**
+     *
+     * Return host associated with this bundle.
+     *
+     * @return Host associated with this bundle.
+     */
+    @PlanningVariable(valueRangeProviderRefs = {"hostRange"},
+        strengthComparatorClass = HostStrengthComparator.class)
+    public Host getHostAssociated() {
+        return host_associated;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**
      *
@@ -236,16 +271,6 @@ public class Bundles {
      */
     public void setBundleGroup(int bundle_cost) {
         this.bundle_cost = bundle_cost;
-    }
-
-    /**
-     *
-     * Return host associated with this bundle.
-     *
-     * @return Host associated with this bundle.
-     */
-    public Host getHostAssociated() {
-        return host_associated;
     }
 
     /**
