@@ -26,11 +26,9 @@ package br.ufba.dcc.wiser.fot.balance.tests;
 import br.ufba.dcc.wiser.fot.balance.config.GroupConfigFile;
 import br.ufba.dcc.wiser.fot.balance.config.HostConfigFile;
 import br.ufba.dcc.wiser.fot.balance.config.HostConfigFileObject;
+import br.ufba.dcc.wiser.fot.balance.entity.Group;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import static org.junit.Assert.assertEquals;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 
@@ -40,50 +38,25 @@ import org.junit.Test;
  */
 public class ConfigLoaderTest extends TestSupport{
     
-    /* Basic JSON string for bundle test purpose */
-    public static final String DEFAULT_BUNDLE_CONFIG_TEST = 
-        "[\n" +
-        "    {\n" +
-        "        \"group_name\": \"test_group\",\n" +
-        "        \"bundles_list\": [\n" +
-        "            {\n" +
-        "                \"groupId\" : \"groupId\",\n" +
-        "                \"artifactId\" : \"artifactId\",\n" +
-        "                \"artifactVersion\" : \"1.0.0\",\n" +
-        "                \"bundleCost\" : 1\n" +
-        "            }\n" +
-        "        ]\n" +
-        "    }\n" +
-        "]";
     
-    /* Basic JSON string for host test purpose */
-    public static final String DEFAULT_HOST_CONFIG_TEST = 
-        "[\n" +
-        "    {\n" +
-        "        \"hostId\": \"test_host\",\n" +
-        "        \"hostIP\": \"127.0.0.1\",\n" +
-        "        \"groupsList\": [\n" +
-        "            \"security\",\n" +
-        "            \"basic\"\n" +
-        "        ]\n" +
-        "    }\n" +
-        "]";
+    /* Return of host config file expected */
+    public static String HOST_CONFIG_FILE_SERIALIZED_OUTPUT = "[{\"hostId\":\"Host 1\",\"hostIP\":\"192.168.0.1\",\"groupsList\":[\"test1\"]},{\"hostId\":\"Host 2\",\"hostIP\":\"192.168.0.2\",\"groupsList\":[\"test2\"]}]";
+    
+    /* Return of group config file expected */
+    public static String GROUP_CONFIG_FILE_SERIALIZED_OUTPUT = "[{\"groupName\":\"test1\",\"bundlesList\":[{\"groupId\":\"GID1\",\"artifactId\":\"AID1\",\"artifactVersion\":\"1.TEST.1\",\"bundleCost\":1.0}]},{\"groupName\":\"test2\",\"bundlesList\":[{\"groupId\":\"GID2\",\"artifactId\":\"AID2\",\"artifactVersion\":\"1.TEST.2\",\"bundleCost\":2.0},{\"groupId\":\"GID3\",\"artifactId\":\"AID3\",\"artifactVersion\":\"1.TEST.3\",\"bundleCost\":3.0}]}]";
     
     @Test
-    public void testConfigFile(){
-        // TODO
+    public void testConfigFileLoader(){
+        /* GSON to deserialization of those strings */
         Gson gson = new Gson();
         
-        Type listOfHostsConfigFileObjectType = new TypeToken<ArrayList<HostConfigFileObject>>(){}.getType();
+        /* Load the two test configuration files */
+        List<HostConfigFileObject> host_configurations = HostConfigFile.getConfigurationsFromInstance();
+        List<Group> group_configurations = GroupConfigFile.getConfigurationsFromInstance();
         
-        List<HostConfigFileObject> hostsConfiguration = gson.fromJson(DEFAULT_HOST_CONFIG_TEST, listOfHostsConfigFileObjectType);
-        
-        System.out.println("FINAL OBJECT => " + gson.toJson(hostsConfiguration));
-        
-        HostConfigFile.getInstance();
-        GroupConfigFile.getInstance();
-        
-        assertEquals("[Testing] Checking if ", 0, 0);
+        /* Now check if the serialization of the list of configurations is the same as our stored string */
+        assertEquals("[Testing] Checking if host config file is correct", gson.toJson(host_configurations), HOST_CONFIG_FILE_SERIALIZED_OUTPUT);
+        assertEquals("[Testing] Checking if group config file is correct", gson.toJson(group_configurations), HOST_CONFIG_FILE_SERIALIZED_OUTPUT);
     }
     
 }

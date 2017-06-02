@@ -25,7 +25,6 @@ package br.ufba.dcc.wiser.fot.balance;
 
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
-import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
@@ -84,8 +83,6 @@ public class Controller {
     protected ConfigurationAdmin configuration_admin;
     /* Set of Host */
     private final Set<Host> host_list;
-    /* Set of bundles */
-    private final Set<Bundles> bundle_list;
     /* Array of Groups */
     private final Map<String, Group> group_list;
 
@@ -120,9 +117,6 @@ public class Controller {
 
         /* Create the list of groups */
         group_list = new HashMap<>();
-
-        /* Create a set of bundles */
-        bundle_list = new HashSet<>();
     }
 
     /**
@@ -146,7 +140,7 @@ public class Controller {
      *
      */
     public void init() {
-        //JSON config_file = new JSON(CONFIG_CLASSPATH_URL);
+        
     }
 
     /**
