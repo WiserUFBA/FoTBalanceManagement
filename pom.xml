@@ -13,9 +13,13 @@
     <packaging>bundle</packaging>
 
     <properties>
+        <!-- Project Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Maven Compiler Properties -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Cellar Properties -->
+        <cellar.version>4.0.3</cellar.version>
     </properties>
 
     <!-- Build specifications -->
@@ -145,31 +149,37 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
-            <version>4.0.3</version>
+            <version>${cellar.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.bundle</artifactId>
-            <version>4.0.3</version>
+            <version>${cellar.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
-            <version>4.0.3</version>
+            <version>${cellar.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.itests</artifactId>
-            <version>4.0.3</version>
+            <version>${cellar.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>apache-karaf-cellar</artifactId>
-            <version>4.0.3</version>
+            <version>${cellar.version}</version>
             <classifier>features</classifier>
             <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.features</artifactId>
+            <version>${cellar.version}</version>
+            <type>jar</type>
         </dependency>
         <!-- Hazelcast -->
         <dependency>
@@ -210,12 +220,6 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
             <version>4.0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf.cellar</groupId>
-            <artifactId>org.apache.karaf.cellar.features</artifactId>
-            <version>4.0.1</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>

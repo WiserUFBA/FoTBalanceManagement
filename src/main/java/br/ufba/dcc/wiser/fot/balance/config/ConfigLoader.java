@@ -30,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +54,9 @@ public class ConfigLoader {
      * @param config_file_url URL to this file in disk.
      * @param config_file_type Type of data for GSON.
      * @return A list of configurations
+     * @throws File not found exception if te system can't retrieve the file.
      */
-    public static <T> List<T> configLoader(String config_file_url){
+    public static <T> List<T> configLoader(String config_file_url) throws FileNotFoundException{
         
         /* Configuration File */
         InputStream input_stream_reader;
@@ -67,7 +67,7 @@ public class ConfigLoader {
         /* Check if this file is correct */
         if(input_stream_reader == null){
             FoTBalanceUtils.errorMsg("Canno't load configuration file = " + config_file_url);
-            return null;
+            throw new FileNotFoundException("Cannot find file => " + config_file_url);
         }
         
         /* Get a buffered reader */

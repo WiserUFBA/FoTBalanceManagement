@@ -25,6 +25,8 @@ package br.ufba.dcc.wiser.fot.balance.config;
 
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.Gson;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +41,7 @@ public class HostConfigFile {
     private static final String HOST_CONFIGURATION_FILE_URL = "/br/ufba/dcc/wiser/fot/balance/config/host_config.json";
     
     /* Configurations list */
+    /* ignore */
     private final List<HostConfigFileObject> configurations;
     
     /* Instance of this object */
@@ -46,7 +49,20 @@ public class HostConfigFile {
     
     /* Private constructor for singlenton operations */
     private HostConfigFile(){
-        configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL);
+        /* Initialize the configurations */
+        configurations = new ArrayList<>();
+        
+        /* Try get configurations on config files */
+        try{
+            List<HostConfigFileObject> temp_configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL);
+            configurations.addAll(temp_configurations);
+        }
+        catch(FileNotFoundException e){
+            FoTBalanceUtils.errorMsg("The url to file " + HOST_CONFIGURATION_FILE_URL + " is not " +
+                "correct or this file do not exist.");
+        }
+        
+        /* Display configuration content as info message */
         Gson gson = new Gson();
         FoTBalanceUtils.infoMsg("Configuration file loaded!");
         FoTBalanceUtils.infoMsg("Content: " + gson.toJson(configurations));
