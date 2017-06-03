@@ -1,14 +1,12 @@
-Pré-requisitos:
+# Fot Balance Management
 
-+ Executar no servicemix:
+### Introdução
 
-feature:repo-add mvn:org.ops4j.pax.jdbc/pax-jdbc-features/0.5.0/xml/features
-feature:install transaction jndi pax-jdbc-h2 pax-jdbc-pool-dbcp2 pax-jdbc-config
+Serviço de balanceamento de bundles através do conceito de grupos utilizando do framework para resolução
+de problemas de planejamento OptaPlanner
 
-+ Criar um arquivo dentro do servicemix de nome org.ops4j.datasource-balance.cfg na pasta etc com conteúdo:
+### Support
 
-osgi.jdbc.driver.name=H2-pool-xa
-url=jdbc:h2:${karaf.data}/fot-balance
-dataSourceName=fot-balance
+Desenvolvido por Jurandir Barbosa
 
 
