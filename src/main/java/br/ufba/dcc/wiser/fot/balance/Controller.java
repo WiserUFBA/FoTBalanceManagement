@@ -106,6 +106,9 @@ public class Controller {
     /* Karaf Install Port, used by bundles */
     public static final int KARAF_INSTALL_PORT = 8181;
 
+    /* Karaf Default Start Level for new bundles */
+    public static final int DEFAULT_START_LEVEL = 80;
+    
     /**
      *
      * Create a new Controller instance.
@@ -585,10 +588,10 @@ public class Controller {
 
                 /* Start bundle if it's specified */
                 if (start) {
-                    event = new ClusterBundleEvent(symbolicName, version, install_url, BundleEvent.STARTED);
+                    event = new ClusterBundleEvent(symbolicName, version, install_url, DEFAULT_START_LEVEL, BundleEvent.STARTED);
                     event.setSourceGroup(group);
                 } /* Otherwise mark as installed */ else {
-                    event = new ClusterBundleEvent(symbolicName, version, install_url, BundleEvent.INSTALLED);
+                    event = new ClusterBundleEvent(symbolicName, version, install_url, DEFAULT_START_LEVEL, BundleEvent.INSTALLED);
                     event.setSourceGroup(group);
                 }
 
@@ -716,7 +719,7 @@ public class Controller {
                 ClusterBundleEvent event;
 
                 /* Set the bundle as uninstalled */
-                event = new ClusterBundleEvent(symbolicName, version, uninstall_url, BundleEvent.UNINSTALLED);
+                event = new ClusterBundleEvent(symbolicName, version, uninstall_url, DEFAULT_START_LEVEL, BundleEvent.UNINSTALLED);
                 event.setSourceGroup(group);
                 System.out.println("event: " + event);
                 event_producer.produce(event);
