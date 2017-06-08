@@ -56,7 +56,7 @@ public class ConfigLoaderTest extends TestSupport{
         
         /* Now check if the serialization of the list of configurations is the same as our stored string */
         assertEquals("[Testing] Checking if host config file is correct", gson.toJson(host_configurations), HOST_CONFIG_FILE_SERIALIZED_OUTPUT);
-        assertEquals("[Testing] Checking if group config file is correct", gson.toJson(group_configurations), HOST_CONFIG_FILE_SERIALIZED_OUTPUT);
+        assertEquals("[Testing] Checking if group config file is correct", gson.toJson(group_configurations), GROUP_CONFIG_FILE_SERIALIZED_OUTPUT);
     }
     
 }

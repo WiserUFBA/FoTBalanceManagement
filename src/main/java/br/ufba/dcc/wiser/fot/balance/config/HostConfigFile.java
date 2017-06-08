@@ -98,6 +98,11 @@ public class HostConfigFile {
      * @return A list of configuration objects.
      */
     public static List<HostConfigFileObject> getConfigurationsFromInstance(){
+        /* Initialize this instance if it's not yet initialized */
+        if(instance == null){
+            getInstance();
+        }
+        
         return instance.getConfigurations();
     }
     
