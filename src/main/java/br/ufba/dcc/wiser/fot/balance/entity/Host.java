@@ -49,6 +49,7 @@ public class Host {
      * Instantiate a FoT Balance Host.
      * 
      * @param host_hazelcast_instance Reference of hazelcast host.
+     * @param host_id uuid of this host.
      * @param host_capacity Capacity of this node.
      */
     public Host(Node host_hazelcast_instance, String host_id, int host_capacity){

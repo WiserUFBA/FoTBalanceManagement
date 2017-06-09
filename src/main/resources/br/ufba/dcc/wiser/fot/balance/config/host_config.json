@@ -1,7 +1,7 @@
 [
     {
         "hostId": "Host 1",
-        "hostIP": "192.168.0.1",
+        "hostIP": "192.168.0.137",
         "groupsList": [
             "security",
             "basic"
@@ -9,7 +9,7 @@
     },
     {
         "hostId": "Host 2",
-        "hostIP": "192.168.0.2",
+        "hostIP": "192.168.0.139",
         "groupsList": [
             "localization",
             "basic"
@@ -17,7 +17,7 @@
     },
     {
         "hostId": "Host 3",
-        "hostIP": "192.168.0.3",
+        "hostIP": "192.168.0.140",
         "groupsList": [
             "discovery"
         ]

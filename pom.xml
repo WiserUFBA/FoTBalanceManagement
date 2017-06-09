@@ -12,6 +12,10 @@
     <version>2.0.1</version>
     <packaging>bundle</packaging>
 
+    <!-- Remember to install the following bundles before put this bundle inside karaf -->
+    <!-- bundle:install mvn:org.optaplanner/optaplanner-core/6.5.0.Final -->
+    <!-- bundle:install mvn:org.apache.commons/commons-lang3/3.5 -->
+
     <properties>
         <!-- Project Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,6 +46,7 @@
                         <!-- <Embed-Transitive>true</Embed-Transitive> 
                         <Import-Package>*</Import-Package> -->
                         <Import-Package>
+                            org.optaplanner.*,
                             org.apache.felix.service.command,
                             org.apache.felix.gogo.commands,
                             org.apache.karaf.shell.console,
@@ -195,6 +200,7 @@
             <artifactId>hazelcast-all</artifactId>
             <version>3.6.4</version>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!-- OP4SJ -->
         <dependency>
@@ -228,11 +234,13 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
             <version>4.0.6</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.core</artifactId>
             <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
         <!-- OptaPlanner -->
         <dependency>
@@ -240,6 +248,7 @@
             <artifactId>optaplanner-core</artifactId>
             <version>6.5.0.Final</version>
             <type>jar</type>
+            <scope> provided </scope>
         </dependency>
         <!-- Junit -->
         <dependency>

@@ -114,7 +114,7 @@ public class Controller {
      * Create a new Controller instance.
      *
      */
-    private Controller() {
+    public Controller() {
         /* Those settings will be setted by blueprint */
         hazelcast_instance = null;
         execution_context = null;
@@ -137,7 +137,7 @@ public class Controller {
         /* OptaPlanner Solver */
         solver = solver_factory.buildSolver();
     }
-
+    
     /**
      * Return the instance of FoT Balance Controller.
      *
@@ -159,6 +159,19 @@ public class Controller {
      *
      */
     public void init() {
+        /* Store this new object in static reference */
+        instance = this;
+        
+        /* Get cluster instance */
+        Cluster cluster = hazelcast_instance.getCluster();
+        
+        /* Get members from cluster */
+        Set<Member> members = cluster.getMembers();
+        
+        for(Member member : members){
+            System.out.println("UUID -- " + member.getUuid());
+        }
+
         // TODO, THIS SHOULD MOUNT ALL SYSTEM
     }
 
@@ -283,6 +296,11 @@ public class Controller {
      *
      */
     public void balanceNetwork() {
+        /* Update Host Lists */
+        updateHosts();
+        
+        /* Check if there are need to unninstal some bundles on some hosts or whatever */
+        //TODO
         
         /* For each Group solve the class, compare results and do the network changes */
         for(String group_name : group_list.keySet()){
