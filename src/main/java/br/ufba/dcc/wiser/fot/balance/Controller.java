@@ -102,7 +102,7 @@ public class Controller {
     public static int NODE_CAPACITY = 6;
 
     /* Solver configuration file */
-    public static final String SOLVER_CONFIGURATION = "br/ufba/dcc/wiser/fot/balance/solver/fotBalanceSolverConfig.xml";
+    public static final String SOLVER_CONFIGURATION = "/br/ufba/dcc/wiser/fot/balance/solver/fotBalanceSolverConfig.xml";
 
     /* Karaf Install Port, used by bundles */
     public static final int KARAF_INSTALL_PORT = 8181;
