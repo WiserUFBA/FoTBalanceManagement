@@ -26,6 +26,7 @@ package br.ufba.dcc.wiser.fot.balance;
 import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
@@ -159,7 +160,11 @@ public class Controller {
      *
      */
     public void init() {
+        /* Initializing Controller */
+        FoTBalanceUtils.infoMsg("Initializing FoT Balance Management Controller");
+        
         /* Store this new object in static reference */
+        FoTBalanceUtils.infoMsg("Storing new FoT Balance Controller");
         instance = this;
         
         /* Get cluster instance */
