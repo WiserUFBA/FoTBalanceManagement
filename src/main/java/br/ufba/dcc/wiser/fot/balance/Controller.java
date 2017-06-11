@@ -93,10 +93,10 @@ public class Controller {
     private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
     
     /* Factory of Group Solver */
-    private final SolverFactory<Group> solver_factory;
+    private SolverFactory<Group> solver_factory;
     
     /* Group Solver Class */
-    private final Solver<Group> solver;
+    private Solver<Group> solver;
     
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;
@@ -132,11 +132,6 @@ public class Controller {
         
         /* Create the list of offline hosts, which will loose the bundles installed by this controller */
         offline_hosts_to_remove_bundles = new HashMap<>();
-        
-        /* OptaPlanner Solver Factory */
-        solver_factory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
-        /* OptaPlanner Solver */
-        solver = solver_factory.buildSolver();
     }
     
     /**
@@ -163,19 +158,15 @@ public class Controller {
         /* Initializing Controller */
         FoTBalanceUtils.infoMsg("Initializing FoT Balance Management Controller");
         
+        /* OptaPlanner Solver Factory */
+        solver_factory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
+        
+        /* OptaPlanner Solver */
+        solver = solver_factory.buildSolver();
+        
         /* Store this new object in static reference */
         FoTBalanceUtils.infoMsg("Storing new FoT Balance Controller");
         instance = this;
-        
-        /* Get cluster instance */
-        Cluster cluster = hazelcast_instance.getCluster();
-        
-        /* Get members from cluster */
-        Set<Member> members = cluster.getMembers();
-        
-        for(Member member : members){
-            System.out.println("UUID -- " + member.getUuid());
-        }
 
         // TODO, THIS SHOULD MOUNT ALL SYSTEM
     }
@@ -301,6 +292,84 @@ public class Controller {
      *
      */
     public void balanceNetwork() {
+        /* If some of the interfaces is still not initialized stop this function */
+        
+        /* Hazelcast instance don't exist or it's not initialized yet */
+        if(hazelcast_instance == null){
+            FoTBalanceUtils.errorMsg("Hazelcast instance don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Execution context don't exist or it's not initialized yet */
+        if(hazelcast_instance == null){
+            FoTBalanceUtils.errorMsg("Execution context don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Event producer don't exist or it's not initialized yet */
+        if(event_producer == null){
+            FoTBalanceUtils.errorMsg("Event producer don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Cluster manager don't exist or it's not initialized yet */
+        if(cluster_manager == null){
+            FoTBalanceUtils.errorMsg("Cluster manager don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Group manager don't exist or it's not initialized yet */
+        if(group_manager == null){
+            FoTBalanceUtils.errorMsg("Group manager don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Configuration admin don't exist or it's not initialized yet */
+        if(configuration_admin == null){
+            FoTBalanceUtils.errorMsg("Configuration admin don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Some of the lists isn't working or it's not initialized yet */
+        if((host_list == null) || (group_list == null) || (offline_hosts_to_remove_bundles == null)){
+            FoTBalanceUtils.errorMsg("Some of the lists isn't working or it's not initialized yet");
+            return;
+        }
+        
+        /* Solver factory don't exist or it's not initialized yet */
+        if(solver_factory == null){
+            FoTBalanceUtils.errorMsg("Solver Factory don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Solver don't exist or it's not initialized yet */
+        if(solver == null){
+            FoTBalanceUtils.errorMsg("Solver don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* Since singleton instance of Controller is needed by some classes, we check if this instance is initialized */
+        if(instance == null){
+            FoTBalanceUtils.errorMsg("Controller Singleton instace don't exist or it's not initialized yet");
+            return;
+        }
+        
+        /* *************** TESTING UUID *************** */
+        
+        /* Get cluster instance */
+        Cluster cluster = hazelcast_instance.getCluster();
+        
+        /* Get members from cluster */
+        Set<Member> members = cluster.getMembers();
+        
+        System.out.println("HAHAHA");
+        
+        for(Member member : members){
+            System.out.println("UUID -- " + member.getUuid());
+        }
+        
+        /* ******************************************** */
+        
         /* Update Host Lists */
         updateHosts();
         
