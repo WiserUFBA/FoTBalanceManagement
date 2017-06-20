@@ -52,19 +52,21 @@
                     <instructions>
                         <Bundle-Activator>br.ufba.dcc.wiser.fot.balance.Activator</Bundle-Activator>
                         <Export-Package>br.ufba.dcc.wiser.fot.balance</Export-Package>
-                        <!-- <Embed-Dependency>scope=compile|runtimeinline=false</Embed-Dependency> -->
+                        <!-- <Embed-Dependency>scope=compile|runtime;inline=false</Embed-Dependency> -->
                         <Embed-Directory>target/dependency</Embed-Directory>
                         <Embed-StripGroup>true</Embed-StripGroup>
-                        <!-- <Embed-Transitive>true</Embed-Transitive> 
-                        <Import-Package>*</Import-Package> -->
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
-                            com.google.gson.*,
-                            org.optaplanner.*,
+                            !com.sun.*,
                             org.apache.felix.service.command,
                             org.apache.felix.gogo.commands,
                             org.apache.karaf.shell.console,
                             *
                         </Import-Package>
+                        <!-- Include all dependencies which is not provided by Karaf -->
+                        <Embed-Dependency>
+                            *;scope=!provided|test;inline=true
+                        </Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>
@@ -129,33 +131,47 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- OptaPlanner -->
+        <!-- https://mvnrepository.com/artifact/org.optaplanner/optaplanner-core -->
+        <dependency>
+            <groupId>org.optaplanner</groupId>
+            <artifactId>optaplanner-core</artifactId>
+            <version>${optaplanner.version}</version>
+            <scope>compile</scope>
         </dependency>
         <!-- CXF -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-core</artifactId>
             <version>${cxf.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!--Camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <version>${camel.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <version>${camel.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
             <version>${camel.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- OSGI -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.cm</artifactId>
+            <scope>provided</scope>
             <version>1.5.0</version>
             <type>jar</type>
         </dependency>
@@ -168,6 +184,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
             <version>4.3.1</version>
             <type>jar</type>
         </dependency>
@@ -176,16 +193,19 @@
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
             <version>${cellar.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.bundle</artifactId>
             <version>${cellar.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
             <version>${cellar.version}</version>
+            <scope>provided</scope>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -199,12 +219,14 @@
             <artifactId>apache-karaf-cellar</artifactId>
             <version>${cellar.version}</version>
             <classifier>features</classifier>
+            <scope>provided</scope>
             <type>xml</type>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.features</artifactId>
             <version>${cellar.version}</version>
+            <scope>provided</scope>
             <type>jar</type>
         </dependency>
         <!-- Hazelcast -->
@@ -254,14 +276,6 @@
             <artifactId>org.apache.karaf.shell.core</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- OptaPlanner -->
-        <dependency>
-            <groupId>org.optaplanner</groupId>
-            <artifactId>optaplanner-core</artifactId>
-            <version>${optaplanner.version}</version>
-            <type>jar</type>
-            <scope> provided </scope>
         </dependency>
         <!-- Junit -->
         <dependency>
