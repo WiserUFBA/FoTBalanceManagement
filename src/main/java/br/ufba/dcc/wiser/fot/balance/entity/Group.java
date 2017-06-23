@@ -25,13 +25,9 @@ package br.ufba.dcc.wiser.fot.balance.entity;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.List;
 import java.util.HashSet;
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.apache.karaf.cellar.core.Node;
-import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -39,6 +35,8 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import br.ufba.dcc.wiser.fot.balance.Controller;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.annotations.SerializedName;
+import org.optaplanner.core.api.domain.solution.PlanningScore;
+import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 
 /**
  *
@@ -47,7 +45,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 @PlanningSolution
-public class Group implements Solution<HardSoftScore>{
+public class Group{
     /* Name of the group */
     @SerializedName("groupName")
     private String group_name;
@@ -283,6 +281,7 @@ public class Group implements Solution<HardSoftScore>{
      * @return Bundle list of this group.
      */
     @ValueRangeProvider(id = "hostRange")
+    @ProblemFactCollectionProperty
     public Set<Host> getHostList(){
         return host_list;
     }
@@ -303,7 +302,7 @@ public class Group implements Solution<HardSoftScore>{
      * 
      * @return Actual score of this operation
      */
-    @Override
+    @PlanningScore
     public HardSoftScore getScore() {
         return score;
     }
@@ -314,22 +313,8 @@ public class Group implements Solution<HardSoftScore>{
      * 
      * @param score 
      */
-    @Override
     public void setScore(HardSoftScore score) {
         this.score = score;
-    }
-    
-    /**
-     * 
-     * Get list of host that is being organized.
-     * 
-     * @return List of facts (Hosts of this group)
-     */
-    @Override
-    public Collection<? extends Object> getProblemFacts() {
-        List<Object> facts = new ArrayList<>();
-        facts.addAll(host_list);
-        return facts;
     }
     
     /**

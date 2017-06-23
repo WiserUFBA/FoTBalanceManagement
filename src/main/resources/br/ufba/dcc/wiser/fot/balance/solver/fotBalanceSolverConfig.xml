@@ -5,7 +5,6 @@
 
   <!-- Score configuration -->
   <scoreDirectorFactory>
-    <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
     <!-- Classe de pontuação avançada, incremental -->
     <incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solverBundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>
   </scoreDirectorFactory>

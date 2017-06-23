@@ -25,9 +25,11 @@
         <!-- Cellar Properties -->
         <cellar.version>4.0.4</cellar.version>
         <!-- OptaPlanner Version -->
-        <optaplanner.version>6.5.0.Final</optaplanner.version>
-        <!-- GSON Verrsion -->
+        <optaplanner.version>7.0.0.Final</optaplanner.version>
+        <!-- GSON Version -->
         <gson.version>2.8.0</gson.version>
+        <!-- SLF4J Version -->
+        <slf4j.version>1.7.25</slf4j.version>
         <!-- Camel Version -->
         <camel.version>2.16.2</camel.version>
         <!-- OP4SJ Version -->
@@ -46,23 +48,47 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
+                <version>3.3.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-Activator>br.ufba.dcc.wiser.fot.balance.Activator</Bundle-Activator>
-                        <Export-Package>br.ufba.dcc.wiser.fot.balance</Export-Package>
-                        <!-- <Embed-Dependency>scope=compile|runtime;inline=false</Embed-Dependency> -->
+                        <Bundle-ClassPath>.</Bundle-ClassPath>
+                        <Export-Package>
+                            br.ufba.dcc.wiser.fot.balance
+                        </Export-Package>
                         <Embed-Directory>target/dependency</Embed-Directory>
                         <Embed-StripGroup>true</Embed-StripGroup>
                         <Embed-Transitive>true</Embed-Transitive>
+                        <!-- Use script discover_package_used in utils folder to update this -->
                         <Import-Package>
+
+                            com.hazelcast.core,
+                            org.apache.commons.lang3.builder,
+                            org.apache.karaf.cellar.bundle,
+                            org.apache.karaf.cellar.core,
+                            org.apache.karaf.cellar.core.command,
+                            org.apache.karaf.cellar.core.control,
+                            org.apache.karaf.cellar.core.event,
+                            org.apache.karaf.cellar.hazelcast,
+                            org.apache.karaf.shell.support.table,
+                            org.optaplanner.core.api.domain.entity,
+                            org.optaplanner.core.api.domain.solution,
+                            org.optaplanner.core.api.domain.solution.drools,
+                            org.optaplanner.core.api.domain.valuerange,
+                            org.optaplanner.core.api.domain.variable,
+                            org.optaplanner.core.api.score,
+                            org.optaplanner.core.api.score.buildin.hardsoft,
+                            org.optaplanner.core.api.solver,
+                            org.optaplanner.core.impl.score.director.incremental,
                             !com.sun.*,
+                            !sun.io.*,
                             org.apache.felix.service.command,
                             org.apache.felix.gogo.commands,
                             org.apache.karaf.shell.console,
                             *
                         </Import-Package>
+                        <!-- To make a package optional use ';resolution=optional' -->
                         <!-- Include all dependencies which is not provided by Karaf -->
                         <Embed-Dependency>
                             *;scope=!provided|test;inline=true
@@ -72,7 +98,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -85,7 +111,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>2.10.4</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -99,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.20</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
@@ -135,12 +161,41 @@
         </dependency>
         <!-- OptaPlanner -->
         <!-- https://mvnrepository.com/artifact/org.optaplanner/optaplanner-core -->
+        <!-- 
+            Provided by feature optaplanner-engine 7.0.0.Final
+            add 'kie=mvn:org.kie/kie-karaf-features/LATEST/xml/features' to file 'etc/org.apache.karaf.features.repos.cfg'
+            and after install using
+            feature:repo-add kie 7.0.0.Final
+            feature:install optaplanner-engine
+        -->
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-core</artifactId>
             <version>${optaplanner.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- SLF4J -->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <!-- Unresolved transitive dependencies -->
+                     
+                              
+        <!-- ================================== -->
+        
         <!-- CXF -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
