@@ -26,6 +26,7 @@ package br.ufba.dcc.wiser.fot.balance;
 import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
+import br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
@@ -38,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarInputStream;
@@ -164,12 +166,25 @@ public class Controller {
             /* Load Input stream of solver configuration */
             InputStream solver_configuration_stream = getClass().getClassLoader().getResourceAsStream(SOLVER_CONFIGURATION);
 
+            /* List of some imports needed by solver factory */
+            List<String> import_list = new ArrayList();
+            import_list.add("br.ufba.dcc.wiser.fot.balance.solver");
+            import_list.add("br.ufba.dcc.wiser.fot.balance.entity");
+            
             /* OptaPlanner Solver Factory */
-            solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream);
+            /* This don't work */
+            //solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, BundleBalancerIncrementalScoreCalculator.class.getClassLoader());
+            /* Ugly but let's try if it's working */
+            solver_factory = SolverFactory.createEmpty();
+            solver_factory.getSolverConfig().getScoreDirectorFactoryConfig().setIncrementalScoreCalculatorClass(BundleBalancerIncrementalScoreCalculator.class);
+            solver_factory.getSolverConfig().getScanAnnotatedClassesConfig().setPackageIncludeList(import_list);
+            solver_factory.getSolverConfig().getTerminationConfig().setSecondsSpentLimit(new Long(10));
+            solver_factory.getSolverConfig().getTerminationConfig().setBestScoreLimit("0hard/0soft");
+            solver_factory.getSolverConfig().getTerminationConfig().setStepCountLimit(100000);          
             
             /* OptaPlanner Solver */
             solver = solver_factory.buildSolver();
-        } catch(Exception e){
+        } catch (Exception e) {
             FoTBalanceUtils.errorMsg("Cannot load solver configuration or construct solver");
             e.printStackTrace(new PrintStream(System.err));
         }
@@ -304,7 +319,7 @@ public class Controller {
     public void balanceNetwork() {
         /* If some of the interfaces is still not initialized stop this function */
 
- /* Hazelcast instance don't exist or it's not initialized yet */
+        /* Hazelcast instance don't exist or it's not initialized yet */
         if (hazelcast_instance == null) {
             FoTBalanceUtils.errorMsg("Hazelcast instance don't exist or it's not initialized yet");
             return;
@@ -365,7 +380,7 @@ public class Controller {
         }
 
         /* *************** TESTING UUID *************** */
- /* Get cluster instance */
+        /* Get cluster instance */
         Cluster cluster = hazelcast_instance.getCluster();
 
         /* Get members from cluster */
@@ -378,11 +393,12 @@ public class Controller {
         }
 
         /* ******************************************** */
- /* Update Host Lists */
+        /* Update Host Lists */
         updateHosts();
 
         /* Check if there are need to unninstal some bundles on some hosts or whatever */
         //TODO
+        
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
             Group solved_group = solver.solve(group_list.get(group_name));

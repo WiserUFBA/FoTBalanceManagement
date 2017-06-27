@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver>
-  <!-- Domain model configuration -->
-  <scanAnnotatedClasses/>
+    <!-- Domain model configuration -->
+    <!--<scanAnnotatedClasses/>-->
 
-  <!-- Score configuration -->
-  <scoreDirectorFactory>
-    <!-- Classe de pontuação avançada, incremental -->
-    <incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>
-  </scoreDirectorFactory>
+    <!-- Score configuration -->
+    <scoreDirectorFactory>
+        <!-- Classe de pontuação avançada, incremental -->
+        <!--<incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
+    </scoreDirectorFactory>
 
-  <!-- Optimization algorithms configuration -->
-  <termination>
-    <!-- Não deve gastar mais de 10 segundos -->
-    <secondsSpentLimit>10</secondsSpentLimit>
-    <!-- Se atingir um score de 0 de custo de hardware e 0 de gasto de software -->
-    <bestScoreLimit>0hard/0soft</bestScoreLimit>
-    <!-- Não deve ultrapassar 10k testes -->
-    <calculateCountLimit>10000</calculateCountLimit>
-  </termination>
+    <!-- Optimization algorithms configuration -->
+    <termination>
+        <!-- Não deve gastar mais de 10 segundos -->
+        <secondsSpentLimit>10</secondsSpentLimit>
+        <!-- Se atingir um score de 0 de custo de hardware e 0 de gasto de software -->
+        <bestScoreLimit>0hard/0soft</bestScoreLimit>
+        <!-- Não deve ultrapassar 10k testes -->
+        <calculateCountLimit>10000</calculateCountLimit>
+    </termination>
 </solver>

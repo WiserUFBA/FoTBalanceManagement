@@ -56,7 +56,9 @@
                         <Bundle-ClassPath>.</Bundle-ClassPath>
                         <Export-Package>
                             br.ufba.dcc.wiser.fot.balance,
-                            br.ufba.dcc.wiser.fot.balance.solver
+                            br.ufba.dcc.wiser.fot.balance.entity,
+                            br.ufba.dcc.wiser.fot.balance.solver,
+                            br.ufba.dcc.wiser.fot.balance.exceptions
                         </Export-Package>
                         <Embed-Directory>target/dependency</Embed-Directory>
                         <Embed-StripGroup>true</Embed-StripGroup>
@@ -175,27 +177,6 @@
             <version>${optaplanner.version}</version>
             <scope>provided</scope>
         </dependency>
-        
-        <!-- SLF4J -->
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
-        <!-- Unresolved transitive dependencies -->
-                     
-                              
-        <!-- ================================== -->
         
         <!-- CXF -->
         <dependency>
