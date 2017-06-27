@@ -31,6 +31,7 @@ import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -91,13 +92,13 @@ public class Controller {
     private final Map<String, Group> group_list;
     /* List of offline hosts, hosts which will loose bundles after caming online */
     private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
-    
+
     /* Factory of Group Solver */
     private SolverFactory<Group> solver_factory;
-    
+
     /* Group Solver Class */
     private Solver<Group> solver;
-    
+
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;
 
@@ -109,7 +110,7 @@ public class Controller {
 
     /* Karaf Default Start Level for new bundles */
     public static final int DEFAULT_START_LEVEL = 80;
-    
+
     /**
      *
      * Create a new Controller instance.
@@ -129,11 +130,11 @@ public class Controller {
 
         /* Create the list of groups */
         group_list = new HashMap<>();
-        
+
         /* Create the list of offline hosts, which will loose the bundles installed by this controller */
         offline_hosts_to_remove_bundles = new HashMap<>();
     }
-    
+
     /**
      * Return the instance of FoT Balance Controller.
      *
@@ -157,19 +158,22 @@ public class Controller {
     public void init() {
         /* Initializing Controller */
         FoTBalanceUtils.infoMsg("Initializing FoT Balance Management Controller");
-        
-        /* OptaPlanner Solver Factory */
-        solver_factory = SolverFactory.createFromXmlResource(SOLVER_CONFIGURATION);
-        
-        if(solver_factory == null){
-            FoTBalanceUtils.infoMsg("AFF1");
+
+        /* Create OptaPlanner Solver */
+        try {
+            /* Load Input stream of solver configuration */
+            InputStream solver_configuration_stream = getClass().getClassLoader().getResourceAsStream(SOLVER_CONFIGURATION);
+
+            /* OptaPlanner Solver Factory */
+            solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream);
+            
+            /* OptaPlanner Solver */
+            solver = solver_factory.buildSolver();
+        } catch(Exception e){
+            FoTBalanceUtils.errorMsg("Cannot load solver configuration or construct solver");
+            e.printStackTrace(new PrintStream(System.err));
         }
-        
-        FoTBalanceUtils.infoMsg("OK1");
-        
-        /* OptaPlanner Solver */
-        solver = solver_factory.buildSolver();
-        
+
         /* Store this new object in static reference */
         FoTBalanceUtils.infoMsg("Storing new FoT Balance Controller");
         instance = this;
@@ -210,15 +214,15 @@ public class Controller {
         /* Unregister this group from cellar */
         removeCellarGroup(group_name);
     }
-    
+
     /**
-     * 
+     *
      * Register offline host.
-     * 
+     *
      * @param host Offline host.
      * @param bundles A set of bundles to remove when the host returns.
      */
-    public void registerOfflineHostBundles(Host host, Set<Bundles> bundles){
+    public void registerOfflineHostBundles(Host host, Set<Bundles> bundles) {
         offline_hosts_to_remove_bundles.put(host, bundles);
     }
 
@@ -236,7 +240,7 @@ public class Controller {
 
             /* If members is null, somethin went wrong */
             if (members == null) {
-                System.err.println("Something went wrong...");
+                FoTBalanceUtils.errorMsg("Something went wrong...");
                 return;
             }
 
@@ -287,7 +291,7 @@ public class Controller {
                 balanceNetwork();
             }
         } catch (Exception e) {
-            System.err.println("Something went wrong...");
+            FoTBalanceUtils.errorMsg("Something went wrong...");
             e.printStackTrace(new PrintStream(System.err));
         }
     }
@@ -299,96 +303,93 @@ public class Controller {
      */
     public void balanceNetwork() {
         /* If some of the interfaces is still not initialized stop this function */
-        
-        /* Hazelcast instance don't exist or it's not initialized yet */
-        if(hazelcast_instance == null){
+
+ /* Hazelcast instance don't exist or it's not initialized yet */
+        if (hazelcast_instance == null) {
             FoTBalanceUtils.errorMsg("Hazelcast instance don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Execution context don't exist or it's not initialized yet */
-        if(hazelcast_instance == null){
+        if (hazelcast_instance == null) {
             FoTBalanceUtils.errorMsg("Execution context don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Event producer don't exist or it's not initialized yet */
-        if(event_producer == null){
+        if (event_producer == null) {
             FoTBalanceUtils.errorMsg("Event producer don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Cluster manager don't exist or it's not initialized yet */
-        if(cluster_manager == null){
+        if (cluster_manager == null) {
             FoTBalanceUtils.errorMsg("Cluster manager don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Group manager don't exist or it's not initialized yet */
-        if(group_manager == null){
+        if (group_manager == null) {
             FoTBalanceUtils.errorMsg("Group manager don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Configuration admin don't exist or it's not initialized yet */
-        if(configuration_admin == null){
+        if (configuration_admin == null) {
             FoTBalanceUtils.errorMsg("Configuration admin don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Some of the lists isn't working or it's not initialized yet */
-        if((host_list == null) || (group_list == null) || (offline_hosts_to_remove_bundles == null)){
+        if ((host_list == null) || (group_list == null) || (offline_hosts_to_remove_bundles == null)) {
             FoTBalanceUtils.errorMsg("Some of the lists isn't working or it's not initialized yet");
             return;
         }
-        
+
         /* Solver factory don't exist or it's not initialized yet */
-        if(solver_factory == null){
+        if (solver_factory == null) {
             FoTBalanceUtils.errorMsg("Solver Factory don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Solver don't exist or it's not initialized yet */
-        if(solver == null){
+        if (solver == null) {
             FoTBalanceUtils.errorMsg("Solver don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* Since singleton instance of Controller is needed by some classes, we check if this instance is initialized */
-        if(instance == null){
+        if (instance == null) {
             FoTBalanceUtils.errorMsg("Controller Singleton instace don't exist or it's not initialized yet");
             return;
         }
-        
+
         /* *************** TESTING UUID *************** */
-        
-        /* Get cluster instance */
+ /* Get cluster instance */
         Cluster cluster = hazelcast_instance.getCluster();
-        
+
         /* Get members from cluster */
         Set<Member> members = cluster.getMembers();
-        
+
         System.out.println("HAHAHA");
-        
-        for(Member member : members){
+
+        for (Member member : members) {
             System.out.println("UUID -- " + member.getUuid());
         }
-        
+
         /* ******************************************** */
-        
-        /* Update Host Lists */
+ /* Update Host Lists */
         updateHosts();
-        
+
         /* Check if there are need to unninstal some bundles on some hosts or whatever */
         //TODO
-        
         /* For each Group solve the class, compare results and do the network changes */
-        for(String group_name : group_list.keySet()){
+        for (String group_name : group_list.keySet()) {
             Group solved_group = solver.solve(group_list.get(group_name));
-            
+
             // TODO: DO THE CHANGES ON NETWORK
         }
-        
+
         // THAT's ALL :)
     }
 
@@ -494,7 +495,7 @@ public class Controller {
             /* Try to execute the command */
             results = execution_context.execute(command);
         } catch (Exception e) {
-            System.err.println("Something went wrong...");
+            FoTBalanceUtils.errorMsg("Something went wrong...");
             e.printStackTrace(new PrintStream(System.err));
         }
 
@@ -578,7 +579,7 @@ public class Controller {
 
         /* If the group is null show error and stop execution */
         if (group == null) {
-            System.err.println("Cluster group " + group_name + " doesn't exist");
+            FoTBalanceUtils.errorMsg("Cluster group " + group_name + " doesn't exist");
             return;
         }
 
@@ -587,7 +588,7 @@ public class Controller {
 
         /* Check if the producer is ON, if it's not stop execution */
         if (event_producer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF");
+            FoTBalanceUtils.errorMsg("Cluster event producer is OFF");
             return;
         }
 
@@ -609,11 +610,11 @@ public class Controller {
                 try {
                     jar_input_stream = new JarInputStream(new URL(install_url).openStream());
                 } /* Catch errors of malformed URL exception */ catch (MalformedURLException e) {
-                    System.err.println("Something went wrong... Malformed URL!");
+                    FoTBalanceUtils.errorMsg("Something went wrong... Malformed URL!");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 } /* Catch IO Exception */ catch (IOException e) {
-                    System.err.println("Something went wrong... IO Exception!");
+                    FoTBalanceUtils.errorMsg("Something went wrong... IO Exception!");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 }
@@ -623,7 +624,7 @@ public class Controller {
 
                 /* If the manifest is invalid, skip this bundle */
                 if (manifest == null) {
-                    System.err.println("Bundle location " + install_url + " doesn't seem correct!");
+                    FoTBalanceUtils.errorMsg("Bundle location " + install_url + " doesn't seem correct!");
                     continue;
                 }
 
@@ -649,7 +650,7 @@ public class Controller {
                     version = manifest.getMainAttributes().getValue("Bundle-Version");
                     jar_input_stream.close();
                 } catch (IOException e) {
-                    System.err.println("IO Exception wrong...");
+                    FoTBalanceUtils.errorMsg("IO Exception wrong...");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 }
@@ -697,12 +698,12 @@ public class Controller {
                 event_producer.produce(event);
 
             } else {
-                System.err.println("Bundle location " + install_url
+                FoTBalanceUtils.errorMsg("Bundle location " + install_url
                         + " is blocked outbound for cluster group " + group_name);
             }
         }
     }
-    
+
     /**
      *
      * Uninstall a list of bundle in a given host.
@@ -711,19 +712,19 @@ public class Controller {
      * @param uninstall_urls List of uninstall urls.
      * @param group_name Group name.
      */
-    public void hostUnninstalBundle(Node node, ArrayList<String> uninstall_urls, String group_name){
+    public void hostUnninstalBundle(Node node, ArrayList<String> uninstall_urls, String group_name) {
         /* Get the group based on group name */
         org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
 
         /* If the group is null show error and stop execution */
         if (group == null) {
-            System.err.println("Cluster group " + group_name + " doesn't exist");
+            FoTBalanceUtils.errorMsg("Cluster group " + group_name + " doesn't exist");
             return;
         }
 
         /* Check if the producer is ON, if it's not stop execution */
         if (event_producer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF");
+            FoTBalanceUtils.errorMsg("Cluster event producer is OFF");
             return;
         }
 
@@ -745,11 +746,11 @@ public class Controller {
                 try {
                     jar_input_stream = new JarInputStream(new URL(uninstall_url).openStream());
                 } /* Catch errors of malformed URL exception */ catch (MalformedURLException e) {
-                    System.err.println("Something went wrong... Malformed URL!");
+                    FoTBalanceUtils.errorMsg("Something went wrong... Malformed URL!");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 } /* Catch IO Exception */ catch (IOException e) {
-                    System.err.println("Something went wrong... IO Exception!");
+                    FoTBalanceUtils.errorMsg("Something went wrong... IO Exception!");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 }
@@ -759,7 +760,7 @@ public class Controller {
 
                 /* If the manifest is invalid, skip this bundle */
                 if (manifest == null) {
-                    System.err.println("Bundle location " + uninstall_url + " doesn't seem correct!");
+                    FoTBalanceUtils.errorMsg("Bundle location " + uninstall_url + " doesn't seem correct!");
                     continue;
                 }
 
@@ -785,7 +786,7 @@ public class Controller {
                     version = manifest.getMainAttributes().getValue("Bundle-Version");
                     jar_input_stream.close();
                 } catch (IOException e) {
-                    System.err.println("IO Exception wrong...");
+                    FoTBalanceUtils.errorMsg("IO Exception wrong...");
                     e.printStackTrace(new PrintStream(System.err));
                     continue;
                 }
@@ -823,12 +824,12 @@ public class Controller {
                 event_producer.produce(event);
 
             } else {
-                System.err.println("Bundle location " + uninstall_url
+                FoTBalanceUtils.errorMsg("Bundle location " + uninstall_url
                         + " is blocked outbound for cluster group " + group_name);
             }
         }
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**
      *
@@ -841,16 +842,16 @@ public class Controller {
     }
 
     /**
-     * 
+     *
      * Check if there are a group with the specified name.
-     * 
+     *
      * @param group_name Group name which will be tested
      * @return True if this group is already registered and false otherwise.
      */
     public boolean groupExists(String group_name) {
         return group_list.containsKey(group_name);
     }
-    
+
     /**
      *
      * Set a new Hazelcast Instance.
