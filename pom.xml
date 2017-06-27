@@ -55,14 +55,15 @@
                         <Bundle-Activator>br.ufba.dcc.wiser.fot.balance.Activator</Bundle-Activator>
                         <Bundle-ClassPath>.</Bundle-ClassPath>
                         <Export-Package>
-                            br.ufba.dcc.wiser.fot.balance
+                            br.ufba.dcc.wiser.fot.balance,
+                            br.ufba.dcc.wiser.fot.balance.solver
                         </Export-Package>
                         <Embed-Directory>target/dependency</Embed-Directory>
                         <Embed-StripGroup>true</Embed-StripGroup>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!-- Use script discover_package_used in utils folder to update this -->
                         <Import-Package>
-
+                            br.ufba.dcc.wiser.fot.balance.solver,
                             com.hazelcast.core,
                             org.apache.commons.lang3.builder,
                             org.apache.karaf.cellar.bundle,
