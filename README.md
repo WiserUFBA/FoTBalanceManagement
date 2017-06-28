@@ -18,7 +18,7 @@ config:property-set kie mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features
 config:update
 feature:repo-add cellar 4.0.4
 feature:repo-add kie 7.0.0.Final
-feature:install webconsole cellar cellar-obr cellar-log optaplanner-core
+feature:install webconsole cellar cellar-obr cellar-log optaplanner-engine
 ```
 
 ### Support
