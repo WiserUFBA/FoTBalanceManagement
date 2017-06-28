@@ -37,6 +37,8 @@ import java.util.List;
 
 /**
  *
+ * Configurations loader.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class ConfigLoader {

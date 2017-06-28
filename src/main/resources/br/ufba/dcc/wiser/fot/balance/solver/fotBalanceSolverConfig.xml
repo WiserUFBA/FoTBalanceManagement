@@ -1,3 +1,4 @@
+<!-- Don't be foolish, this has never worked on Karaf :( -->
 <?xml version="1.0" encoding="UTF-8"?>
 <solver>
     <!-- Domain model configuration -->
@@ -6,7 +7,7 @@
     <!-- Score configuration -->
     <scoreDirectorFactory>
         <!-- Classe de pontuação avançada, incremental -->
-        <incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>
+        <incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.FoTBalanceIncrementalScoreCalculator</incrementalScoreCalculatorClass>
     </scoreDirectorFactory>
 
     <!-- Optimization algorithms configuration -->

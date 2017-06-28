@@ -12,7 +12,9 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 
 /**
  *
- * @author jeferson
+ * Difficulty Comparator for symbolic bundles (OptaPlanner needed class).
+ *
+ * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class BundleDifficultyComparator implements Comparator<Bundles>, Serializable{
 

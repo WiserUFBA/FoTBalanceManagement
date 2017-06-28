@@ -35,9 +35,11 @@ import org.optaplanner.core.impl.score.director.incremental.AbstractIncrementalS
 
 /**
  *
- * @author jeferson
+ * Incremental Score Calculator for OptaPlanner.
+ *
+ * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
-public class BundleBalancerIncrementalScoreCalculator extends AbstractIncrementalScoreCalculator<Group> {
+public class FoTBalanceIncrementalScoreCalculator extends AbstractIncrementalScoreCalculator<Group> {
 
     private Map<Host, Integer> capacityUsedMap;
     private Map<Host, Integer> bundleCountMap;

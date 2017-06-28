@@ -29,6 +29,8 @@ import java.util.List;
 
 /**
  *
+ * Configuration file content class.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class HostConfigFileObject {

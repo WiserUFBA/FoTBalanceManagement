@@ -23,7 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
-import br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator;
+import br.ufba.dcc.wiser.fot.balance.solver.FoTBalanceIncrementalScoreCalculator;
 import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
@@ -32,7 +32,6 @@ import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,8 +61,10 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
 import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.SolverConfigContext;
+import org.optaplanner.core.config.score.director.ScoreDirectorFactoryConfig;
 import org.optaplanner.core.config.solver.SolverConfig;
+import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -97,7 +98,7 @@ public class Controller {
     private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
 
     /* Factory of Group Solver */
-    private SolverFactory<Group> solver_factory;
+    private final SolverConfig solver_config;
 
     /* Group Solver Class */
     private Solver<Group> solver;
@@ -136,6 +137,9 @@ public class Controller {
 
         /* Create the list of offline hosts, which will loose the bundles installed by this controller */
         offline_hosts_to_remove_bundles = new HashMap<>();
+
+        /* OptaPlanner Solver Configurations */
+        solver_config = new SolverConfig();
     }
 
     /**
@@ -165,33 +169,41 @@ public class Controller {
         /* Create OptaPlanner Solver */
         try {
             /* Load Input stream of solver configuration */
-            InputStream solver_configuration_stream = getClass().getClassLoader().getResourceAsStream(SOLVER_CONFIGURATION);
+            //InputStream solver_configuration_stream = getClass().getClassLoader().getResourceAsStream(SOLVER_CONFIGURATION);
 
-            /* List of some imports needed by solver factory */
-            /*
-            List<String> import_list = new ArrayList();
-            import_list.add("br.ufba.dcc.wiser.fot.balance.solver");
-            import_list.add("br.ufba.dcc.wiser.fot.balance.entity");
-            */
-            
+            /* !!!!!!!!!!!!!!!!!!! This don't work !!!!!!!!!!!!!!!!!!! */
             /* OptaPlanner Solver Factory */
-            /* This don't work */
-            solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, BundleBalancerIncrementalScoreCalculator.class.getClassLoader());
-            /* Ugly but let's try if it's working */
-            /*
-            solver_factory = SolverFactory.createEmpty();
-            */
-            //SolverConfig solver_config = solver_factory.getSolverConfig();
-            //solver_config.getScoreDirectorFactoryConfig().setIncrementalScoreCalculatorClass(BundleBalancerIncrementalScoreCalculator.class);
-            //solver_config.getScanAnnotatedClassesConfig().setPackageIncludeList(import_list);
-            /*
-            solver_factory.getSolverConfig().getTerminationConfig().setSecondsSpentLimit(new Long(10));
-            solver_factory.getSolverConfig().getTerminationConfig().setBestScoreLimit("0hard/0soft");
-            solver_factory.getSolverConfig().getTerminationConfig().setStepCountLimit(100000);          
-            */
-            
+            //solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, FoTBalanceIncrementalScoreCalculator.class.getClassLoader());
+            /* !!!!!!!!!!!!!!!!!!! Ugly but works at all !!!!!!!!!!!!!!!!!!! */
+            /* Create a Solver Config Contexts */
+            SolverConfigContext solver_config_context = new SolverConfigContext();
+            solver_config_context.setClassLoader(FoTBalanceIncrementalScoreCalculator.class.getClassLoader());
+
+            /* Configure Score Director class */
+            ScoreDirectorFactoryConfig score_director = new ScoreDirectorFactoryConfig();
+            score_director.setIncrementalScoreCalculatorClass(FoTBalanceIncrementalScoreCalculator.class);
+
+            /* Configure Termination Settings */
+            TerminationConfig termination_config = new TerminationConfig();
+            termination_config.setBestScoreLimit("0hard/0soft");
+            termination_config.setSecondsSpentLimit(new Long(10));
+            termination_config.setScoreCalculationCountLimit(new Long(100000));
+
+            /* Entity Class List */
+            List<Class<?>> entity_class_list = new ArrayList();
+            entity_class_list.add(Bundles.class);
+
+            /* Store the configuration created on solver config */
+            solver_config.setTerminationConfig(termination_config);
+            solver_config.setScoreDirectorFactoryConfig(score_director);
+            solver_config.setEntityClassList(entity_class_list);
+
+            /* Configure Solution Class */
+            solver_config.setSolutionClass(Group.class);
+
             /* OptaPlanner Solver */
-            solver = solver_factory.buildSolver();
+            //solver = solver_factory.buildSolver(); // DON'T WORKS, SO DON'T USE IT
+            solver = solver_config.buildSolver(solver_config_context);
         } catch (Exception e) {
             FoTBalanceUtils.errorMsg("Cannot load solver configuration or construct solver");
             e.printStackTrace(new PrintStream(System.err));
@@ -327,14 +339,14 @@ public class Controller {
     public void balanceNetwork() {
         /* If some of the interfaces is still not initialized stop this function */
 
-        /* Hazelcast instance don't exist or it's not initialized yet */
+ /* Hazelcast instance don't exist or it's not initialized yet */
         if (hazelcast_instance == null) {
             FoTBalanceUtils.errorMsg("Hazelcast instance don't exist or it's not initialized yet");
             return;
         }
 
         /* Execution context don't exist or it's not initialized yet */
-        if (hazelcast_instance == null) {
+        if (execution_context == null) {
             FoTBalanceUtils.errorMsg("Execution context don't exist or it's not initialized yet");
             return;
         }
@@ -369,9 +381,9 @@ public class Controller {
             return;
         }
 
-        /* Solver factory don't exist or it's not initialized yet */
-        if (solver_factory == null) {
-            FoTBalanceUtils.errorMsg("Solver Factory don't exist or it's not initialized yet");
+        /* Solver config don't exist or it's not initialized yet */
+        if (solver_config == null) {
+            FoTBalanceUtils.errorMsg("Solver Config don't exist or it's not initialized yet");
             return;
         }
 
@@ -406,7 +418,6 @@ public class Controller {
 
         /* Check if there are need to unninstal some bundles on some hosts or whatever */
         //TODO
-        
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
             Group solved_group = solver.solve(group_list.get(group_name));
@@ -529,7 +540,7 @@ public class Controller {
         } else {
             // <editor-fold defaultstate="collapsed" desc="Print table of Groups and Members">
             /* BEGIN OF PRINT FUNCTION */
- /* ----------------------------- */
+            /* ----------------------------- */
             ShellTable table = new ShellTable();
             table.column(" ");
             table.column("Group");
@@ -562,7 +573,7 @@ public class Controller {
             }
             table.print(System.out);
             /* ----------------------------- */
- /* END OF PRINT FUNCTION */
+            /* END OF PRINT FUNCTION */
             // </editor-fold>
         }
     }

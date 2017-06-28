@@ -33,6 +33,8 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 /**
  *
+ * Symbolic bundle definition class for balancing operations.
+ * 
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 @PlanningEntity(difficultyComparatorClass = BundleDifficultyComparator.class)
