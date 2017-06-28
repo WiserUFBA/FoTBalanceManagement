@@ -13,8 +13,10 @@ compilar e instalar o projeto na versão *Servicemix 7.0.1* através do [webcons
 Copiar e colar no terminal do Karaf:
 
 ```sh
+config:edit org.apache.karaf.features.repos
+config:property-set kie mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features
 feature:repo-add cellar 4.0.4
-feature:repo-add mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features
+feature:repo-add kie 7.0.0.Final
 feature:install webconsole cellar cellar-obr cellar-log optaplanner-core
 ```
 

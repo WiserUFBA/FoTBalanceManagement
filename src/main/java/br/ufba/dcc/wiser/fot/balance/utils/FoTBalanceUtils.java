@@ -42,19 +42,19 @@ public class FoTBalanceUtils {
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     /* Force messages to appear in karaf console */
-    private static final boolean ENABLE_KARAF_OUTPUT = true;
+    private static final boolean ENABLE_KARAF_OUTPUT = false;
 
     /* Begin of a Info Message */
-    private static final String BEGIN_INFO_MESSAGE = "\n\n[INFO] ";
+    private static final String BEGIN_INFO_MESSAGE = "[INFO] ";
 
     /* Begin of a warning message */
-    private static final String BEGIN_WARN_MESSAGE = "\n\n[WARN] ";
+    private static final String BEGIN_WARN_MESSAGE = "[WARN] ";
 
     /* Begin of a error message */
-    private static final String BEGIN_ERROR_MESSAGE = "\n\n[ERROR] ";
+    private static final String BEGIN_ERROR_MESSAGE = "[ERROR] ";
 
     /* Begin of a debug message */
-    private static final String BEGIN_DEBUG_MESSAGE = "\n\n[DEBUG] ";
+    private static final String BEGIN_DEBUG_MESSAGE = "[DEBUG] ";
 
     /* Begin of a trace message */
     private static final String BEGIN_TRACE_MESSAGE = "[TRACE] ";
@@ -71,7 +71,7 @@ public class FoTBalanceUtils {
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.print(BEGIN_WARN_MESSAGE + warning_msg);
+            System.err.println(BEGIN_WARN_MESSAGE + warning_msg);
         }
     }
 
@@ -87,7 +87,7 @@ public class FoTBalanceUtils {
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.print(BEGIN_ERROR_MESSAGE + error_msg);
+            System.err.println(BEGIN_ERROR_MESSAGE + error_msg);
         }
     }
 
@@ -103,7 +103,7 @@ public class FoTBalanceUtils {
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.print(BEGIN_INFO_MESSAGE + info_msg);
+            System.err.println(BEGIN_INFO_MESSAGE + info_msg);
         }
     }
 
@@ -119,7 +119,7 @@ public class FoTBalanceUtils {
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.print(BEGIN_DEBUG_MESSAGE + debug_msg);
+            System.err.println(BEGIN_DEBUG_MESSAGE + debug_msg);
         }
     }
 
@@ -135,7 +135,7 @@ public class FoTBalanceUtils {
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.print(BEGIN_TRACE_MESSAGE + trace_msg);
+            System.err.println(BEGIN_TRACE_MESSAGE + trace_msg);
         }
     }
 }
