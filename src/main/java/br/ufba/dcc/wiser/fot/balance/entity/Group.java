@@ -98,7 +98,7 @@ public class Group{
     public void setGroupName(String group_name){
         /* If the groupName is equal actual name, nothing change */
         if(this.group_name.equals(group_name)){
-            FoTBalanceUtils.errorMsg("This group already have this name!");
+            FoTBalanceUtils.error("This group already have this name!");
             return;
         }
         
@@ -107,7 +107,7 @@ public class Group{
         
         /* Check if new group name hasn't been registered yet on controller */
         if(controller.groupExists(group_name)){
-            FoTBalanceUtils.errorMsg("Group already exists, choose another name!s");
+            FoTBalanceUtils.error("Group already exists, choose another name!s");
         }
         
         /* Store the old group name */
@@ -324,17 +324,17 @@ public class Group{
      */
     void displayAssociations() {
         for(Host host : host_list){
-            FoTBalanceUtils.infoMsg("Associated Bundles => " + host.getHostID());
+            FoTBalanceUtils.info("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){
                 if(bundle.getHostAssociated() != null && bundle.getHostAssociated().equals(host)){
-                    FoTBalanceUtils.infoMsg("\t" + bundle.getBundleMvnArtifact());
+                    FoTBalanceUtils.info("\t" + bundle.getBundleMvnArtifact());
                 }
             }
         }
-        FoTBalanceUtils.infoMsg("Unassociated Bundles:");
+        FoTBalanceUtils.info("Unassociated Bundles:");
         for(Bundles bundle : bundles_list){
             if(bundle.getHostAssociated() == null){
-                FoTBalanceUtils.infoMsg("\t" + bundle.getBundleMvnArtifact());
+                FoTBalanceUtils.info("\t" + bundle.getBundleMvnArtifact());
             }
         }
     }

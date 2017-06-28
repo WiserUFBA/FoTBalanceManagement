@@ -59,14 +59,14 @@ public class GroupConfigFile {
             configurations.addAll(temp_configurations);
         }
         catch(FileNotFoundException e){
-            FoTBalanceUtils.errorMsg("The url to file " + GROUP_CONFIGURATION_FILE_URL + " is not " +
+            FoTBalanceUtils.error("The url to file " + GROUP_CONFIGURATION_FILE_URL + " is not " +
                 "correct or this file do not exist.");
         }
         
         /* Display configuration content as info message */
         Gson gson = new Gson();
-        FoTBalanceUtils.infoMsg("Configuration file loaded!");
-        FoTBalanceUtils.infoMsg("Content: " + gson.toJson(configurations));
+        FoTBalanceUtils.info("Configuration file loaded!");
+        FoTBalanceUtils.info("Content: " + gson.toJson(configurations));
     }
     
     /**

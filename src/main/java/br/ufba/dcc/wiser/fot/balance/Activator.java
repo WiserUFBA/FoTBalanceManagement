@@ -39,13 +39,13 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bc) throws Exception {
-        FoTBalanceUtils.infoMsg("Starting the bundle FoT Balance");
+        FoTBalanceUtils.info("Starting the bundle FoT Balance");
         Activator.bc = bc;
     }
 
     @Override
     public void stop(BundleContext bc) throws Exception {
-        FoTBalanceUtils.infoMsg("Stopping the bundle FoT Balance");
+        FoTBalanceUtils.info("Stopping the bundle FoT Balance");
         Activator.bc = null;
     }
 

@@ -50,7 +50,7 @@ public class FoTBalanceIncrementalScoreCalculator extends AbstractIncrementalSco
     private void insert(Bundles bundle) {
         /* Imprime o resultado da rodada */
         FoTBalanceUtils.BALANCE_COUNTER++;
-        System.out.println( "Rodada " + FoTBalanceUtils.BALANCE_COUNTER + " => "
+        FoTBalanceUtils.debug( "Count " + FoTBalanceUtils.BALANCE_COUNTER + " => "
                 + "Hard Score = " + hardScore + " | Soft Score = " + softScore);
         
         Host host = bundle.getHostAssociated();
@@ -75,7 +75,7 @@ public class FoTBalanceIncrementalScoreCalculator extends AbstractIncrementalSco
     private void retract(Bundles bundle) {
         /* Imprime o resultado da rodada */
         FoTBalanceUtils.BALANCE_COUNTER++;
-        System.out.println( "Rodada " + FoTBalanceUtils.BALANCE_COUNTER + " => "
+        FoTBalanceUtils.debug( "Count " + FoTBalanceUtils.BALANCE_COUNTER + " => "
                 + "Hard Score = " + hardScore + " | Soft Score = " + softScore);
         
         Host host = bundle.getHostAssociated();
@@ -100,7 +100,7 @@ public class FoTBalanceIncrementalScoreCalculator extends AbstractIncrementalSco
     @Override
     public void resetWorkingSolution(Group workingSolution) {
         /* Inicializa a estrutura de balanceamento */
-        System.out.println("\n#Reinicializando a estrutura de Balanceamento Incremental\n");
+        FoTBalanceUtils.info("\n#Reinitializing balance incremental structure\n");
         
         /* Reset counter of balance operations */
         FoTBalanceUtils.BALANCE_COUNTER = 0;

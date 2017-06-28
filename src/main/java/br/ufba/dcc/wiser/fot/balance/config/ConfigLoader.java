@@ -70,14 +70,14 @@ public class ConfigLoader {
 
         /* Check if this file is correct */
         if (input_stream_reader == null) {
-            FoTBalanceUtils.errorMsg("Canno't load configuration file = " + config_file_url);
+            FoTBalanceUtils.error("Canno't load configuration file = " + config_file_url);
             throw new FileNotFoundException("Cannot find file => " + config_file_url);
         }
 
         /* Get a buffered reader */
         BufferedReader config_file_buffer = new BufferedReader(new InputStreamReader(input_stream_reader));
 
-        FoTBalanceUtils.infoMsg("Loaded Configuration file - " + config_file_url);
+        FoTBalanceUtils.info("Loaded Configuration file - " + config_file_url);
 
         /* Get GSON object and convert this file to a list of T object and after that return the config file */
         Type config_file_type = new TypeToken<ArrayList<T>>() {

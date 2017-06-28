@@ -23,6 +23,10 @@
  */
 package br.ufba.dcc.wiser.fot.balance.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import br.ufba.dcc.wiser.fot.balance.Activator;
+
 /**
  *
  * Log and other class utilities.
@@ -34,10 +38,7 @@ public class FoTBalanceUtils {
     /* Counter for balance operations check */
     public static int BALANCE_COUNTER = 0;
     
-    /* System Messages line begin */
-    public static final String WARNING_MSG_START = "[WARNING] ";
-    public static final String ERROR_MSG_START = "[ERROR] ";
-    public static final String INFO_MSG_START = "[INFO] ";
+    private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
     
     /**
      * 
@@ -45,30 +46,52 @@ public class FoTBalanceUtils {
      * 
      * @param warning_msg Message to be printed.
      */
-    public static void warningMsg(String warning_msg){
+    public static void warn(String warning_msg){
         // TODO Store this in a log file too
-        System.err.println(WARNING_MSG_START + warning_msg);
+        LOG.warn(warning_msg);
     }
     
     /**
      * 
-     * Print a error message formatted with error style.
+     * Print a error message stored in log file and that use SLF4J.
      * 
      * @param error_msg Message to be printed.
      */
-    public static void errorMsg(String error_msg){
+    public static void error(String error_msg){
         // TODO Store this in a log file too
-        System.err.println(ERROR_MSG_START + error_msg);
+        LOG.error(error_msg);
     }
     
     /**
      * 
-     * Print a info message formatted with info style.
+     * Print a info message stored in log file and that use SLF4J.
      * 
      * @param info_msg Message to be printed.
      */
-    public static void infoMsg(String info_msg){
+    public static void info(String info_msg){
         // TODO Store this in a log file too
-        System.err.println(INFO_MSG_START + info_msg);
+        LOG.info(info_msg);
+    }
+    
+    /**
+     * 
+     * Print a debug message stored in log file and that use SLF4J.
+     * 
+     * @param debug_msg Message to be printed.
+     */
+    public static void debug(String debug_msg){
+        // TODO Store this in a log file too
+        LOG.debug(debug_msg);
+    }
+    
+    /**
+     * 
+     * Print a debug message stored in log file and that use SLF4J.
+     * 
+     * @param trace_msg Message to be printed.
+     */
+    public static void trace(String trace_msg){
+        // TODO Store this in a log file too
+        LOG.trace(trace_msg);
     }
 }

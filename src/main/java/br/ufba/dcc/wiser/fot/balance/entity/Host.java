@@ -24,6 +24,7 @@
 package br.ufba.dcc.wiser.fot.balance.entity;
 
 import br.ufba.dcc.wiser.fot.balance.Controller;
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import org.apache.karaf.cellar.core.Node;
 import java.util.HashSet;
 import java.util.Set;
@@ -127,7 +128,7 @@ public class Host {
         }
         catch(NullPointerException e){
             /* Stop Application if the group not exist */
-            System.err.println("Invalid group or group not exist.");
+            FoTBalanceUtils.error("Invalid group or group not exist.");
             return;
         }
         
@@ -152,7 +153,7 @@ public class Host {
         }
         catch(NullPointerException e){
             /* Stop Application if the group not exist */
-            System.err.println("Invalid group or group not exist.");
+            FoTBalanceUtils.error("Invalid group or group not exist.");
             return;
         }
         
