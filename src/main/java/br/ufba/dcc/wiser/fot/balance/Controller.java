@@ -114,6 +114,15 @@ public class Controller {
     /* Karaf Default Start Level for new bundles */
     public static final int DEFAULT_START_LEVEL = 80;
 
+    /* OptaPlanner Best Score */
+    private final static String BEST_SCORE_LIMIT = "0hard/0soft";
+    
+    /* OptaPlanner Maximum seconds spent on balancing */
+    private final static Long SECONDS_SPENT_LIMIT = new Long(10);
+    
+    /* OptaPlanner Maximum number of calculations per balancing */
+    private final static Long CALCULATION_COUNT_LIMIT =  new Long(100000);
+    
     /**
      *
      * Create a new Controller instance.
@@ -183,11 +192,11 @@ public class Controller {
             ScoreDirectorFactoryConfig score_director = new ScoreDirectorFactoryConfig();
             score_director.setIncrementalScoreCalculatorClass(FoTBalanceIncrementalScoreCalculator.class);
 
-            /* Configure Termination Settings */
+            /* Configure Termination Settings */            
             TerminationConfig termination_config = new TerminationConfig();
-            termination_config.setBestScoreLimit("0hard/0soft");
-            termination_config.setSecondsSpentLimit(new Long(10));
-            termination_config.setScoreCalculationCountLimit(new Long(100000));
+            termination_config.setBestScoreLimit(BEST_SCORE_LIMIT);
+            termination_config.setSecondsSpentLimit(SECONDS_SPENT_LIMIT);
+            termination_config.setScoreCalculationCountLimit(CALCULATION_COUNT_LIMIT);
 
             /* Entity Class List */
             List<Class<?>> entity_class_list = new ArrayList();
