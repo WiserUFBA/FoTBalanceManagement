@@ -8,7 +8,7 @@ de problemas de planejamento OptaPlanner
 ### Instalação
 
 Para utilizar o bundle você primeiramente deve instalar as seguintes dependências, e após isso
-compilar e instalar o projeto na versão *Servicemix 7.0.1* através do [webconsole](http://localhost:8181/system/console).
+compilar e instalar o projeto na versão **Servicemix 7.0.1** através do [webconsole](http://localhost:8181/system/console).
 
 Copiar e colar no terminal do Karaf:
 
