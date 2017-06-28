@@ -322,7 +322,7 @@ public class Group{
      * Display association of the bundles of this group with hosts associated with this group.
      * 
      */
-    void displayAssociations() {
+    public void displayAssociations() {
         for(Host host : host_list){
             FoTBalanceUtils.info("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){

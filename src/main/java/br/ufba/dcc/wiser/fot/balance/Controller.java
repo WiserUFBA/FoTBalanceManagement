@@ -173,6 +173,7 @@ public class Controller {
             /* !!!!!!!!!!!!!!!!!!! This don't work !!!!!!!!!!!!!!!!!!! */
             /* OptaPlanner Solver Factory */
             //solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, FoTBalanceIncrementalScoreCalculator.class.getClassLoader());
+            
             /* !!!!!!!!!!!!!!!!!!! Ugly but works at all !!!!!!!!!!!!!!!!!!! */
             /* Create a Solver Config Contexts */
             SolverConfigContext solver_config_context = new SolverConfigContext();
@@ -320,9 +321,6 @@ public class Controller {
                         host_list.remove(host);
                     }
                 }
-
-                /* If there are new nodes or some nodes has exit do balance */
-                balanceNetwork();
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Something went wrong...");
@@ -338,7 +336,7 @@ public class Controller {
     public void balanceNetwork() {
         /* If some of the interfaces is still not initialized stop this function */
 
- /* Hazelcast instance don't exist or it's not initialized yet */
+        /* Hazelcast instance don't exist or it's not initialized yet */
         if (hazelcast_instance == null) {
             FoTBalanceUtils.error("Hazelcast instance don't exist or it's not initialized yet");
             return;
@@ -405,11 +403,13 @@ public class Controller {
         /* Get members from cluster */
         Set<Member> members = cluster.getMembers();
 
+        System.out.println("Number of Members -- " + members.size());
         for (Member member : members) {
             System.out.println("UUID -- " + member.getUuid());
         }
 
         /* ******************************************** */
+        
         /* Update Host Lists */
         updateHosts();
 
@@ -417,9 +417,14 @@ public class Controller {
         //TODO
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
+            /* Balance this group */
             Group solved_group = solver.solve(group_list.get(group_name));
 
+            /* Print info about new associations */
+            solved_group.displayAssociations();            
+            
             // TODO: DO THE CHANGES ON NETWORK
+            // INSTALL AND UNINSTALL PACKAGES, CHECK HOW MANY HOSTS EXIST...
         }
 
         // THAT's ALL :)

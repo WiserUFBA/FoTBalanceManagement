@@ -34,64 +34,108 @@ import br.ufba.dcc.wiser.fot.balance.Activator;
  * @author Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>
  */
 public class FoTBalanceUtils {
-    
+
     /* Counter for balance operations check */
     public static int BALANCE_COUNTER = 0;
-    
+
+    /* Logger */
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
-    
+
+    /* Force messages to appear in karaf console */
+    private static final boolean ENABLE_KARAF_OUTPUT = true;
+
+    /* Begin of a Info Message */
+    private static final String BEGIN_INFO_MESSAGE = "\n\n[INFO] ";
+
+    /* Begin of a warning message */
+    private static final String BEGIN_WARN_MESSAGE = "\n\n[WARN] ";
+
+    /* Begin of a error message */
+    private static final String BEGIN_ERROR_MESSAGE = "\n\n[ERROR] ";
+
+    /* Begin of a debug message */
+    private static final String BEGIN_DEBUG_MESSAGE = "\n\n[DEBUG] ";
+
+    /* Begin of a trace message */
+    private static final String BEGIN_TRACE_MESSAGE = "[TRACE] ";
+
     /**
-     * 
+     *
      * Print a warning message formatted with warning style.
-     * 
+     *
      * @param warning_msg Message to be printed.
      */
-    public static void warn(String warning_msg){
+    public static void warn(String warning_msg) {
         // TODO Store this in a log file too
         LOG.warn(warning_msg);
+
+        /* Force display on karaf */
+        if (ENABLE_KARAF_OUTPUT) {
+            System.err.print(BEGIN_WARN_MESSAGE + warning_msg);
+        }
     }
-    
+
     /**
-     * 
+     *
      * Print a error message stored in log file and that use SLF4J.
-     * 
+     *
      * @param error_msg Message to be printed.
      */
-    public static void error(String error_msg){
+    public static void error(String error_msg) {
         // TODO Store this in a log file too
         LOG.error(error_msg);
+
+        /* Force display on karaf */
+        if (ENABLE_KARAF_OUTPUT) {
+            System.err.print(BEGIN_ERROR_MESSAGE + error_msg);
+        }
     }
-    
+
     /**
-     * 
+     *
      * Print a info message stored in log file and that use SLF4J.
-     * 
+     *
      * @param info_msg Message to be printed.
      */
-    public static void info(String info_msg){
+    public static void info(String info_msg) {
         // TODO Store this in a log file too
         LOG.info(info_msg);
+
+        /* Force display on karaf */
+        if (ENABLE_KARAF_OUTPUT) {
+            System.err.print(BEGIN_INFO_MESSAGE + info_msg);
+        }
     }
-    
+
     /**
-     * 
+     *
      * Print a debug message stored in log file and that use SLF4J.
-     * 
+     *
      * @param debug_msg Message to be printed.
      */
-    public static void debug(String debug_msg){
+    public static void debug(String debug_msg) {
         // TODO Store this in a log file too
         LOG.debug(debug_msg);
+
+        /* Force display on karaf */
+        if (ENABLE_KARAF_OUTPUT) {
+            System.err.print(BEGIN_DEBUG_MESSAGE + debug_msg);
+        }
     }
-    
+
     /**
-     * 
+     *
      * Print a debug message stored in log file and that use SLF4J.
-     * 
+     *
      * @param trace_msg Message to be printed.
      */
-    public static void trace(String trace_msg){
+    public static void trace(String trace_msg) {
         // TODO Store this in a log file too
         LOG.trace(trace_msg);
+
+        /* Force display on karaf */
+        if (ENABLE_KARAF_OUTPUT) {
+            System.err.print(BEGIN_TRACE_MESSAGE + trace_msg);
+        }
     }
 }

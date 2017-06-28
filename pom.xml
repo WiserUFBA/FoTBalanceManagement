@@ -29,6 +29,8 @@
         <optaplanner.version>7.0.0.Final</optaplanner.version>
         <!-- GSON Version -->
         <gson.version>2.8.0</gson.version>
+        <!-- SLF4J Version -->
+        <slf4j.version>1.7.25</slf4j.version>
         <!-- Camel Version -->
         <camel.version>2.16.2</camel.version>
         <!-- OP4SJ Version -->
@@ -176,7 +178,22 @@
             <version>${optaplanner.version}</version>
             <scope>provided</scope>
         </dependency>
-               
+        <!-- SLF4J -->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- CXF -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
