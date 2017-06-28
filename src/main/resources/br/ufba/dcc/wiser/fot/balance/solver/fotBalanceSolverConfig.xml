@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver>
     <!-- Domain model configuration -->
-    <!--<scanAnnotatedClasses/>-->
+    <scanAnnotatedClasses/>
 
     <!-- Score configuration -->
     <scoreDirectorFactory>
         <!-- Classe de pontuação avançada, incremental -->
-        <!--<incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
+        <incrementalScoreCalculatorClass>br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator</incrementalScoreCalculatorClass>
     </scoreDirectorFactory>
 
     <!-- Optimization algorithms configuration -->

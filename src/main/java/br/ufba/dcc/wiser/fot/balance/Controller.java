@@ -23,10 +23,10 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator;
 import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
 import br.ufba.dcc.wiser.fot.balance.entity.Group;
-import br.ufba.dcc.wiser.fot.balance.solver.BundleBalancerIncrementalScoreCalculator;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
@@ -63,6 +63,7 @@ import org.apache.karaf.cellar.hazelcast.HazelcastNode;
 import org.apache.karaf.shell.support.table.ShellTable;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.solver.SolverConfig;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -167,20 +168,27 @@ public class Controller {
             InputStream solver_configuration_stream = getClass().getClassLoader().getResourceAsStream(SOLVER_CONFIGURATION);
 
             /* List of some imports needed by solver factory */
+            /*
             List<String> import_list = new ArrayList();
             import_list.add("br.ufba.dcc.wiser.fot.balance.solver");
             import_list.add("br.ufba.dcc.wiser.fot.balance.entity");
+            */
             
             /* OptaPlanner Solver Factory */
             /* This don't work */
-            //solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, BundleBalancerIncrementalScoreCalculator.class.getClassLoader());
+            solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, BundleBalancerIncrementalScoreCalculator.class.getClassLoader());
             /* Ugly but let's try if it's working */
+            /*
             solver_factory = SolverFactory.createEmpty();
-            solver_factory.getSolverConfig().getScoreDirectorFactoryConfig().setIncrementalScoreCalculatorClass(BundleBalancerIncrementalScoreCalculator.class);
-            solver_factory.getSolverConfig().getScanAnnotatedClassesConfig().setPackageIncludeList(import_list);
+            */
+            //SolverConfig solver_config = solver_factory.getSolverConfig();
+            //solver_config.getScoreDirectorFactoryConfig().setIncrementalScoreCalculatorClass(BundleBalancerIncrementalScoreCalculator.class);
+            //solver_config.getScanAnnotatedClassesConfig().setPackageIncludeList(import_list);
+            /*
             solver_factory.getSolverConfig().getTerminationConfig().setSecondsSpentLimit(new Long(10));
             solver_factory.getSolverConfig().getTerminationConfig().setBestScoreLimit("0hard/0soft");
             solver_factory.getSolverConfig().getTerminationConfig().setStepCountLimit(100000);          
+            */
             
             /* OptaPlanner Solver */
             solver = solver_factory.buildSolver();

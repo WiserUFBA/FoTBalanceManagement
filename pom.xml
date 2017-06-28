@@ -9,12 +9,13 @@
     <artifactId>fot-balance-management</artifactId>
     <description> FoT Balance Management Bundle</description>
     <groupId>br.ufba.dcc.wiser</groupId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <packaging>bundle</packaging>
 
-    <!-- Remember to install the following bundles before put this bundle inside karaf -->
-    <!-- bundle:install mvn:org.optaplanner/optaplanner-core/6.5.0.Final -->
-    <!-- bundle:install mvn:org.apache.commons/commons-lang3/3.5 -->
+    <!-- Remember to pre-install the following features before install this bundle itself -->
+    <!-- feature:repo-add cellar 4.0.4 -->
+    <!-- feature:repo-add mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features -->
+    <!-- feature:install webconsole cellar cellar-obr cellar-log optaplanner-core -->
 
     <properties>
         <!-- Project Properties -->
@@ -166,7 +167,7 @@
         <!-- https://mvnrepository.com/artifact/org.optaplanner/optaplanner-core -->
         <!-- 
             Provided by feature optaplanner-engine 7.0.0.Final
-            add 'kie=mvn:org.kie/kie-karaf-features/LATEST/xml/features' to file 'etc/org.apache.karaf.features.repos.cfg'
+            add 'kie=mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features' to file 'etc/org.apache.karaf.features.repos.cfg'
             and after install using
             feature:repo-add kie 7.0.0.Final
             feature:install optaplanner-engine
