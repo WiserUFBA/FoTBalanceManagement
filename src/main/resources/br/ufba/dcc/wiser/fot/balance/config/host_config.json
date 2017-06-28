@@ -1,6 +1,7 @@
 [
     {
         "hostId": "Host 1",
+        "hostUuid": "0f109050-cdb0-4739-b4e4-00fc7f79fa21",
         "hostIP": "192.168.0.137",
         "groupsList": [
             "security",
@@ -9,17 +10,11 @@
     },
     {
         "hostId": "Host 2",
+        "hostUuid": "c1cee6bd-b6e5-48dd-88cd-0b2cbf7a99f7",
         "hostIP": "192.168.0.139",
         "groupsList": [
             "localization",
             "basic"
-        ]
-    },
-    {
-        "hostId": "Host 3",
-        "hostIP": "192.168.0.140",
-        "groupsList": [
-            "discovery"
         ]
     }
 ]
