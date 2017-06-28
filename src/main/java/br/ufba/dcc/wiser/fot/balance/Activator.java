@@ -23,6 +23,7 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -38,13 +39,13 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bc) throws Exception {
-        System.out.println("Starting the bundle FoT Balance");
+        FoTBalanceUtils.infoMsg("Starting the bundle FoT Balance");
         Activator.bc = bc;
     }
 
     @Override
     public void stop(BundleContext bc) throws Exception {
-        System.out.println("Stopping the bundle FoT Balance");
+        FoTBalanceUtils.infoMsg("Stopping the bundle FoT Balance");
         Activator.bc = null;
     }
 
