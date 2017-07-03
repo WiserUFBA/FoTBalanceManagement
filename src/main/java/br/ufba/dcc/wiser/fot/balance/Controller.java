@@ -104,7 +104,7 @@ public class Controller {
 
     /* Host Groups Associations */
     private final Map<String, Set<Group>> host_group_associations;
-    
+
     /* Factory of Group Solver */
     private final SolverConfig solver_config;
 
@@ -128,15 +128,15 @@ public class Controller {
     public static final int DEFAULT_START_LEVEL = 80;
 
     /* List of groups for *ONE HOST* case */
-    public static final String[] DEFAULT_GROUP_LIST_HOST0 = { "localization", "basic", "discover" };
+    public static final String[] DEFAULT_GROUP_LIST_HOST0 = {"localization", "basic", "discover"};
     public static List<String> GROUPS_LIST_ONEHOSTCASE = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST0));
-    
+
     /* List of groups for *TWO HOST* case */
-    public static final String[] DEFAULT_GROUP_LIST_HOST1 = { "basic", "discover" };
-    public static final String[] DEFAULT_GROUP_LIST_HOST2 = { "basic", "localization" };
+    public static final String[] DEFAULT_GROUP_LIST_HOST1 = {"basic", "discover"};
+    public static final String[] DEFAULT_GROUP_LIST_HOST2 = {"basic", "localization"};
     public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST1 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST1));
     public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST2 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST2));
-    
+
     /* OptaPlanner Best Score */
     private final static String BEST_SCORE_LIMIT = "0hard/0soft";
 
@@ -145,7 +145,7 @@ public class Controller {
 
     /* OptaPlanner Maximum number of calculations per balancing */
     private final static Long CALCULATION_COUNT_LIMIT = new Long(100000);
-    
+
     /**
      *
      * Create a new Controller instance.
@@ -171,7 +171,7 @@ public class Controller {
 
         /* OptaPlanner Solver Configurations */
         solver_config = new SolverConfig();
-        
+
         /* Host and Group associations */
         host_group_associations = new HashMap<>();
     }
@@ -190,7 +190,7 @@ public class Controller {
         /* Return the instance */
         return instance;
     }
-    
+
     /**
      *
      * Initialize application and execute some routines
@@ -245,32 +245,48 @@ public class Controller {
 
         /* Load Configuration Files */
         host_configurations = HostConfigFile.getConfigurationsFromInstance();
+        System.out.println("++++++++++++++++HMM111111111111++++++++++++++++");
         group_configurations = GroupConfigFile.getConfigurationsFromInstance();
-
-        /* Store groups defined on the configuration file */
-        for (Group temp_group : group_configurations) {
-            /* Get Group Name */
-            String temp_group_name = temp_group.getGroupName();
-            
-            /* Add reference to group list */
-            group_list.put(temp_group_name, temp_group);
-            
-            /* Register the group on cellar */
-            createCellarGroup(temp_group_name);
-        }
+        System.out.println("++++++++++++++++HMM222222222222++++++++++++++++");
         
-        /* Store list of groups by hostname */
-        for(HostConfigFileObject host_config_object : host_configurations){
-            /* List of groups associated with this host */
-            Set<Group> groups_associated = new HashSet<>();
-            
-            /* For each group associated with this host add a reference to group object */
-            for(String group_name : host_config_object.getGroupsList()){
-                groups_associated.add(group_list.get(group_name));
+        try {
+            /* Store groups defined on the configuration file */
+            for (Group temp_group : group_configurations) {
+
+                /* Get Group Name */
+                String temp_group_name = temp_group.getGroupName();
+
+                /* Add reference to group list */
+                group_list.put(temp_group_name, temp_group);
+
+                /* Register the group on cellar */
+                FoTBalanceUtils.info("Registering group on cellar");
+                createCellarGroup(temp_group_name);
             }
-            
-            /* Finnaly add list of group references to this host */
-            host_group_associations.put(host_config_object.getHostname(), groups_associated);
+        } catch (Exception e) {
+            FoTBalanceUtils.error("Cannot register cellar group");
+            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
+            FoTBalanceUtils.trace(e.getMessage());
+        }
+
+        /* Store list of groups by hostname */
+        try{
+            for (HostConfigFileObject host_config_object : host_configurations) {
+                /* List of groups associated with this host */
+                Set<Group> groups_associated = new HashSet<>();
+
+                /* For each group associated with this host add a reference to group object */
+                for (String group_name : host_config_object.getGroupsList()) {
+                    groups_associated.add(group_list.get(group_name));
+                }
+
+                /* Finnaly add list of group references to this host */
+                host_group_associations.put(host_config_object.getHostname(), groups_associated);
+            }
+        } catch (Exception e) {
+            FoTBalanceUtils.error("Cannot store host groups");
+            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
+            FoTBalanceUtils.trace(e.getMessage());
         }
         
         /* Store this new object in a static reference */
@@ -317,6 +333,7 @@ public class Controller {
     /* Update the list of hosts based on cluster members */
     public void updateHosts() {
         /* If some of the interfaces is still not initialized stop this function */
+        FoTBalanceUtils.info("--- Updating Hosts ---");
 
         /* Hazelcast instance don't exist or it's not initialized yet */
         if (hazelcast_instance == null) {
@@ -423,7 +440,7 @@ public class Controller {
             Set<Host> new_hosts = new HashSet<>();
             Set<Host> past_hosts = new HashSet<>();
 
-            /* Put all elements in temp list host to discover who notes */
+            /* Put all elements in temp list host to discover who is new */
             new_hosts.addAll(temp_host_list);
             new_hosts.removeAll(host_list);
 
@@ -443,14 +460,14 @@ public class Controller {
                         /* Check if this host has never entered this list or this list is empty */
                         if (bundles_to_remove != null && bundles_to_remove.size() > 0) {
                             /* For each group name unninstal all pendent bundles */
-                            for(String group_name : bundles_to_remove.keySet()){
+                            for (String group_name : bundles_to_remove.keySet()) {
                                 /* List of unninstal urls */
                                 List<String> uninstall_urls = bundles_to_remove.get(group_name);
-                                
+
                                 /* Unninstall all urls received */
                                 hostUnninstalBundle(host.getHostInstance(), uninstall_urls, group_name);
                             }
-                            
+
                             /* Clean list after unninstall all the pendent bundles */
                             bundles_to_remove.clear();
                         }
@@ -459,17 +476,17 @@ public class Controller {
                         Set<Group> groups_associated = host_group_associations.get(host.getHostID());
 
                         /* Check how many hosts we have since if we have special rules for cases with one and two hosts */
-                        if((host_list.size() + new_hosts.size() - past_hosts.size()) > 2){
+                        if ((host_list.size() + new_hosts.size() - past_hosts.size()) > 2) {
                             /* If we have groups associated with this host */
-                            if(groups_associated != null && groups_associated.size() > 0){
+                            if (groups_associated != null && groups_associated.size() > 0) {
 
                                 /* Register the groups of this host in this instance */
-                                for(Group group_associated : groups_associated){
+                                for (Group group_associated : groups_associated) {
                                     host.addGroup(group_associated.getGroupName());
                                 }
                             }
                         }
-                        
+
                         /* Finnaly add host to host list */
                         host_list.add(host);
                     }
@@ -491,10 +508,10 @@ public class Controller {
                 }
 
                 /* If we have only one or only two hosts we have a special case */
-                if(host_list.size() <= 2){
-                    
+                if (host_list.size() <= 2) {
+
                     /* If we have one or two hosts we need to remove additional groups in order to keep these hosts ok */
-                    for(Host host : host_list){
+                    for (Host host : host_list) {
                         /* Get the map of unninstall urls */
                         Map<String, List<String>> unninstal_urls_groups = host.getAllUninstalUrls();
 
@@ -502,7 +519,7 @@ public class Controller {
                         host.removeAllGroups();
 
                         /* For each group name unninstal all pendent bundles */
-                        for(String group_name : unninstal_urls_groups.keySet()){
+                        for (String group_name : unninstal_urls_groups.keySet()) {
                             /* List of unninstal urls */
                             List<String> uninstall_urls = unninstal_urls_groups.get(group_name);
 
@@ -510,44 +527,44 @@ public class Controller {
                             hostUnninstalBundle(host.getHostInstance(), uninstall_urls, group_name);
                         }
                     }
-                    
+
                     /* Register hosts on priority groups */
-                    if(host_list.size() == 1){
+                    if (host_list.size() == 1) {
                         /* Host 0 -- The default host in one host case */
                         Host host0 = host_list.iterator().next();
 
                         /* Register host 0 with the priority groups */
-                        for(String group_name : DEFAULT_GROUP_LIST_HOST0){
+                        for (String group_name : DEFAULT_GROUP_LIST_HOST0) {
                             host0.addGroup(group_name);
                         }
-                    }
-                    else{
+                    } else {
                         /* Base iterator */
                         Iterator<Host> host_iterator = host_list.iterator();
-                        
+
                         /* Host 1 -- The first host on two host case */
                         Host host1 = host_iterator.next();
-                        
+
                         /* Host 2 -- The second host on two host case */
                         Host host2 = host_iterator.next();
-                        
+
                         /* Register host 1 with the priority groups */
-                        for(String group_name : DEFAULT_GROUP_LIST_HOST1){
+                        for (String group_name : DEFAULT_GROUP_LIST_HOST1) {
                             host1.addGroup(group_name);
                         }
-                        
+
                         /* Register host 2 with the priority groups */
-                        for(String group_name : DEFAULT_GROUP_LIST_HOST1){
+                        for (String group_name : DEFAULT_GROUP_LIST_HOST1) {
                             host2.addGroup(group_name);
                         }
                     }
                 }
-                
+
                 /* Since network has changed we need to balance it again */
                 balanceNetwork();
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Several error on network check");
+            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
             FoTBalanceUtils.trace(e.getMessage());
         }
     }
@@ -560,7 +577,7 @@ public class Controller {
     private void balanceNetwork() {
         /* Display the begin of network balancing */
         FoTBalanceUtils.info("----- Begin of Balance -----");
-        
+
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
             /* Actual group */
@@ -569,23 +586,22 @@ public class Controller {
             /* Print info about actual group */
             FoTBalanceUtils.info("------ Before Balance ------");
             actual_group.displayAssociations();
-            
+
             /* Balance this group */
             Group solved_group = solver.solve(actual_group);
 
             /* Print info about new associations */
             FoTBalanceUtils.info("------ After  Balance ------");
             solved_group.displayAssociations();
-            
+
             // TODO: DO THE CHANGES ON NETWORK
             // TODO: COMPARE IT WITH THE LAST CONFIGURATION
             // TODO: INSTALL AND UNINSTALL PACKAGES
-            TODO
-            
+            //TODO
             /* Check associations after balance finish */
             actual_group.checkMapAssociations();
         }
-        
+
         /* Show that re reach the end of fot balacing */
         FoTBalanceUtils.info("------ End of Balance ------");
     }
