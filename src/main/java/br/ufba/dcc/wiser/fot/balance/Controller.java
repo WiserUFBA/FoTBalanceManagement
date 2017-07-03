@@ -23,6 +23,9 @@
  */
 package br.ufba.dcc.wiser.fot.balance;
 
+import br.ufba.dcc.wiser.fot.balance.config.GroupConfigFile;
+import br.ufba.dcc.wiser.fot.balance.config.HostConfigFile;
+import br.ufba.dcc.wiser.fot.balance.config.HostConfigFileObject;
 import br.ufba.dcc.wiser.fot.balance.solver.FoTBalanceIncrementalScoreCalculator;
 import br.ufba.dcc.wiser.fot.balance.entity.Bundles;
 import br.ufba.dcc.wiser.fot.balance.entity.Host;
@@ -34,6 +37,7 @@ import com.hazelcast.core.Member;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +46,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
@@ -218,7 +224,15 @@ public class Controller {
             FoTBalanceUtils.trace(e.getMessage());
         }
 
-        /* Store this new object in static reference */
+        /* Load Configuration Files */
+        List<HostConfigFileObject> host_configurations = HostConfigFile.getConfigurationsFromInstance();
+        List<Group> group_configurations = GroupConfigFile.getConfigurationsFromInstance();
+        
+        // -----------------------------------------------
+        // TODO JOIN CONFIGURATION FILES!
+        // -----------------------------------------------
+        
+        /* Store this new object in a static reference */
         FoTBalanceUtils.info("Storing new FoT Balance Controller");
         instance = this;
 
@@ -414,7 +428,13 @@ public class Controller {
 
         System.out.println("Number of Members -- " + members.size());
         for (Member member : members) {
-            System.out.println("UUID -- " + member.getUuid());
+            System.out.println("UUID -- " + member.getUuid() + " / IP -- " + member.getAddress());
+            try {
+                System.out.println("HOST* -- " + member.getAddress().getInetAddress().getHostName());
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("HOST -- " + new HazelcastNode(member).getHost());
         }
 
         /* ******************************************** */

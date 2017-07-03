@@ -39,7 +39,7 @@ public class HostConfigFileObject {
     private String hostId;
     
     /* IP of this host */
-    private String hostIP;
+    private String hostName;
     
     /* List of groups */
     private List<String> groupsList;
@@ -49,12 +49,12 @@ public class HostConfigFileObject {
      * Instantiate a new Configuration File.
      * 
      * @param hostId Id of this host.
-     * @param hostIP IP of this host.
+     * @param hostName FQDN of this host.
      * @param groupsList Array of groups which is associated with this host.
      */
-    public HostConfigFileObject(String hostId, String hostIP, String[] groupsList){
+    public HostConfigFileObject(String hostId, String hostName, String[] groupsList){
         this.hostId = hostId;
-        this.hostIP = hostIP;
+        this.hostName = hostName;
         this.groupsList = new ArrayList<>(Arrays.asList(groupsList));
     }
     
@@ -63,10 +63,10 @@ public class HostConfigFileObject {
      * Instantiate a new configuration file without groups.
      * 
      * @param hostId Id of this host.
-     * @param hostIP IP of this host.
+     * @param hostName FQDN of this host.
      */
-    public HostConfigFileObject(String hostId, String hostIP){
-        this(hostId, hostIP, new String[0]);
+    public HostConfigFileObject(String hostId, String hostName){
+        this(hostId, hostName, new String[0]);
     }
     
     /**
@@ -83,7 +83,6 @@ public class HostConfigFileObject {
      * 
      * No argument constructor for clone operations.
      * 
-     * @param hostId Id of this host.
      */
     public HostConfigFileObject(){
         this("");
@@ -133,19 +132,19 @@ public class HostConfigFileObject {
      * 
      * Get IP of this host.
      * 
-     * @return IP of this host.
+     * @return FQDN of this host.
      */
     public String getHostIp() {
-        return hostIP;
+        return hostName;
     }
 
     /**
      * 
      * Set id of this host.
      * 
-     * @param hostIP New IP of this host.
+     * @param hostName New FQDN of this host.
      */
-    public void setHostIP(String hostIP) {
-        this.hostIP = hostIP;
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 }

@@ -40,7 +40,7 @@ public class ConfigLoaderTest extends TestSupport{
     
     
     /* Return of host config file expected */
-    public static String HOST_CONFIG_FILE_SERIALIZED_OUTPUT = "[{\"hostId\":\"Host 1\",\"hostIP\":\"192.168.0.1\",\"groupsList\":[\"test1\"]},{\"hostId\":\"Host 2\",\"hostIP\":\"192.168.0.2\",\"groupsList\":[\"test2\"]}]";
+    public static String HOST_CONFIG_FILE_SERIALIZED_OUTPUT = "[{\"hostId\":\"Host 1\",\"hostName\":\"host1.local\",\"groupsList\":[\"test1\"]},{\"hostId\":\"Host 2\",\"hostName\":\"host2.local\",\"groupsList\":[\"test2\"]}]";
     
     /* Return of group config file expected */
     public static String GROUP_CONFIG_FILE_SERIALIZED_OUTPUT = "[{\"groupName\":\"test1\",\"bundlesList\":[{\"groupId\":\"GID1\",\"artifactId\":\"AID1\",\"artifactVersion\":\"1.TEST.1\",\"bundleCost\":1.0}]},{\"groupName\":\"test2\",\"bundlesList\":[{\"groupId\":\"GID2\",\"artifactId\":\"AID2\",\"artifactVersion\":\"1.TEST.2\",\"bundleCost\":2.0},{\"groupId\":\"GID3\",\"artifactId\":\"AID3\",\"artifactVersion\":\"1.TEST.3\",\"bundleCost\":3.0}]}]";
