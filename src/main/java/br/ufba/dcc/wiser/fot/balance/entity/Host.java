@@ -25,8 +25,11 @@ package br.ufba.dcc.wiser.fot.balance.entity;
 
 import br.ufba.dcc.wiser.fot.balance.Controller;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
+import java.util.HashMap;
 import org.apache.karaf.cellar.core.Node;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -50,7 +53,7 @@ public class Host {
      * Instantiate a FoT Balance Host.
      * 
      * @param host_hazelcast_instance Reference of hazelcast host.
-     * @param host_id uuid of this host.
+     * @param host_id FQDN of this host.
      * @param host_capacity Capacity of this node.
      */
     public Host(Node host_hazelcast_instance, String host_id, int host_capacity){
@@ -71,7 +74,7 @@ public class Host {
      * 
      * Instantiate a host without a hazelcast_install reference.
      * 
-     * @param host_id Id of this host.
+     * @param host_id FQDN of this host.
      * @param host_capacity Capacity of this host.
      */
     public Host(String host_id, int host_capacity){
@@ -163,6 +166,58 @@ public class Host {
     
     /**
      * 
+     * Get all bundles associated with this host.
+     * 
+     * @return A set of bundles associated with this host.
+     */
+    public Set<Bundles> getBundlesAssociated(){
+        /* List of bundles associated with this host */
+        Set<Bundles> bundles_associated = new HashSet<>();
+        
+        /* Get all bundles associated with this host */
+        for(Group group : group_list){
+            bundles_associated.addAll(group.getBundlesAssociated(this));
+        }
+        
+        return bundles_associated;
+    }
+    
+    /**
+     * 
+     * Get all install urls of the bundles associated with this host.
+     * 
+     * @return A map of install urls by groupss.
+     */
+    public Map<String, List<String>> getAllInstalUrls(){
+        Map<String, List<String>> install_urls_groups = new HashMap<>();
+        
+        /* Get all install ulrs of the bundles associated with this host */
+        for(Group group : group_list){
+            install_urls_groups.put(group.getGroupName(), group.getInstallUrls(this));
+        }
+        
+        return install_urls_groups;
+    }
+    
+    /**
+     * 
+     * Get all uninstall urls of the bundles associated with this host.
+     * 
+     * @return A map of uninstall urls by groupss.
+     */
+    public Map<String, List<String>> getAllUninstalUrls(){
+        Map<String, List<String>> uninstall_urls_groups = new HashMap<>();
+        
+        /* Get all install ulrs of the bundles associated with this host */
+        for(Group group : group_list){
+            uninstall_urls_groups.put(group.getGroupName(), group.getUninstallUrls(this));
+        }
+        
+        return uninstall_urls_groups;
+    }
+    
+    /**
+     * 
      * Remove All groups from the given host.
      * 
      */
@@ -185,7 +240,7 @@ public class Host {
     
     /**
      * 
-     * Get id of the actual host.
+     * Get id or FQDN of the actual host.
      * 
      * @return Id of this host.
      */
@@ -195,7 +250,7 @@ public class Host {
 
     /**
      * 
-     * Set id of this host
+     * Set new FQDN of this host
      * 
      * @param host_id New Id of this host.
      */

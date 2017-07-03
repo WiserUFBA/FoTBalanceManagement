@@ -38,7 +38,7 @@ public class HostConfigFileObject {
     /* Id of this host */
     private String hostId;
     
-    /* IP of this host */
+    /* Hostname(FQDN) of this host */
     private String hostName;
     
     /* List of groups */
@@ -134,7 +134,7 @@ public class HostConfigFileObject {
      * 
      * @return FQDN of this host.
      */
-    public String getHostIp() {
+    public String getHostname() {
         return hostName;
     }
 

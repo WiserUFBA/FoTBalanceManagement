@@ -33,8 +33,11 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import br.ufba.dcc.wiser.fot.balance.Controller;
+import br.ufba.dcc.wiser.fot.balance.exceptions.UnassociatedHostException;
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.List;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 
@@ -162,8 +165,6 @@ public class Group{
         /* Pick the list of bundles associated with this host and put it on List of bundles to remove */
         Set<Bundles> old_bundles_associated = host_bundle_associations.get(host);
         host_bundle_associations.remove(host);
-        Controller controller = Controller.getInstance();
-        controller.registerOfflineHostBundles(host, old_bundles_associated);
         
         /* Remove references of this host on each bundle */
         for(Bundles bundle : old_bundles_associated){
@@ -235,7 +236,7 @@ public class Group{
     /**
      * 
      * Check if the map of associations between bundles and host are updated,
-     * this method should be called always after the balance
+     * this method should be called always after the balance.
      * 
      */
     public void checkMapAssociations(){
@@ -258,6 +259,68 @@ public class Group{
         }
     }
     
+    /**
+     * Get all install urls associated with a given host.
+     * 
+     * @param host Host selected for install urls.
+     * @return A list of install urls.
+     */
+    public List<String> getInstallUrls(Host host){
+        /* Get a set of bundles associated with this host */
+        Set<Bundles> bundles_associated = getBundlesAssociated(host);
+        
+        /* List of install urls */
+        List<String> install_urls = new ArrayList<>();
+        
+        /* Get intsall url for each bundle associated with this host */
+        for(Bundles bundle : bundles_associated){
+            try {
+                install_urls.add(bundle.getKarafInstallURL());
+            } catch (UnassociatedHostException e) {
+                FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
+                FoTBalanceUtils.trace(e.getMessage());
+            }
+        }
+        
+        return install_urls;
+    }
+        
+    /**
+     * Get all uninstall urls associated with a given host.
+     * 
+     * @param host Host selected for uninstall urls.
+     * @return A list of uninstall urls.
+     */
+    public List<String> getUninstallUrls(Host host){
+        /* Get a set of bundles associated with this host */
+        Set<Bundles> bundles_associated = getBundlesAssociated(host);
+        
+        /* List of uninstall urls */
+        List<String> uninstall_urls = new ArrayList<>();
+        
+        /* Get unintsall url for each bundle associated with this host */
+        for(Bundles bundle : bundles_associated){
+            try {
+                uninstall_urls.add(bundle.getKarafInstallURL());
+            } catch (UnassociatedHostException e) {
+                FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
+                FoTBalanceUtils.trace(e.getMessage());
+            }
+        }
+        
+        return uninstall_urls;
+    }
+    
+    /**
+     * 
+     * Get bundles of this group associated with a given host.
+     * 
+     * @param host Host which bundles are needed.
+     * @return A set of bundles associated with a given host.
+     */
+    public Set<Bundles> getBundlesAssociated(Host host){
+        return host_bundle_associations.get(host);
+    }
     
     /**
      * 
@@ -323,6 +386,8 @@ public class Group{
      * 
      */
     public void displayAssociations() {
+        FoTBalanceUtils.info("Group Name -- " + group_name);
+        
         for(Host host : host_list){
             FoTBalanceUtils.info("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){

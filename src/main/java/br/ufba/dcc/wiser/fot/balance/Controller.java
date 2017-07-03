@@ -39,15 +39,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
@@ -97,16 +97,23 @@ public class Controller {
     protected ConfigurationAdmin configuration_admin;
     /* Set of Host */
     private final Set<Host> host_list;
-    /* Array of Groups */
+    /* Map of Groups */
     private final Map<String, Group> group_list;
     /* List of offline hosts, hosts which will loose bundles after caming online */
-    private final Map<Host, Set<Bundles>> offline_hosts_to_remove_bundles;
+    private final Map<Host, Map<String, List<String>>> offline_hosts_to_remove_bundles;
 
+    /* Host Groups Associations */
+    private final Map<String, Set<Group>> host_group_associations;
+    
     /* Factory of Group Solver */
     private final SolverConfig solver_config;
 
     /* Group Solver Class */
     private Solver<Group> solver;
+
+    /* Configuration files */
+    private List<HostConfigFileObject> host_configurations;
+    private List<Group> group_configurations;
 
     /* Default Node Capacity */
     public static int NODE_CAPACITY = 6;
@@ -120,14 +127,24 @@ public class Controller {
     /* Karaf Default Start Level for new bundles */
     public static final int DEFAULT_START_LEVEL = 80;
 
+    /* List of groups for *ONE HOST* case */
+    public static final String[] DEFAULT_GROUP_LIST_HOST0 = { "localization", "basic", "discover" };
+    public static List<String> GROUPS_LIST_ONEHOSTCASE = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST0));
+    
+    /* List of groups for *TWO HOST* case */
+    public static final String[] DEFAULT_GROUP_LIST_HOST1 = { "basic", "discover" };
+    public static final String[] DEFAULT_GROUP_LIST_HOST2 = { "basic", "localization" };
+    public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST1 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST1));
+    public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST2 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST2));
+    
     /* OptaPlanner Best Score */
     private final static String BEST_SCORE_LIMIT = "0hard/0soft";
-    
+
     /* OptaPlanner Maximum seconds spent on balancing */
     private final static Long SECONDS_SPENT_LIMIT = new Long(10);
-    
+
     /* OptaPlanner Maximum number of calculations per balancing */
-    private final static Long CALCULATION_COUNT_LIMIT =  new Long(100000);
+    private final static Long CALCULATION_COUNT_LIMIT = new Long(100000);
     
     /**
      *
@@ -154,6 +171,9 @@ public class Controller {
 
         /* OptaPlanner Solver Configurations */
         solver_config = new SolverConfig();
+        
+        /* Host and Group associations */
+        host_group_associations = new HashMap<>();
     }
 
     /**
@@ -170,7 +190,7 @@ public class Controller {
         /* Return the instance */
         return instance;
     }
-
+    
     /**
      *
      * Initialize application and execute some routines
@@ -188,7 +208,6 @@ public class Controller {
             /* !!!!!!!!!!!!!!!!!!! This don't work !!!!!!!!!!!!!!!!!!! */
             /* OptaPlanner Solver Factory */
             //solver_factory = SolverFactory.createFromXmlInputStream(solver_configuration_stream, FoTBalanceIncrementalScoreCalculator.class.getClassLoader());
-            
             /* !!!!!!!!!!!!!!!!!!! Ugly but works at all !!!!!!!!!!!!!!!!!!! */
             /* Create a Solver Config Contexts */
             SolverConfigContext solver_config_context = new SolverConfigContext();
@@ -198,7 +217,7 @@ public class Controller {
             ScoreDirectorFactoryConfig score_director = new ScoreDirectorFactoryConfig();
             score_director.setIncrementalScoreCalculatorClass(FoTBalanceIncrementalScoreCalculator.class);
 
-            /* Configure Termination Settings */            
+            /* Configure Termination Settings */
             TerminationConfig termination_config = new TerminationConfig();
             termination_config.setBestScoreLimit(BEST_SCORE_LIMIT);
             termination_config.setSecondsSpentLimit(SECONDS_SPENT_LIMIT);
@@ -225,12 +244,34 @@ public class Controller {
         }
 
         /* Load Configuration Files */
-        List<HostConfigFileObject> host_configurations = HostConfigFile.getConfigurationsFromInstance();
-        List<Group> group_configurations = GroupConfigFile.getConfigurationsFromInstance();
+        host_configurations = HostConfigFile.getConfigurationsFromInstance();
+        group_configurations = GroupConfigFile.getConfigurationsFromInstance();
+
+        /* Store groups defined on the configuration file */
+        for (Group temp_group : group_configurations) {
+            /* Get Group Name */
+            String temp_group_name = temp_group.getGroupName();
+            
+            /* Add reference to group list */
+            group_list.put(temp_group_name, temp_group);
+            
+            /* Register the group on cellar */
+            createCellarGroup(temp_group_name);
+        }
         
-        // -----------------------------------------------
-        // TODO JOIN CONFIGURATION FILES!
-        // -----------------------------------------------
+        /* Store list of groups by hostname */
+        for(HostConfigFileObject host_config_object : host_configurations){
+            /* List of groups associated with this host */
+            Set<Group> groups_associated = new HashSet<>();
+            
+            /* For each group associated with this host add a reference to group object */
+            for(String group_name : host_config_object.getGroupsList()){
+                groups_associated.add(group_list.get(group_name));
+            }
+            
+            /* Finnaly add list of group references to this host */
+            host_group_associations.put(host_config_object.getHostname(), groups_associated);
+        }
         
         /* Store this new object in a static reference */
         FoTBalanceUtils.info("Storing new FoT Balance Controller");
@@ -273,90 +314,8 @@ public class Controller {
         removeCellarGroup(group_name);
     }
 
-    /**
-     *
-     * Register offline host.
-     *
-     * @param host Offline host.
-     * @param bundles A set of bundles to remove when the host returns.
-     */
-    public void registerOfflineHostBundles(Host host, Set<Bundles> bundles) {
-        offline_hosts_to_remove_bundles.put(host, bundles);
-    }
-
     /* Update the list of hosts based on cluster members */
-    private void updateHosts() {
-        /* Get cluster instance */
-        Cluster cluster = hazelcast_instance.getCluster();
-
-        /* Temporary list of hosts */
-        Set<Host> temp_host_list = new HashSet<>();
-
-        try {
-            /* Get members from cluster */
-            Set<Member> members = cluster.getMembers();
-
-            /* If members is null, somethin went wrong */
-            if (members == null) {
-                FoTBalanceUtils.error("Something went wrong...");
-                return;
-            }
-
-            /* For each member who belong to members list */
-            for (Member member : members) {
-                /* Create a new host based on cluster member */
-                Host host = new Host(new HazelcastNode(member), member.getUuid(), NODE_CAPACITY);
-
-                /* Store the temp host */
-                temp_host_list.add(host);
-            }
-
-            /* Remove all elements of the actual list from the temp list */
-            Set<Host> new_hosts = new HashSet<>();
-            Set<Host> past_hosts = new HashSet<>();
-
-            /* Put all elements in temp list host to discover who notes */
-            new_hosts.addAll(temp_host_list);
-            new_hosts.removeAll(host_list);
-
-            /* Put all elements from old host list, to discover which host had disappear */
-            past_hosts.addAll(host_list);
-            past_hosts.removeAll(temp_host_list);
-
-            /* Check if there are network modifications */
-            if (!new_hosts.isEmpty() || !past_hosts.isEmpty()) {
-                /* Check if there are new hosts on network */
-                if (!new_hosts.isEmpty()) {
-                    /* Add new hosts to host_list */
-                    for (Host host : new_hosts) {
-                        host_list.add(host);
-                    }
-                }
-
-                /* Check if there are some hosts out network */
-                if (!past_hosts.isEmpty()) {
-                    /* Remove those entries from host list */
-                    for (Host host : past_hosts) {
-                        /* Unsubscribe all groups */
-                        host.removeAllGroups();
-
-                        /* Remove host from host list */
-                        host_list.remove(host);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            FoTBalanceUtils.error("Something went wrong...");
-            FoTBalanceUtils.trace(e.getMessage());
-        }
-    }
-
-    /**
-     *
-     * Balance loading in network.
-     *
-     */
-    public void balanceNetwork() {
+    public void updateHosts() {
         /* If some of the interfaces is still not initialized stop this function */
 
         /* Hazelcast instance don't exist or it's not initialized yet */
@@ -413,50 +372,222 @@ public class Controller {
             return;
         }
 
+        /* Configuration files not loaded */
+        if (host_configurations == null || group_configurations == null) {
+            FoTBalanceUtils.error("Configuration files not loaded");
+            return;
+        }
+
         /* Since singleton instance of Controller is needed by some classes, we check if this instance is initialized */
         if (instance == null) {
             FoTBalanceUtils.error("Controller Singleton instace don't exist or it's not initialized yet");
             return;
         }
 
-        /* *************** TESTING UUID *************** */
         /* Get cluster instance */
         Cluster cluster = hazelcast_instance.getCluster();
 
-        /* Get members from cluster */
-        Set<Member> members = cluster.getMembers();
+        /* Temporary list of hosts */
+        Set<Host> temp_host_list = new HashSet<>();
 
-        System.out.println("Number of Members -- " + members.size());
-        for (Member member : members) {
-            System.out.println("UUID -- " + member.getUuid() + " / IP -- " + member.getAddress());
-            try {
-                System.out.println("HOST* -- " + member.getAddress().getInetAddress().getHostName());
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            /* Get members from cluster */
+            Set<Member> members = cluster.getMembers();
+
+            /* If members is null, something went wrong */
+            if (members == null) {
+                FoTBalanceUtils.error("Error retrieving members from cluster object");
+                return;
             }
-            System.out.println("HOST -- " + new HazelcastNode(member).getHost());
+
+            /* For each member who belong to members list */
+            for (Member member : members) {
+                String hostname_fqdn = "";
+
+                try {
+                    /* Get FQDN of this member */
+                    hostname_fqdn = member.getAddress().getInetAddress().getHostName();
+                } catch (UnknownHostException e) {
+                    FoTBalanceUtils.error("Cannot retrieve FQDN of member");
+                    FoTBalanceUtils.trace(e.getMessage());
+                }
+
+                /* Create a new host based on cluster member */
+                Host host = new Host(new HazelcastNode(member), hostname_fqdn, NODE_CAPACITY);
+
+                /* Store the temp host */
+                temp_host_list.add(host);
+            }
+
+            /* Remove all elements of the actual list from the temp list */
+            Set<Host> new_hosts = new HashSet<>();
+            Set<Host> past_hosts = new HashSet<>();
+
+            /* Put all elements in temp list host to discover who notes */
+            new_hosts.addAll(temp_host_list);
+            new_hosts.removeAll(host_list);
+
+            /* Put all elements from old host list, to discover which host had disappear */
+            past_hosts.addAll(host_list);
+            past_hosts.removeAll(temp_host_list);
+
+            /* Check if there are network modifications */
+            if (!new_hosts.isEmpty() || !past_hosts.isEmpty()) {
+                /* Check if there are new hosts on network */
+                if (!new_hosts.isEmpty()) {
+                    /* Add new hosts to host_list */
+                    for (Host host : new_hosts) {
+                        /* If this host has bundles pendent to remove, remove they first and then add to host list */
+                        Map<String, List<String>> bundles_to_remove = offline_hosts_to_remove_bundles.get(host);
+
+                        /* Check if this host has never entered this list or this list is empty */
+                        if (bundles_to_remove != null && bundles_to_remove.size() > 0) {
+                            /* For each group name unninstal all pendent bundles */
+                            for(String group_name : bundles_to_remove.keySet()){
+                                /* List of unninstal urls */
+                                List<String> uninstall_urls = bundles_to_remove.get(group_name);
+                                
+                                /* Unninstall all urls received */
+                                hostUnninstalBundle(host.getHostInstance(), uninstall_urls, group_name);
+                            }
+                            
+                            /* Clean list after unninstall all the pendent bundles */
+                            bundles_to_remove.clear();
+                        }
+
+                        /* Get the groups of this host */
+                        Set<Group> groups_associated = host_group_associations.get(host.getHostID());
+
+                        /* Check how many hosts we have since if we have special rules for cases with one and two hosts */
+                        if((host_list.size() + new_hosts.size() - past_hosts.size()) > 2){
+                            /* If we have groups associated with this host */
+                            if(groups_associated != null && groups_associated.size() > 0){
+
+                                /* Register the groups of this host in this instance */
+                                for(Group group_associated : groups_associated){
+                                    host.addGroup(group_associated.getGroupName());
+                                }
+                            }
+                        }
+                        
+                        /* Finnaly add host to host list */
+                        host_list.add(host);
+                    }
+                }
+
+                /* Check if there are some hosts out network */
+                if (!past_hosts.isEmpty()) {
+                    /* Remove those entries from host list */
+                    for (Host host : past_hosts) {
+                        /* Add to the list of hosts with bundles to remove, since we can't remove the bundles now */
+                        offline_hosts_to_remove_bundles.put(host, host.getAllUninstalUrls());
+
+                        /* Unsubscribe all groups */
+                        host.removeAllGroups();
+
+                        /* Remove host from host list */
+                        host_list.remove(host);
+                    }
+                }
+
+                /* If we have only one or only two hosts we have a special case */
+                if(host_list.size() <= 2){
+                    
+                    /* If we have one or two hosts we need to remove additional groups in order to keep these hosts ok */
+                    for(Host host : host_list){
+                        /* Get the map of unninstall urls */
+                        Map<String, List<String>> unninstal_urls_groups = host.getAllUninstalUrls();
+
+                        /* Unsubscribe all groups */
+                        host.removeAllGroups();
+
+                        /* For each group name unninstal all pendent bundles */
+                        for(String group_name : unninstal_urls_groups.keySet()){
+                            /* List of unninstal urls */
+                            List<String> uninstall_urls = unninstal_urls_groups.get(group_name);
+
+                            /* Unninstall all urls received */
+                            hostUnninstalBundle(host.getHostInstance(), uninstall_urls, group_name);
+                        }
+                    }
+                    
+                    /* Register hosts on priority groups */
+                    if(host_list.size() == 1){
+                        /* Host 0 -- The default host in one host case */
+                        Host host0 = host_list.iterator().next();
+
+                        /* Register host 0 with the priority groups */
+                        for(String group_name : DEFAULT_GROUP_LIST_HOST0){
+                            host0.addGroup(group_name);
+                        }
+                    }
+                    else{
+                        /* Base iterator */
+                        Iterator<Host> host_iterator = host_list.iterator();
+                        
+                        /* Host 1 -- The first host on two host case */
+                        Host host1 = host_iterator.next();
+                        
+                        /* Host 2 -- The second host on two host case */
+                        Host host2 = host_iterator.next();
+                        
+                        /* Register host 1 with the priority groups */
+                        for(String group_name : DEFAULT_GROUP_LIST_HOST1){
+                            host1.addGroup(group_name);
+                        }
+                        
+                        /* Register host 2 with the priority groups */
+                        for(String group_name : DEFAULT_GROUP_LIST_HOST1){
+                            host2.addGroup(group_name);
+                        }
+                    }
+                }
+                
+                /* Since network has changed we need to balance it again */
+                balanceNetwork();
+            }
+        } catch (Exception e) {
+            FoTBalanceUtils.error("Several error on network check");
+            FoTBalanceUtils.trace(e.getMessage());
         }
+    }
 
-        /* ******************************************** */
+    /**
+     *
+     * Balance loading in network.
+     *
+     */
+    private void balanceNetwork() {
+        /* Display the begin of network balancing */
+        FoTBalanceUtils.info("----- Begin of Balance -----");
         
-        /* Update Host Lists */
-        updateHosts();
-
-        /* Check if there are need to unninstal some bundles on some hosts or whatever */
-        //TODO
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
+            /* Actual group */
+            Group actual_group = group_list.get(group_name);
+
+            /* Print info about actual group */
+            FoTBalanceUtils.info("------ Before Balance ------");
+            actual_group.displayAssociations();
+            
             /* Balance this group */
-            Group solved_group = solver.solve(group_list.get(group_name));
+            Group solved_group = solver.solve(actual_group);
 
             /* Print info about new associations */
-            solved_group.displayAssociations();            
+            FoTBalanceUtils.info("------ After  Balance ------");
+            solved_group.displayAssociations();
             
             // TODO: DO THE CHANGES ON NETWORK
-            // INSTALL AND UNINSTALL PACKAGES, CHECK HOW MANY HOSTS EXIST...
+            // TODO: COMPARE IT WITH THE LAST CONFIGURATION
+            // TODO: INSTALL AND UNINSTALL PACKAGES
+            TODO
+            
+            /* Check associations after balance finish */
+            actual_group.checkMapAssociations();
         }
-
-        // THAT's ALL :)
+        
+        /* Show that re reach the end of fot balacing */
+        FoTBalanceUtils.info("------ End of Balance ------");
     }
 
     /**
@@ -571,7 +702,7 @@ public class Controller {
         } else {
             // <editor-fold defaultstate="collapsed" desc="Print table of Groups and Members">
             /* BEGIN OF PRINT FUNCTION */
-            /* ----------------------------- */
+ /* ----------------------------- */
             ShellTable table = new ShellTable();
             table.column(" ");
             table.column("Group");
@@ -604,7 +735,7 @@ public class Controller {
             }
             table.print(System.out);
             /* ----------------------------- */
-            /* END OF PRINT FUNCTION */
+ /* END OF PRINT FUNCTION */
             // </editor-fold>
         }
     }
@@ -639,7 +770,7 @@ public class Controller {
      * @param install_urls List of install urls.
      * @param group_name Group name.
      */
-    public void hostInstallBundle(Node node, ArrayList<String> install_urls, String group_name) {
+    public void hostInstallBundle(Node node, List<String> install_urls, String group_name) {
         /* Get the group based on group name */
         org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
 
@@ -778,7 +909,7 @@ public class Controller {
      * @param uninstall_urls List of uninstall urls.
      * @param group_name Group name.
      */
-    public void hostUnninstalBundle(Node node, ArrayList<String> uninstall_urls, String group_name) {
+    public void hostUnninstalBundle(Node node, List<String> uninstall_urls, String group_name) {
         /* Get the group based on group name */
         org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
 
