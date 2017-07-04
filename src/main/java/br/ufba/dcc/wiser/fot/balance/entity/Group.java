@@ -272,6 +272,11 @@ public class Group{
         /* List of install urls */
         List<String> install_urls = new ArrayList<>();
         
+        /* If there's no bundle associated with this host just return the empty list */
+        if(bundles_associated == null){
+            return install_urls;
+        }
+        
         /* Get intsall url for each bundle associated with this host */
         for(Bundles bundle : bundles_associated){
             try {
@@ -297,6 +302,11 @@ public class Group{
         
         /* List of uninstall urls */
         List<String> uninstall_urls = new ArrayList<>();
+        
+        /* If there's no bundle associated with this host just return the empty list */
+        if(bundles_associated == null){
+            return uninstall_urls;
+        }
         
         /* Get unintsall url for each bundle associated with this host */
         for(Bundles bundle : bundles_associated){
@@ -392,14 +402,14 @@ public class Group{
             FoTBalanceUtils.info("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){
                 if(bundle.getHostAssociated() != null && bundle.getHostAssociated().equals(host)){
-                    FoTBalanceUtils.info("\t" + bundle.getBundleMvnArtifact());
+                    FoTBalanceUtils.info("\t" + bundle.getMavenURL());
                 }
             }
         }
         FoTBalanceUtils.info("Unassociated Bundles:");
         for(Bundles bundle : bundles_list){
             if(bundle.getHostAssociated() == null){
-                FoTBalanceUtils.info("\t" + bundle.getBundleMvnArtifact());
+                FoTBalanceUtils.info("\t" + bundle.getMavenURL());
             }
         }
     }
