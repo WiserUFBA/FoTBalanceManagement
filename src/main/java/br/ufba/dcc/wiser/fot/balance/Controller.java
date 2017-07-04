@@ -581,7 +581,8 @@ public class Controller {
             Group actual_group = group_list.get(group_name);
 
             /* If actual group is empty avoid call solve, and skip this bundle */
-            if(actual_group.getHostList().size() == 0){
+            if(actual_group.getHostList().isEmpty()){
+                FoTBalanceUtils.info("Empty group avoiding...");
                 continue;
             }
             
