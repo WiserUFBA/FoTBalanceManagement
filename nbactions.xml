@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Deploy this to our mvn repository -->
-<actions>
+<!-- Deploy this to our mvn repository --><actions>
     <action>
         <actionName>CUSTOM-git local deploy</actionName>
         <displayName>git local deploy</displayName>
@@ -50,4 +49,21 @@
             <activatedProfile>run-on-felix</activatedProfile>
         </activatedProfiles>
     </action>
+    <action>
+            <actionName>CUSTOM-Full Stack Trace</actionName>
+            <displayName>Full Stack Trace</displayName>
+            <goals>
+                <goal>install</goal>
+                <goal>-X</goal>
+                <goal>-e</goal>
+            </goals>
+        </action>
+    <action>
+            <actionName>CUSTOM-test + system.out</actionName>
+            <displayName>test + system.out</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dsurefire.useFile=false</goal>
+            </goals>
+        </action>
 </actions>

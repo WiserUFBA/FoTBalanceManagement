@@ -24,8 +24,9 @@
 package br.ufba.dcc.wiser.fot.balance.config;
 
 import br.ufba.dcc.wiser.fot.balance.utils.FoTBalanceUtils;
+import com.google.common.reflect.TypeParameter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +62,7 @@ public class ConfigLoader {
      * @return A list of configurations
      * @throws File not found exception if te system can't retrieve the file.
      */
-    public static <T> List<T> configLoader(String config_file_url) throws FileNotFoundException {
+    public static <T> List<T> configLoader(String config_file_url, Class<T> elementClass) throws FileNotFoundException {
         /* Configuration File */
         InputStream input_stream_reader;
 
@@ -76,14 +77,14 @@ public class ConfigLoader {
 
         /* Get a buffered reader */
         BufferedReader config_file_buffer = new BufferedReader(new InputStreamReader(input_stream_reader));
-
         FoTBalanceUtils.info("Loaded Configuration file - " + config_file_url);
 
         /* Get GSON object and convert this file to a list of T object and after that return the config file */
-        Type config_file_type = new TypeToken<ArrayList<T>>() {
-        }.getType();
+        /* https://stackoverflow.com/questions/25431859/gson-classcastexception-with-generics -- Thanks Stack Overflow <3 */
+        Type config_file_type = new TypeToken<ArrayList<T>>() {}.where(new TypeParameter<T>(){}, elementClass).getType();
         List<T> configurations_file = GSON_OBJ.fromJson(config_file_buffer, config_file_type);
-
+        
+        
         return configurations_file;
     }
 

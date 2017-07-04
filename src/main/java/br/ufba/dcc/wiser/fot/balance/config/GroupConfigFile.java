@@ -55,7 +55,7 @@ public class GroupConfigFile {
         
         /* Try get configurations on config files */
         try{
-            List<Group> temp_configurations = ConfigLoader.configLoader(GROUP_CONFIGURATION_FILE_URL);
+            List<Group> temp_configurations = ConfigLoader.configLoader(GROUP_CONFIGURATION_FILE_URL, Group.class);
             configurations.addAll(temp_configurations);
         }
         catch(FileNotFoundException e){

@@ -240,16 +240,16 @@ public class Controller {
             solver = solver_config.buildSolver(solver_config_context);
         } catch (Exception e) {
             FoTBalanceUtils.error("Cannot load solver configuration or construct solver");
-            FoTBalanceUtils.trace(e.getMessage());
+            FoTBalanceUtils.trace(e);
         }
 
         /* Load Configuration Files */
         host_configurations = HostConfigFile.getConfigurationsFromInstance();
-        System.out.println("++++++++++++++++HMM111111111111++++++++++++++++");
         group_configurations = GroupConfigFile.getConfigurationsFromInstance();
-        System.out.println("++++++++++++++++HMM222222222222++++++++++++++++");
+        /* TODO: LOAD LAST STATE SAVED, (REMOVE ALL BUNDLES FROM ALL HOSTS) */
         
         try {
+            
             /* Store groups defined on the configuration file */
             for (Group temp_group : group_configurations) {
 
@@ -265,8 +265,7 @@ public class Controller {
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Cannot register cellar group");
-            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
-            FoTBalanceUtils.trace(e.getMessage());
+            FoTBalanceUtils.trace(e);
         }
 
         /* Store list of groups by hostname */
@@ -285,8 +284,7 @@ public class Controller {
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Cannot store host groups");
-            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
-            FoTBalanceUtils.trace(e.getMessage());
+            FoTBalanceUtils.trace(e);
         }
         
         /* Store this new object in a static reference */
@@ -426,7 +424,7 @@ public class Controller {
                     hostname_fqdn = member.getAddress().getInetAddress().getHostName();
                 } catch (UnknownHostException e) {
                     FoTBalanceUtils.error("Cannot retrieve FQDN of member");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                 }
 
                 /* Create a new host based on cluster member */
@@ -553,7 +551,7 @@ public class Controller {
                         }
 
                         /* Register host 2 with the priority groups */
-                        for (String group_name : DEFAULT_GROUP_LIST_HOST1) {
+                        for (String group_name : DEFAULT_GROUP_LIST_HOST2) {
                             host2.addGroup(group_name);
                         }
                     }
@@ -564,8 +562,7 @@ public class Controller {
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Several error on network check");
-            e.printStackTrace(); // THIS SHOULD BE REMOVED IT'S ONLY HERE FOR DEBUG PURPOSES
-            FoTBalanceUtils.trace(e.getMessage());
+            FoTBalanceUtils.trace(e);
         }
     }
 
@@ -709,7 +706,7 @@ public class Controller {
             results = execution_context.execute(command);
         } catch (Exception e) {
             FoTBalanceUtils.error("Something went wrong...");
-            FoTBalanceUtils.trace(e.getMessage());
+            FoTBalanceUtils.trace(e);
         }
 
         /* Check result and print table */
@@ -824,11 +821,11 @@ public class Controller {
                     jar_input_stream = new JarInputStream(new URL(install_url).openStream());
                 } /* Catch errors of malformed URL exception */ catch (MalformedURLException e) {
                     FoTBalanceUtils.error("Something went wrong... Malformed URL!");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 } /* Catch IO Exception */ catch (IOException e) {
                     FoTBalanceUtils.error("Something went wrong... IO Exception!");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 }
 
@@ -864,7 +861,7 @@ public class Controller {
                     jar_input_stream.close();
                 } catch (IOException e) {
                     FoTBalanceUtils.error("IO Exception wrong...");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 }
 
@@ -960,11 +957,11 @@ public class Controller {
                     jar_input_stream = new JarInputStream(new URL(uninstall_url).openStream());
                 } /* Catch errors of malformed URL exception */ catch (MalformedURLException e) {
                     FoTBalanceUtils.error("Something went wrong... Malformed URL!");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 } /* Catch IO Exception */ catch (IOException e) {
                     FoTBalanceUtils.error("Something went wrong... IO Exception!");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 }
 
@@ -1000,7 +997,7 @@ public class Controller {
                     jar_input_stream.close();
                 } catch (IOException e) {
                     FoTBalanceUtils.error("IO Exception wrong...");
-                    FoTBalanceUtils.trace(e.getMessage());
+                    FoTBalanceUtils.trace(e);
                     continue;
                 }
 

@@ -278,7 +278,7 @@ public class Group{
                 install_urls.add(bundle.getKarafInstallURL());
             } catch (UnassociatedHostException e) {
                 FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
-                FoTBalanceUtils.trace(e.getMessage());
+                FoTBalanceUtils.trace(e);
             }
         }
         
@@ -304,7 +304,7 @@ public class Group{
                 uninstall_urls.add(bundle.getKarafInstallURL());
             } catch (UnassociatedHostException e) {
                 FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
-                FoTBalanceUtils.trace(e.getMessage());
+                FoTBalanceUtils.trace(e);
             }
         }
         

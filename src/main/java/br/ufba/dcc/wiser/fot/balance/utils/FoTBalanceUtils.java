@@ -127,15 +127,15 @@ public class FoTBalanceUtils {
      *
      * Print a debug message stored in log file and that use SLF4J.
      *
-     * @param trace_msg Message to be printed.
+     * @param ex Exception which will be printed.
      */
-    public static void trace(String trace_msg) {
+    public static void trace(Exception ex) {
         // TODO Store this in a log file too
-        LOG.trace(trace_msg);
+        LOG.error("Full Stack trace error -- ", ex);
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {
-            System.err.println(BEGIN_TRACE_MESSAGE + trace_msg);
+            System.err.println(BEGIN_TRACE_MESSAGE + ex);
         }
     }
 }

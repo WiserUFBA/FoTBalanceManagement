@@ -54,7 +54,7 @@ public class HostConfigFile {
         
         /* Try get configurations on config files */
         try{
-            List<HostConfigFileObject> temp_configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL);
+            List<HostConfigFileObject> temp_configurations = ConfigLoader.configLoader(HOST_CONFIGURATION_FILE_URL, HostConfigFileObject.class);
             configurations.addAll(temp_configurations);
         }
         catch(FileNotFoundException e){
