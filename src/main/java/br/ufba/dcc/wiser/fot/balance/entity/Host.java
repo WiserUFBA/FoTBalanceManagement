@@ -206,16 +206,23 @@ public class Host {
      * @return A map of uninstall urls by groupss.
      */
     public Map<String, List<String>> getAllUninstalUrls(){
+        FoTBalanceUtils.info("Getting unninstall urls of " + this.host_id);
         Map<String, List<String>> uninstall_urls_groups = new HashMap<>();
         
         /* Get all install ulrs of the bundles associated with this host */
         for(Group group : group_list){
+            /* Check if group is null */
+            if(group == null){
+                FoTBalanceUtils.warn("Invalid Group discovered, please check why this is happening");
+                continue;
+            }
+            
             /* Get a list of unninstal urls by group */
             List<String> temp_uninstal_urls = group.getUninstallUrls(this);
             
             /* Add relation if it's not null */
             if(temp_uninstal_urls != null){
-                FoTBalanceUtils.info("Group " + group.getGroupName() + " has " + uninstall_urls_groups.size());
+                FoTBalanceUtils.info("Group " + group.getGroupName() + " has " + uninstall_urls_groups.size() + " bundles to unninstal");
                 uninstall_urls_groups.put(group.getGroupName(), temp_uninstal_urls);
             }
         }
@@ -231,6 +238,12 @@ public class Host {
     public void removeAllGroups(){
         /* Remove this host from all groups subscribed */
         for(Group group : group_list){
+            /* Invalid group found avoiding */
+            if(group == null){
+                FoTBalanceUtils.warn("Invalid group found avoiding!");
+                continue;
+            }
+            
             group.removeHost(this);
         }
     }
