@@ -166,6 +166,12 @@ public class Group{
         Set<Bundles> old_bundles_associated = host_bundle_associations.get(host);
         host_bundle_associations.remove(host);
         
+        /* Stop this function if there are no bundle associated with this host yet */
+        if(host_bundle_associations == null){
+            FoTBalanceUtils.info("This host has no bundle associated with him");
+            return;
+        }
+        
         /* Remove references of this host on each bundle */
         for(Bundles bundle : old_bundles_associated){
             bundle.disassociateHost();

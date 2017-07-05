@@ -15,6 +15,7 @@ Copiar e colar no terminal do Karaf, na máquina responsável pelo controller:
 ```sh
 config:edit org.apache.karaf.features.repos
 config:property-set kie mvn:org.kie/kie-karaf-features/7.0.0.Final/xml/features
+config:update
 config:edit org.ops4j.pax.url.mvn 
 config:property-append org.ops4j.pax.url.mvn.repositories ", https://github.com/WiserUFBA/wiser-mvn-repo/raw/master/releases@id=wiser"
 config:update
