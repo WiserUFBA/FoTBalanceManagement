@@ -260,7 +260,7 @@ public class Controller {
                 group_list.put(temp_group_name, temp_group);
 
                 /* Register the group on cellar */
-                FoTBalanceUtils.info("Registering group on cellar");
+                FoTBalanceUtils.info("Registering group " + temp_group_name + " on cellar");
                 createCellarGroup(temp_group_name);
             }
         } catch (Exception e) {

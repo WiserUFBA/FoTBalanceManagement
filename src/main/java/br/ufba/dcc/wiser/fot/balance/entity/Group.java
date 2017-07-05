@@ -167,7 +167,7 @@ public class Group{
         host_bundle_associations.remove(host);
         
         /* Stop this function if there are no bundle associated with this host yet */
-        if(host_bundle_associations == null){
+        if(old_bundles_associated == null){
             FoTBalanceUtils.info("This host has no bundle associated with him");
             return;
         }
