@@ -30,6 +30,7 @@ import org.apache.karaf.cellar.core.Node;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -186,7 +187,7 @@ public class Host {
      * 
      * Get all install urls of the bundles associated with this host.
      * 
-     * @return A map of install urls by groupss.
+     * @return A map of install urls by groups.
      */
     public Map<String, List<String>> getAllInstalUrls(){
         Map<String, List<String>> install_urls_groups = new HashMap<>();
@@ -296,6 +297,50 @@ public class Host {
      */
     public void setHostCapacity(int new_capacity){
         this.host_capacity = new_capacity;
+    }
+    
+    /**
+     * 
+     * Check if this object is equal to another one. Two hosts are equal when the id are equals.
+     * 
+     * @param obj Object which is being compared.
+     * @return true if this object are equal to the one which are being compared.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        /* If the instances are equal */
+        if (obj == this){
+            return true;
+        }
+        
+        /* If the obj is of a different type */
+        if (!(obj instanceof Host)) {
+            return false;
+        }
+        
+        /* Do the adequated cast */
+        Host host = (Host) obj;
+        return Objects.equals(host_id, host.getHostID()) &&
+                Objects.equals(getHostAddress(), host.getHostAddress());
+    }
+
+    /**
+     * 
+     * Generate a hash code based on host_id and host_address;
+     * 
+     * @return An integer Hash Code that will be used for comparisons.
+     */
+    @Override
+    public int hashCode() {
+        /* Base prime number */
+        int hash = 7;
+        
+        /* Multiply another prime number by last hash computed, plus the property wanted */
+        hash = 13 * hash + Objects.hashCode(this.getHostAddress());
+        hash = 13 * hash + Objects.hashCode(this.host_id);
+        
+        /* Return the generated hash code */
+        return hash;
     }
     
 }

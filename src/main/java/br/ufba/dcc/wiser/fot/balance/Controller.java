@@ -597,12 +597,37 @@ public class Controller {
             FoTBalanceUtils.info("------ After  Balance ------");
             solved_group.displayAssociations();
 
-            // TODO: DO THE CHANGES ON NETWORK
-            // TODO: COMPARE IT WITH THE LAST CONFIGURATION
-            // TODO: INSTALL AND UNINSTALL PACKAGES
-            //TODO
+            /* For each host check bundles before and after the balance and do the correct changes */
+            Iterator<Host> it_solved_host = solved_group.getHostList().iterator();
+            for(Host previous_host : actual_group.getHostList()){
+                /* Get the actual host */
+                Host actual_host = it_solved_host.next();
+                
+                /* Store the node reference */
+                Node node = actual_host.getHostInstance();
+                
+                /* Since we haven't changed host list, the two hosts are equal, the only difference is on bundles */
+                List<String> before_bundles = new ArrayList<>();
+                List<String> after_bundles = new ArrayList<>();
+                
+                /* Do the operations of exclusion on each set; P.S.: Intersection between the two sets are ignored */
+                before_bundles.addAll(actual_group.getInstallUrls(previous_host));
+                after_bundles.addAll(solved_group.getInstallUrls(actual_host));
+                before_bundles.removeAll(after_bundles);
+                after_bundles.removeAll(before_bundles);
+                
+                /* Unninstall all bundles which has moved from this host */
+                hostInstallBundle(node, before_bundles, group_name);
+                
+                /* Install all bundles which are new to this bundle */
+                hostUnninstalBundle(node, after_bundles, group_name);
+            }
+            
             /* Check associations after balance finish */
             actual_group.checkMapAssociations();
+            
+            /* Replace instance of group object */
+            group_list.replace(group_name, actual_group);
         }
 
         /* Show that re reach the end of fot balacing */

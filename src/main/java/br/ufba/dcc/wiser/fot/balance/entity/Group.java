@@ -295,7 +295,7 @@ public class Group{
         
         return install_urls;
     }
-        
+
     /**
      * Get all uninstall urls associated with a given host.
      * 
@@ -349,6 +349,12 @@ public class Group{
         return bundles_list;
     }
     
+    /**
+     * 
+     * Set Bundle List.
+     * 
+     * @param bundles_list New bundle list.
+     */
     public void setBundleList(Set<Bundles> bundles_list) {
         this.bundles_list = bundles_list;
     }
@@ -419,6 +425,5 @@ public class Group{
             }
         }
     }
-    
     
 }
