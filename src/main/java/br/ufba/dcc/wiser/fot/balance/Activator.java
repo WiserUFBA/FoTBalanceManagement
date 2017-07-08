@@ -55,7 +55,7 @@ public class Activator implements BundleActivator {
         controller.destroySession();
         
         /* Destroy controller instance */
-        Controller.destroyInstance();
+        //Controller.destroyInstance();
         
         /* Clean bundle context to avoid errors */
         Activator.bc = null;

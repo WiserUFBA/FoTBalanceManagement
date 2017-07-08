@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import org.apache.karaf.cellar.bundle.BundleState;
@@ -212,6 +213,9 @@ public class Controller {
         /* Initializing Controller */
         FoTBalanceUtils.info("Initializing FoT Balance Management Controller");
 
+        /* Store balance time */
+        long millis_begin = System.currentTimeMillis();
+        
         /* Create OptaPlanner Solver */
         try {
             /* Load Input stream of solver configuration */
@@ -306,6 +310,16 @@ public class Controller {
         
         /* By default after a call of init method the controller is activated */
         MUTEX_CONTROLLER_ACTIVATED = true;
+        
+        /* Store time of controller init */
+        long millis_end = System.currentTimeMillis() - millis_begin;
+        String tempo_execucao = String.format("%02d:%02d.%04d", 
+            TimeUnit.MILLISECONDS.toMinutes(millis_end),
+            TimeUnit.MILLISECONDS.toSeconds(millis_end) - 
+            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis_end)),
+            (millis_end % 1000)
+        );
+        FoTBalanceUtils.debug("\nFinished FoT Balance Management initialization in " + tempo_execucao + " min");
         
         /* Store this new object in a static reference */
         FoTBalanceUtils.info("Storing new FoT Balance Controller");
@@ -629,9 +643,22 @@ public class Controller {
                         }
                     }
                 }
+                
+                /* Store balance begin time */ 
+                long millis_begin = System.currentTimeMillis();
 
                 /* Since network has changed we need to balance it again */
                 balanceNetwork();
+                
+                /* Store balance execution time */
+                long millis_end = System.currentTimeMillis() - millis_begin;
+                String tempo_execucao = String.format("%02d:%02d.%04d", 
+                    TimeUnit.MILLISECONDS.toMinutes(millis_end),
+                    TimeUnit.MILLISECONDS.toSeconds(millis_end) - 
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis_end)),
+                    (millis_end % 1000)
+                );
+                FoTBalanceUtils.debug("\nFinished balance in " + tempo_execucao + " min");
             }
             else{
                 /* Network is already balanced */
@@ -674,9 +701,22 @@ public class Controller {
             FoTBalanceUtils.debug("Balacing group -- " + group_name);
             actual_group.displayAssociations();
 
+            /* Store begin of solve time */
+            long millis_begin = System.currentTimeMillis();
+            
             /* Balance this group */
             Group solved_group = solver.solve(actual_group);
 
+            /* Store time of balance solving */
+            long millis_end = System.currentTimeMillis() - millis_begin;
+            String tempo_execucao = String.format("%02d:%02d.%04d", 
+                TimeUnit.MILLISECONDS.toMinutes(millis_end),
+                TimeUnit.MILLISECONDS.toSeconds(millis_end) - 
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis_end)),
+                (millis_end % 1000)
+            );
+            FoTBalanceUtils.debug("\nFinished optaplanner solver in " + tempo_execucao + " min");
+            
             /* Print info about new associations */
             FoTBalanceUtils.info("------ After  Balance ------");
             solved_group.displayAssociations();
@@ -1183,6 +1223,7 @@ public class Controller {
         /* Wait until controller finished it's operations */
         FoTBalanceUtils.debug("Waiting for controller end of it's operations");
         while(MUTEX_CONTROLLER_BLOCKED){
+            /*
             try{
                 FoTBalanceUtils.debug("!!! CONTROLLER STILL BLOCKED !!!");
                 Thread.sleep(500);
@@ -1190,6 +1231,7 @@ public class Controller {
                 FoTBalanceUtils.error("Catcherd interrupted exception");
                 FoTBalanceUtils.trace(e);
             }
+            */
         }
         
         /* After controller is unblocked */
@@ -1234,6 +1276,9 @@ public class Controller {
         
         /* Session fully destroied */
         FoTBalanceUtils.debug("Session fully destroied");
+        
+        /* Unlock controller */
+        Controller.MUTEX_CONTROLLER_ACTIVATED = true;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
