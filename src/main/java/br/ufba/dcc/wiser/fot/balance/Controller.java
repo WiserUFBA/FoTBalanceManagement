@@ -369,7 +369,7 @@ public class Controller {
         FoTBalanceUtils.info("--- Updating Hosts ---");
 
         /* If controller is activated continue otherwise stop it and unblock this instace */
-        if(MUTEX_CONTROLLER_ACTIVATED){
+        if(!MUTEX_CONTROLLER_ACTIVATED){
             FoTBalanceUtils.debug("Controller disabled, stopping updating hosts");
             MUTEX_CONTROLLER_BLOCKED = false;
             return;
