@@ -3,43 +3,34 @@
         "groupName": "composition",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.1",
-                "bundleCost" : 1
-            }
-        ]
-    },
-    {
-        "groupName": "storage",
-        "bundlesList": [
-            {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.2",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app1_com-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.3",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app2_com-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             }
         ]
-    },
+    },     
+         
     {
         "groupName": "basic",
         "bundlesList": [
+        
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.4",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app3_com-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.5",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app4_com-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             }
         ]
@@ -48,15 +39,33 @@
         "groupName": "discovery",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.6",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app1_dis-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.7",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app2_dis-fatorial",
+                "artifactVersion" : "1.0",
+                "bundleCost" : 1
+            }
+        ]
+    },
+        
+    {
+        "groupName": "storage",
+        "bundlesList": [                    
+            {
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app3_dis-fatorial",
+                "artifactVersion" : "1.0",
+                "bundleCost" : 1
+            },
+                        {
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app4_dis-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             }
         ]
@@ -65,15 +74,27 @@
         "groupName": "localization",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.8",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app1_loc-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.9",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app2_loc-fatorial",
+                "artifactVersion" : "1.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app3_loc-fatorial",
+                "artifactVersion" : "1.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app4_loc-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             }
         ]
@@ -82,15 +103,21 @@
         "groupName": "security",
         "bundlesList": [
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.10",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app1_sec-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             },
             {
-                "groupId" : "groupId",
-                "artifactId" : "artifactId",
-                "artifactVersion" : "1.0.11",
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app2_sec-fatorial",
+                "artifactVersion" : "1.0",
+                "bundleCost" : 1
+            },
+            {
+                "groupId" : "br.ufba.dcc.wiser",
+                "artifactId" : "app3_sec-fatorial",
+                "artifactVersion" : "1.0",
                 "bundleCost" : 1
             }
         ]

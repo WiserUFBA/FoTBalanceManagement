@@ -128,11 +128,11 @@ public class Controller {
     public static final int DEFAULT_START_LEVEL = 80;
 
     /* List of groups for *ONE HOST* case */
-    public static final String[] DEFAULT_GROUP_LIST_HOST0 = {"localization", "basic", "discover"};
+    public static final String[] DEFAULT_GROUP_LIST_HOST0 = {"localization", "basic", "discovery"};
     public static List<String> GROUPS_LIST_ONEHOSTCASE = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST0));
 
     /* List of groups for *TWO HOST* case */
-    public static final String[] DEFAULT_GROUP_LIST_HOST1 = {"basic", "discover"};
+    public static final String[] DEFAULT_GROUP_LIST_HOST1 = {"basic", "discovery"};
     public static final String[] DEFAULT_GROUP_LIST_HOST2 = {"basic", "localization"};
     public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST1 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST1));
     public static List<String> GROUPS_LIST_TWOHOSTCASE_HOST2 = new ArrayList<>(Arrays.asList(DEFAULT_GROUP_LIST_HOST2));
@@ -222,7 +222,10 @@ public class Controller {
             termination_config.setBestScoreLimit(BEST_SCORE_LIMIT);
             termination_config.setSecondsSpentLimit(SECONDS_SPENT_LIMIT);
             termination_config.setScoreCalculationCountLimit(CALCULATION_COUNT_LIMIT);
-
+            FoTBalanceUtils.debug("Configured best score limit as => " + BEST_SCORE_LIMIT);
+            FoTBalanceUtils.debug("Configured solve time limit as => " + SECONDS_SPENT_LIMIT);
+            FoTBalanceUtils.debug("Configured calculation count limit as => " + CALCULATION_COUNT_LIMIT);
+            
             /* Entity Class List */
             List<Class<?>> entity_class_list = new ArrayList();
             entity_class_list.add(Bundles.class);
@@ -238,6 +241,7 @@ public class Controller {
             /* OptaPlanner Solver */
             //solver = solver_factory.buildSolver(); // DON'T WORKS, SO DON'T USE IT
             solver = solver_config.buildSolver(solver_config_context);
+            FoTBalanceUtils.debug("Solver created with success!");
         } catch (Exception e) {
             FoTBalanceUtils.error("Cannot load solver configuration or construct solver");
             FoTBalanceUtils.trace(e);
@@ -268,7 +272,7 @@ public class Controller {
             FoTBalanceUtils.trace(e);
         }
 
-        /* Store list of groups by hostname */
+        /* Store hosts by hostname on groups */
         try{
             for (HostConfigFileObject host_config_object : host_configurations) {
                 /* List of groups associated with this host */
@@ -281,6 +285,7 @@ public class Controller {
 
                 /* Finnaly add list of group references to this host */
                 host_group_associations.put(host_config_object.getHostname(), groups_associated);
+                
             }
         } catch (Exception e) {
             FoTBalanceUtils.error("Cannot store host groups");
@@ -398,6 +403,9 @@ public class Controller {
             FoTBalanceUtils.error("Controller Singleton instace don't exist or it's not initialized yet");
             return;
         }
+        
+        /* All references needed are loaded */
+        FoTBalanceUtils.debug("All instances needed are loaded!");
 
         /* Get cluster instance */
         Cluster cluster = hazelcast_instance.getCluster();
@@ -418,15 +426,22 @@ public class Controller {
             /* For each member who belong to members list */
             for (Member member : members) {
                 String hostname_fqdn = "";
+                String host_address = "";
 
                 try {
                     /* Get FQDN of this member */
-                    hostname_fqdn = member.getAddress().getInetAddress().getHostName();
+                    hostname_fqdn = member.getAddress().getInetAddress().getCanonicalHostName();
+                    
+                    /* Get the IP of this member */
+                    host_address = member.getAddress().getInetAddress().getHostAddress();
                 } catch (UnknownHostException e) {
                     FoTBalanceUtils.error("Cannot retrieve FQDN of member");
                     FoTBalanceUtils.trace(e);
                 }
-
+                
+                /* Display name of the member discovered by hazelcast */
+                FoTBalanceUtils.debug("Member discovered -- FQDN:" + hostname_fqdn + " / IP:" + host_address);
+                
                 /* Create a new host based on cluster member */
                 Host host = new Host(new HazelcastNode(member), hostname_fqdn, NODE_CAPACITY);
 
@@ -473,16 +488,25 @@ public class Controller {
                         /* Get the groups of this host */
                         Set<Group> groups_associated = host_group_associations.get(host.getHostID());
 
+                        /* New Host on network */
+                        FoTBalanceUtils.debug("Host FQDN: " + host.getHostID() + " / IP:" + host.getHostAddress() + " new on network");
+                        
                         /* Check how many hosts we have since if we have special rules for cases with one and two hosts */
                         if ((host_list.size() + new_hosts.size() - past_hosts.size()) > 2) {
                             /* If we have groups associated with this host */
                             if (groups_associated != null && groups_associated.size() > 0) {
+                                FoTBalanceUtils.debug("Adding groups of host -- " + host.getHostID());
 
                                 /* Register the groups of this host in this instance */
                                 for (Group group_associated : groups_associated) {
                                     host.addGroup(group_associated.getGroupName());
+                                    FoTBalanceUtils.debug("Adding group -- " + group_associated.getGroupName() + " on " + host.getHostID());
                                 }
                             }
+                        }
+                        else{
+                            /* Minimum number of hosts found, ignoring group configuration */
+                            FoTBalanceUtils.debug("Minimum number of hosts found, ignoring group configuration on " + host.getHostID());
                         }
 
                         /* Finnaly add host to host list */
@@ -502,14 +526,22 @@ public class Controller {
 
                         /* Remove host from host list */
                         host_list.remove(host);
+                        
+                        /* Removing host */
+                        FoTBalanceUtils.info("Removing host -- " + host.getHostID());
                     }
                 }
 
                 /* If we have only one or only two hosts we have a special case */
                 if (host_list.size() <= 2) {
-
+                    /* Special case found! */
+                    FoTBalanceUtils.debug("Special case found, number of hosts " + host_list.size());
+                    
                     /* If we have one or two hosts we need to remove additional groups in order to keep these hosts ok */
                     for (Host host : host_list) {
+                        /* Host on special case */
+                        FoTBalanceUtils.debug("Special host -- " + host.getHostID());
+                        
                         /* Get the map of unninstall urls */
                         Map<String, List<String>> unninstal_urls_groups = host.getAllUninstalUrls();
 
@@ -560,6 +592,12 @@ public class Controller {
                 /* Since network has changed we need to balance it again */
                 balanceNetwork();
             }
+            else{
+                /* Network is already balanced */
+                FoTBalanceUtils.info("!!!! Network already balanced! !!!!");
+            }
+            
+            FoTBalanceUtils.info("--- Ending of balance ---");
         } catch (Exception e) {
             FoTBalanceUtils.error("Several error on network check");
             FoTBalanceUtils.trace(e);
@@ -582,12 +620,13 @@ public class Controller {
 
             /* If actual group is empty avoid call solve, and skip this bundle */
             if(actual_group.getHostList().isEmpty()){
-                FoTBalanceUtils.info("Empty group avoiding...");
+                FoTBalanceUtils.info("Empty group -- " + group_name + " -- avoiding...");
                 continue;
             }
             
             /* Print info about actual group */
             FoTBalanceUtils.info("------ Before Balance ------");
+            FoTBalanceUtils.debug("Balacing group -- " + group_name);
             actual_group.displayAssociations();
 
             /* Balance this group */
@@ -611,16 +650,16 @@ public class Controller {
                 List<String> after_bundles = new ArrayList<>();
                 
                 /* Do the operations of exclusion on each set; P.S.: Intersection between the two sets are ignored */
-                before_bundles.addAll(actual_group.getInstallUrls(previous_host));
-                after_bundles.addAll(solved_group.getInstallUrls(actual_host));
+                before_bundles.addAll(actual_group.getUninstallUrls(previous_host));
                 before_bundles.removeAll(after_bundles);
+                after_bundles.addAll(solved_group.getInstallUrls(actual_host));
                 after_bundles.removeAll(before_bundles);
                 
                 /* Unninstall all bundles which has moved from this host */
-                hostInstallBundle(node, before_bundles, group_name);
+                hostUnninstalBundle(node, after_bundles, group_name);
                 
                 /* Install all bundles which are new to this bundle */
-                hostUnninstalBundle(node, after_bundles, group_name);
+                hostInstallBundle(node, before_bundles, group_name);
             }
             
             /* Check associations after balance finish */

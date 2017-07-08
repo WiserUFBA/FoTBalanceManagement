@@ -1,7 +1,7 @@
 [
     {
         "hostId": "Host 1",
-        "hostName": "jefersonlima-pc.local",
+        "hostName": "Jurandir.local",
         "groupsList": [
             "localization",
             "basic"
@@ -9,17 +9,33 @@
     },
     {
         "hostId": "Host 2",
-        "hostName": "servicemix-host1.local",
+        "hostName": "pitu.local",
+        "groupsList": [
+            "discovery",
+            "basic"
+        ]
+    },
+    {
+        "hostId": "Host 3",
+        "hostName": "absinto.local",
         "groupsList": [
             "security",
             "basic"
         ]
     },
     {
-        "hostId": "Host 3",
-        "hostName": "servicemix-host2.local",
+        "hostId": "Host 4",
+        "hostName": "rum.local",
         "groupsList": [
-            "localization",
+            "composition",
+            "basic"
+        ]
+    },
+    {
+        "hostId": "Host 5",
+        "hostName": "catuaba.local",
+        "groupsList": [
+            "composition",
             "basic"
         ]
     }

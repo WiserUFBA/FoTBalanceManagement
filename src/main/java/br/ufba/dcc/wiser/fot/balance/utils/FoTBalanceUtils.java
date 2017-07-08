@@ -115,7 +115,7 @@ public class FoTBalanceUtils {
      */
     public static void debug(String debug_msg) {
         // TODO Store this in a log file too
-        LOG.debug(debug_msg);
+        LOG.info(debug_msg);
 
         /* Force display on karaf */
         if (ENABLE_KARAF_OUTPUT) {

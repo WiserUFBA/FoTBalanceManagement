@@ -408,20 +408,20 @@ public class Group{
      * 
      */
     public void displayAssociations() {
-        FoTBalanceUtils.info("Group Name -- " + group_name);
+        FoTBalanceUtils.debug("Group Name -- " + group_name);
         
         for(Host host : host_list){
-            FoTBalanceUtils.info("Associated Bundles => " + host.getHostID());
+            FoTBalanceUtils.debug("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){
                 if(bundle.getHostAssociated() != null && bundle.getHostAssociated().equals(host)){
-                    FoTBalanceUtils.info("\t" + bundle.getMavenURL());
+                    FoTBalanceUtils.debug("\t" + bundle.getMavenURL());
                 }
             }
         }
         FoTBalanceUtils.info("Unassociated Bundles:");
         for(Bundles bundle : bundles_list){
             if(bundle.getHostAssociated() == null){
-                FoTBalanceUtils.info("\t" + bundle.getMavenURL());
+                FoTBalanceUtils.debug("\t" + bundle.getMavenURL());
             }
         }
     }
