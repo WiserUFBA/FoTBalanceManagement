@@ -272,6 +272,8 @@ public class Group{
      * @return A list of install urls.
      */
     public List<String> getInstallUrls(Host host){
+        FoTBalanceUtils.debug("Getting install urls of host " + host.getHostID());
+        
         /* Get a set of bundles associated with this host */
         Set<Bundles> bundles_associated = getBundlesAssociated(host);
         
@@ -284,9 +286,13 @@ public class Group{
             return install_urls;
         }
         
+        /* Show how many bundles are associated with this host */
+        FoTBalanceUtils.debug("Got " + bundles_associated.size() + " bundles associated with his host");
+        
         /* Get intsall url for each bundle associated with this host */
         for(Bundles bundle : bundles_associated){
             try {
+                FoTBalanceUtils.debug("Bundle " + bundle.getBundleMvnArtifact() + " install url " + bundle.getKarafInstallURL());
                 install_urls.add(bundle.getKarafInstallURL());
             } catch (UnassociatedHostException e) {
                 FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
@@ -304,6 +310,8 @@ public class Group{
      * @return A list of uninstall urls.
      */
     public List<String> getUninstallUrls(Host host){
+        FoTBalanceUtils.debug("Getting uninstall urls of host " + host.getHostID());
+        
         /* Get a set of bundles associated with this host */
         Set<Bundles> bundles_associated = getBundlesAssociated(host);
         
@@ -316,12 +324,16 @@ public class Group{
             return uninstall_urls;
         }
         
+        /* Show how many bundles are associated with this host */
+        FoTBalanceUtils.debug("Got " + bundles_associated.size() + " bundles associated with his host");
+        
         /* Get unintsall url for each bundle associated with this host */
         for(Bundles bundle : bundles_associated){
             try {
+                FoTBalanceUtils.debug("Bundle " + bundle.getBundleMvnArtifact() + " install url " + bundle.getKarafInstallURL());
                 uninstall_urls.add(bundle.getKarafInstallURL());
             } catch (UnassociatedHostException e) {
-                FoTBalanceUtils.error("Unassocaited Host Exception, this bundle is not associated anymore with this host");
+                FoTBalanceUtils.error("Unassociated Host Exception, this bundle is not associated anymore with this host");
                 FoTBalanceUtils.trace(e);
             }
         }
