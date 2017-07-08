@@ -280,6 +280,7 @@ public class Group{
         
         /* If there's no bundle associated with this host just return the empty list */
         if(bundles_associated == null){
+            FoTBalanceUtils.debug("No bundles associated with this host");
             return install_urls;
         }
         
@@ -311,6 +312,7 @@ public class Group{
         
         /* If there's no bundle associated with this host just return the empty list */
         if(bundles_associated == null){
+            FoTBalanceUtils.debug("No bundles associated with this host");
             return uninstall_urls;
         }
         
@@ -409,20 +411,30 @@ public class Group{
      */
     public void displayAssociations() {
         FoTBalanceUtils.debug("Group Name -- " + group_name);
-        
+        int i = 0;
         for(Host host : host_list){
             FoTBalanceUtils.debug("Associated Bundles => " + host.getHostID());
             for(Bundles bundle : bundles_list){
                 if(bundle.getHostAssociated() != null && bundle.getHostAssociated().equals(host)){
+                    i++;
                     FoTBalanceUtils.debug("\t" + bundle.getMavenURL());
                 }
             }
         }
+        if(i == 0){
+            FoTBalanceUtils.debug("\tThere's no bundle associated");
+        }
+        
         FoTBalanceUtils.info("Unassociated Bundles:");
+        i = 0;
         for(Bundles bundle : bundles_list){
             if(bundle.getHostAssociated() == null){
+                i++;
                 FoTBalanceUtils.debug("\t" + bundle.getMavenURL());
             }
+        }
+        if(i == 0){
+            FoTBalanceUtils.debug("\tThere's no bundle unassociated");
         }
     }
     

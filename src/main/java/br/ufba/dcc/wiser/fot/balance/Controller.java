@@ -636,6 +636,9 @@ public class Controller {
             FoTBalanceUtils.info("------ After  Balance ------");
             solved_group.displayAssociations();
 
+            /* Check associations after balance finish */
+            solved_group.checkMapAssociations();
+            
             /* For each host check bundles before and after the balance and do the correct changes */
             Iterator<Host> it_solved_host = solved_group.getHostList().iterator();
             for(Host previous_host : actual_group.getHostList()){
@@ -661,9 +664,6 @@ public class Controller {
                 /* Install all bundles which are new to this bundle */
                 hostInstallBundle(node, before_bundles, group_name);
             }
-            
-            /* Check associations after balance finish */
-            actual_group.checkMapAssociations();
             
             /* Replace instance of group object */
             group_list.replace(group_name, actual_group);
@@ -854,6 +854,8 @@ public class Controller {
      * @param group_name Group name.
      */
     public void hostInstallBundle(Node node, List<String> install_urls, String group_name) {
+        FoTBalanceUtils.debug("Cellar Installing Bundles...");
+        
         /* Get the group based on group name */
         org.apache.karaf.cellar.core.Group group = group_manager.findGroupByName(group_name);
 
@@ -873,14 +875,21 @@ public class Controller {
         }
 
         /* Create a Cellar Support */
+        FoTBalanceUtils.debug("Starting cellar support");
         CellarSupport cellar_support = new CellarSupport();
         cellar_support.setClusterManager(cluster_manager);
         cellar_support.setGroupManager(group_manager);
         cellar_support.setConfigurationAdmin(configuration_admin);
+        FoTBalanceUtils.debug("Cellar support started");
 
+        /* Display size of install urls */
+        FoTBalanceUtils.debug("Size of install urls " + install_urls.size());
+        
         /* Install a block of maven install urls */
         for (String install_url : install_urls) {
-
+            /* Installing bundle */
+            FoTBalanceUtils.debug("Installing bundle " + install_url + " on " + node.getHost());
+            
             /* Check if the bundle is allowed to install */
             if (cellar_support.isAllowed(group, Constants.CATEGORY, install_url, EventType.OUTBOUND)) {
                 /* Jar Input Stream  */
@@ -915,11 +924,13 @@ public class Controller {
 
                 /* Since name cannot be null, we check if name is valid */
                 if (name == null) {
+                    FoTBalanceUtils.warn("Name is null checking for symbolic name");
                     name = symbolicName;
                 }
 
                 /* If it's not valid now use install_url as name */
                 if (name == null) {
+                    FoTBalanceUtils.warn("Symbolic name is null too using install url");
                     name = install_url;
                 }
 
@@ -936,6 +947,7 @@ public class Controller {
                 }
 
                 /* Get Classloader */
+                FoTBalanceUtils.debug("Getting bundle class loader");
                 ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
@@ -969,7 +981,9 @@ public class Controller {
                 if (start) {
                     event = new ClusterBundleEvent(symbolicName, version, install_url, DEFAULT_START_LEVEL, BundleEvent.STARTED);
                     event.setSourceGroup(group);
-                } /* Otherwise mark as installed */ else {
+                }
+                else {
+                    /* Otherwise mark as installed */ 
                     event = new ClusterBundleEvent(symbolicName, version, install_url, DEFAULT_START_LEVEL, BundleEvent.INSTALLED);
                     event.setSourceGroup(group);
                 }

@@ -138,6 +138,12 @@ public class Host {
         
         /* Add the group retrieved */
         group_list.add(group);
+        
+        /* Add this host to the group */
+        group.addHost(this);
+        
+        /* Register this host on group */
+        controller_instance.addHostCellarGroup(host_hazelcast_instance, group_name);
     }
     
     /**
