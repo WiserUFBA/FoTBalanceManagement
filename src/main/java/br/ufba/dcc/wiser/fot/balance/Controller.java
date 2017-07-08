@@ -146,6 +146,10 @@ public class Controller {
     /* OptaPlanner Maximum number of calculations per balancing */
     private final static Long CALCULATION_COUNT_LIMIT = new Long(100000);
 
+    /* Mutex for state check */
+    public static boolean MUTEX_CONTROLLER_ACTIVATED = true;
+    public static boolean MUTEX_CONTROLLER_BLOCKED = false;
+    
     /**
      *
      * Create a new Controller instance.
@@ -191,6 +195,14 @@ public class Controller {
         return instance;
     }
 
+    /**
+     * Remove the instance registered
+     *
+     */
+    public static void destroyInstance() {
+        instance = null;
+    }
+    
     /**
      *
      * Initialize application and execute some routines
@@ -292,11 +304,12 @@ public class Controller {
             FoTBalanceUtils.trace(e);
         }
         
+        /* By default after a call of init method the controller is activated */
+        MUTEX_CONTROLLER_ACTIVATED = true;
+        
         /* Store this new object in a static reference */
         FoTBalanceUtils.info("Storing new FoT Balance Controller");
         instance = this;
-
-        // TODO, THIS SHOULD MOUNT ALL SYSTEM
     }
 
     /**
@@ -335,72 +348,93 @@ public class Controller {
 
     /* Update the list of hosts based on cluster members */
     public void updateHosts() {
+        /* Block controller to avoid errors if this bundle is being deactivated */
+        MUTEX_CONTROLLER_BLOCKED = true;
+        
         /* If some of the interfaces is still not initialized stop this function */
         FoTBalanceUtils.info("--- Updating Hosts ---");
 
+        /* If controller is activated continue otherwise stop it and unblock this instace */
+        if(MUTEX_CONTROLLER_ACTIVATED){
+            FoTBalanceUtils.debug("Controller disabled, stopping updating hosts");
+            MUTEX_CONTROLLER_BLOCKED = false;
+            return;
+        }
+        
         /* Hazelcast instance don't exist or it's not initialized yet */
         if (hazelcast_instance == null) {
             FoTBalanceUtils.error("Hazelcast instance don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Execution context don't exist or it's not initialized yet */
         if (execution_context == null) {
             FoTBalanceUtils.error("Execution context don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Event producer don't exist or it's not initialized yet */
         if (event_producer == null) {
             FoTBalanceUtils.error("Event producer don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Cluster manager don't exist or it's not initialized yet */
         if (cluster_manager == null) {
             FoTBalanceUtils.error("Cluster manager don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Group manager don't exist or it's not initialized yet */
         if (group_manager == null) {
             FoTBalanceUtils.error("Group manager don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Configuration admin don't exist or it's not initialized yet */
         if (configuration_admin == null) {
             FoTBalanceUtils.error("Configuration admin don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Some of the lists isn't working or it's not initialized yet */
         if ((host_list == null) || (group_list == null) || (offline_hosts_to_remove_bundles == null)) {
             FoTBalanceUtils.error("Some of the lists isn't working or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Solver config don't exist or it's not initialized yet */
         if (solver_config == null) {
             FoTBalanceUtils.error("Solver Config don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Solver don't exist or it's not initialized yet */
         if (solver == null) {
             FoTBalanceUtils.error("Solver don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Configuration files not loaded */
         if (host_configurations == null || group_configurations == null) {
             FoTBalanceUtils.error("Configuration files not loaded");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
 
         /* Since singleton instance of Controller is needed by some classes, we check if this instance is initialized */
         if (instance == null) {
             FoTBalanceUtils.error("Controller Singleton instace don't exist or it's not initialized yet");
+            MUTEX_CONTROLLER_BLOCKED = false;
             return;
         }
         
@@ -420,6 +454,7 @@ public class Controller {
             /* If members is null, something went wrong */
             if (members == null) {
                 FoTBalanceUtils.error("Error retrieving members from cluster object");
+                MUTEX_CONTROLLER_BLOCKED = false;
                 return;
             }
 
@@ -472,6 +507,8 @@ public class Controller {
 
                         /* Check if this host has never entered this list or this list is empty */
                         if (bundles_to_remove != null && bundles_to_remove.size() > 0) {
+                            FoTBalanceUtils.debug("Unninstalling past bundles of host " + host.getHostID());
+                            
                             /* For each group name unninstal all pendent bundles */
                             for (String group_name : bundles_to_remove.keySet()) {
                                 /* List of unninstal urls */
@@ -484,6 +521,9 @@ public class Controller {
                             /* Clean list after unninstall all the pendent bundles */
                             bundles_to_remove.clear();
                         }
+                        else {
+                            FoTBalanceUtils.debug("Host " + host.getHostID() + " have no bundles to remove");
+                        }
 
                         /* Get the groups of this host */
                         Set<Group> groups_associated = host_group_associations.get(host.getHostID());
@@ -492,6 +532,7 @@ public class Controller {
                         FoTBalanceUtils.debug("Host FQDN: " + host.getHostID() + " / IP:" + host.getHostAddress() + " new on network");
                         
                         /* Check how many hosts we have since if we have special rules for cases with one and two hosts */
+                        FoTBalanceUtils.debug("Number of hosts on cluster " + (host_list.size() + new_hosts.size() - past_hosts.size()));
                         if ((host_list.size() + new_hosts.size() - past_hosts.size()) > 2) {
                             /* If we have groups associated with this host */
                             if (groups_associated != null && groups_associated.size() > 0) {
@@ -602,6 +643,10 @@ public class Controller {
             FoTBalanceUtils.error("Several error on network check");
             FoTBalanceUtils.trace(e);
         }
+        
+        /* Unblocking controller */
+        FoTBalanceUtils.debug("Unblocking Controller");
+        MUTEX_CONTROLLER_BLOCKED = false;
     }
 
     /**
@@ -1124,6 +1169,73 @@ public class Controller {
         }
     }
 
+    /**
+     * 
+     * Destroy controller session, remove all bundles from hosts and unregister 
+     * all groups on cellar.
+     * 
+     */
+    public void destroySession() {
+        /* Deactivate this controller and wait it for update finished */
+        FoTBalanceUtils.debug("Deactivating controller");
+        MUTEX_CONTROLLER_ACTIVATED = false;
+        
+        /* Wait until controller finished it's operations */
+        FoTBalanceUtils.debug("Waiting for controller end of it's operations");
+        while(MUTEX_CONTROLLER_BLOCKED){
+            try{
+                FoTBalanceUtils.debug("!!! CONTROLLER STILL BLOCKED !!!");
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                FoTBalanceUtils.error("Catcherd interrupted exception");
+                FoTBalanceUtils.trace(e);
+            }
+        }
+        
+        /* After controller is unblocked */
+        FoTBalanceUtils.debug("Controller unblocked, starting remove bundles and groups"); 
+        
+        /* For each host registered */
+        for(Host host : host_list){
+            FoTBalanceUtils.debug("Removing bundles and groups from " + host.getHostID());
+                    
+            /* Get a list of bundles to unninstall */
+            Map<String, List<String>> unninstall_urls = host.getAllUninstalUrls();
+            
+            /* For each group name unninstal all bundles */
+            for (String group_name : unninstall_urls.keySet()) {
+                /* List of unninstal urls */
+                List<String> uninstall_urls = unninstall_urls.get(group_name);
+
+                /* Unninstall all urls received */
+                hostUnninstalBundle(host.getHostInstance(), uninstall_urls, group_name);
+            }
+            
+            /* Unsubscribe all groups */
+            host.removeAllGroups();
+
+            /* Remove host from host list */
+            host_list.remove(host);
+        }
+        
+        /* For each group remove it from cellar */
+        for(String group_name : group_list.keySet()){
+            FoTBalanceUtils.debug("Removing group " + group_name);
+            
+            /* Get group based on group name */
+            Group group = getGroup(group_name);
+            
+            /* Remove reamining hosts */
+            group.removeAllHosts();
+            
+            /* Remove group from cellar */
+            removeCellarGroup(group_name);
+        }
+        
+        /* Session fully destroied */
+        FoTBalanceUtils.debug("Session fully destroied");
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Basic Getter and Setter Functions">
     /**
      *
@@ -1257,4 +1369,5 @@ public class Controller {
     }
 
     // </editor-fold>
+
 }

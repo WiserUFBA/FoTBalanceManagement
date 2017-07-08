@@ -39,14 +39,29 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bc) throws Exception {
-        FoTBalanceUtils.info("Starting the bundle FoT Balance");
+        FoTBalanceUtils.info("Starting the bundle FoT Balance Management");
         Activator.bc = bc;
     }
 
     @Override
     public void stop(BundleContext bc) throws Exception {
-        FoTBalanceUtils.info("Stopping the bundle FoT Balance");
+        FoTBalanceUtils.info("Stopping the bundle FoT Balance Management");
+        
+        /* Get a controller instance and stop all functions */
+        FoTBalanceUtils.debug("Getting controller instance");
+        Controller controller = Controller.getInstance();
+        
+        /* Destroy session */
+        controller.destroySession();
+        
+        /* Destroy controller instance */
+        Controller.destroyInstance();
+        
+        /* Clean bundle context to avoid errors */
         Activator.bc = null;
+        
+        /* End of stop */
+        FoTBalanceUtils.debug("Fot Balance Management stopped");
     }
 
 }

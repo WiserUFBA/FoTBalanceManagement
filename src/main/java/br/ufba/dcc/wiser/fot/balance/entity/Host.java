@@ -243,6 +243,8 @@ public class Host {
      * 
      */
     public void removeAllGroups(){
+        Controller controller = Controller.getInstance();
+        
         /* Remove this host from all groups subscribed */
         for(Group group : group_list){
             /* Invalid group found avoiding */
@@ -252,6 +254,7 @@ public class Host {
             }
             
             group.removeHost(this);
+            controller.removeHostCellarGroup(host_hazelcast_instance, host_id);
         }
     }
     
