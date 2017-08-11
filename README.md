@@ -25,6 +25,10 @@ config:update
 bundle:install -s mvn:br.ufba.dcc.wiser.fot/httpInstallMvnBundle/1.0.10
 config:edit org.apache.karaf.cellar.groups
 config:property-set default.bundle.sync disabled
+config:property-set default.config.sync disabled
+config:property-set default.feature.sync disabled
+config:property-set default.obr.urls.sync disabled
+config:update
 ```
 
 Copiar e colar no terminal do karaf, nas demais máquinas:
@@ -38,6 +42,10 @@ config:update
 bundle:install -s mvn:br.ufba.dcc.wiser.fot/httpInstallMvnBundle/1.0.10
 config:edit org.apache.karaf.cellar.groups
 config:property-set default.bundle.sync disabled
+config:property-set default.config.sync disabled
+config:property-set default.feature.sync disabled
+config:property-set default.obr.urls.sync disabled
+config:update
 ```
 
 ### Support
