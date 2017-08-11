@@ -684,7 +684,8 @@ public class Controller {
     private void balanceNetwork() {
         /* Display the begin of network balancing */
         FoTBalanceUtils.info("----- Begin of Balance -----");
-
+        System.out.println("----- Begin of Balance -----");
+        System.out.println(java.time.Instant.now());
         /* For each Group solve the class, compare results and do the network changes */
         for (String group_name : group_list.keySet()) {
             /* Actual group */
@@ -698,6 +699,7 @@ public class Controller {
             
             /* Print info about actual group */
             FoTBalanceUtils.info("------ Before Balance ------");
+
             FoTBalanceUtils.debug("Balacing group -- " + group_name);
             actual_group.displayAssociations();
 
@@ -716,6 +718,8 @@ public class Controller {
                 (millis_end % 1000)
             );
             FoTBalanceUtils.debug("\nFinished optaplanner solver in " + tempo_execucao + " min");
+            System.out.println("\nFinished optaplanner solver in " + tempo_execucao + " min");
+            System.out.println(java.time.Instant.now());
             
             /* Print info about new associations */
             FoTBalanceUtils.info("------ After  Balance ------");
@@ -756,6 +760,8 @@ public class Controller {
 
         /* Show that re reach the end of fot balacing */
         FoTBalanceUtils.info("------ End of Balance ------");
+        System.out.println("------ End of Balance ------");
+        System.out.println(java.time.Instant.now());
     }
 
     /**

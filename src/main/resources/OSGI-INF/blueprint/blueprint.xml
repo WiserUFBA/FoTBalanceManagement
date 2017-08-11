@@ -62,7 +62,7 @@ language governing permissions and limitations under the License. -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint" >
         <route>
             <!--<from uri="timer://myTimer?period=180000" />-->
-            <from uri="timer://myTimer?period=60000" />
+            <from uri="timer://myTimer?period=40000" />
             <to uri="bean:controllerInstance?method=updateHosts"/>
         </route>
     </camelContext>

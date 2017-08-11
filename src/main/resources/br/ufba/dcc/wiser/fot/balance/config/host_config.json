@@ -1,42 +1,37 @@
 [
     {
         "hostId": "Host 1",
-        "hostName": "Jurandir.local",
+        "hostName": "192.168.1.101",
         "groupsList": [
-            "localization",
-            "basic"
+            "localization"
         ]
     },
     {
         "hostId": "Host 2",
-        "hostName": "pitu.local",
+        "hostName": "192.168.1.103",
         "groupsList": [
-            "discovery",
-            "basic"
+            "discovery"
         ]
     },
     {
         "hostId": "Host 3",
-        "hostName": "absinto.local",
+        "hostName": "192.168.1.104",
         "groupsList": [
-            "security",
-            "basic"
+            "security"
         ]
     },
     {
         "hostId": "Host 4",
-        "hostName": "rum.local",
+        "hostName": "192.168.0.105",
         "groupsList": [
-            "composition",
-            "basic"
+            "composition"
         ]
     },
     {
         "hostId": "Host 5",
-        "hostName": "catuaba.local",
+        "hostName": "192.168.0.106",
         "groupsList": [
-            "composition",
-            "basic"
+            "storage"
         ]
     }
 ]

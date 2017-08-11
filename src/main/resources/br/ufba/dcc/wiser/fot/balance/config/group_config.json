@@ -13,24 +13,18 @@
                 "artifactId": "app2_com-fatorial",
                 "artifactVersion": "1.0",
                 "bundleCost": 1
+            },
+            {
+                "groupId": "br.ufba.dcc.wiser",
+                "artifactId": "app4_loc-fatorial",
+                "artifactVersion": "1.0",
+                "bundleCost": 1
             }
    ]
     },
     {
         "groupName": "basic",
         "bundlesList": [
-            {
-                "groupId": "br.ufba.dcc.wiser",
-                "artifactId": "app3_com-fatorial",
-                "artifactVersion": "1.0",
-                "bundleCost": 1
-            },
-            {
-                "groupId": "br.ufba.dcc.wiser",
-                "artifactId": "app4_com-fatorial",
-                "artifactVersion": "1.0",
-                "bundleCost": 1
-            }
         ]
     },
     {
@@ -45,6 +39,12 @@
             {
                 "groupId": "br.ufba.dcc.wiser",
                 "artifactId": "app2_dis-fatorial",
+                "artifactVersion": "1.0",
+                "bundleCost": 1
+            },
+            {
+                "groupId": "br.ufba.dcc.wiser",
+                "artifactId": "app4_loc-fatorial",
                 "artifactVersion": "1.0",
                 "bundleCost": 1
             }
@@ -62,6 +62,12 @@
             {
                 "groupId": "br.ufba.dcc.wiser",
                 "artifactId": "app4_dis-fatorial",
+                "artifactVersion": "1.0",
+                "bundleCost": 1
+            },
+            {
+                "groupId": "br.ufba.dcc.wiser",
+                "artifactId": "app4_com-fatorial",
                 "artifactVersion": "1.0",
                 "bundleCost": 1
             }
@@ -85,12 +91,6 @@
             {
                 "groupId": "br.ufba.dcc.wiser",
                 "artifactId": "app3_loc-fatorial",
-                "artifactVersion": "1.0",
-                "bundleCost": 1
-            },
-            {
-                "groupId": "br.ufba.dcc.wiser",
-                "artifactId": "app4_loc-fatorial",
                 "artifactVersion": "1.0",
                 "bundleCost": 1
             }
