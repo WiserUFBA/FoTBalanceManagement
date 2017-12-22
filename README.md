@@ -48,7 +48,9 @@ config:property-set default.obr.urls.sync disabled
 config:update
 ```
 
-### Support
+## Support and development
 
-Desenvolvido por Jurandir Barbosa <jurandirbarbosa@ifba.edu.br>.
-
+<p align="center">
+	Desenvolvido por Jurandir Barbosa <jurandirbarbosa@ifba.edu.br> em </br>
+  <img src="https://wiki.dcc.ufba.br/pub/SmartUFBA/ProjectLogo/wiserufbalogo.jpg"/>
+</p>
